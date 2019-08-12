@@ -32,21 +32,7 @@ class LoginController extends BaseController
         $result = app('db')->selectone("SELECT * FROM users WHERE uuid=?", array($uuid));
         //初始化用戶
         if(empty($result)){
-            $userId = DB::table("users")->insertGetId(
-                [
-                    'avatar'=>'a.png',
-                    'uuid'=>$uuid,
-                    'username'=>'游客账号_' . rand(100000000, 9999999999),
-                    'city'=>'深圳',
-                    'fans_num'=>0,
-                    'support_num'=>0,
-                    'invitation_num'=>0,
-                    'upload_num'=>0,
-                    'vip_level'=>0,
-                    'popularize_number'=>0,
-                    'add_time'=>date('Y-m-d H:i:s'),
-                ]
-            );
+
         }
 
 

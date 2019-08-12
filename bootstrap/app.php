@@ -97,7 +97,7 @@ $app->singleton(
 | can respond to, as well as the controllers that may handle them.
 |
 */
-
+require_once __DIR__.'/../app/Console/functions.php';
 $app->router->group([
     'namespace' => 'App\Http\Controllers',
 ], function ($router) {

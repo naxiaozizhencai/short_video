@@ -24,7 +24,8 @@ class UsersService
         $userData = $this->UsersRepositories->GetUserDataByUuid($uuid);
 
         if(empty($userData)){
-            $this->InitUserData($uuid);
+            $this->UsersRepositories->InsertUser($uuid);
+            $userData = $this->UsersRepositories->GetUserDataByUuid($uuid);
         }
 
         $resultData = ['code'=>200, 'data'=>[]];
@@ -58,14 +59,6 @@ class UsersService
         $resultData['data']['user_data'] = $data;
         $resultData['data']['token_data'] = $token_data;
         return $resultData;
-    }
-
-    /**
-     * 初始化数据
-     */
-    public function InitUserData()
-    {
-
     }
 
 }
