@@ -52,7 +52,6 @@ class VideoService
 
         $this->tempDataRepositories->UpdateValue($uid, 'view_max_id');
         $data['data']['video_data'] = $video_data;
-
         return $data;
     }
 
