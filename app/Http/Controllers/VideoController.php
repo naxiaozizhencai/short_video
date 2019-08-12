@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\FavoriteRepositories;
 use App\Service\VideoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,9 +30,10 @@ class VideoController extends Controller
 
     public function DoFavorite(Request $request)
     {
-        echo "DoFavorite";
-        exit;
+
         $video_id = $request->input('video_id');
+        $data = $this->videoService->DoFavorite(1, 2);
+        return response()->json($data);
     }
 
 

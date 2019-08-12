@@ -1,5 +1,6 @@
 <?php
 namespace App\Service;
+use App\Repositories\FavoriteRepositories;
 use App\Repositories\TempDataRepositories;
 use App\Repositories\UsersRepositories;
 use App\Repositories\VideoRepositories;
@@ -8,10 +9,14 @@ class VideoService
 {
     protected $videoRepositories;
     protected $tempDataRepositories;
-    public function __construct(VideoRepositories $videoRepositories, TempDataRepositories $tempDataRepositories)
+    protected $favoriteRepositories;
+    public function __construct(VideoRepositories $videoRepositories,
+                                TempDataRepositories $tempDataRepositories,
+                                FavoriteRepositories $favoriteRepositories)
     {
         $this->videoRepositories = $videoRepositories;
         $this->tempDataRepositories = $tempDataRepositories;
+        $this->favoriteRepositories = $favoriteRepositories;
     }
 
     /**
@@ -63,8 +68,33 @@ class VideoService
      */
     public function DoFavorite($video_id, $user_id)
     {
-        
-        return [];
+
+        $data = ['code'=>200, 'data'=>[]];
+
+        $video_row = $this->videoRepositories->getVideoById($video_id);
+        if(empty($video_row)){
+            return $data = ['code'=>-1, 'errMsg'=>'视频数据不存在'];
+        }
+        $favor_row = $this->favoriteRepositories->FindFavoriteRow($user_id, $video_id);
+        $find_data['user_id'] = $user_id;
+        $find_data['video_id'] = $video_id;
+        $update_data = $find_data;
+
+        if(empty($favor_row)){
+            $update_data['status'] = 1;
+        }else{
+            $update_data['status'] = ($favor_row->status == 1) ? 0 : 1;
+        }
+        $favor_num = ($update_data['status'] == 1) ? 1 : -1;
+        $update_data['add_time'] = date("Y-m-d H:i:s");
+        $this->favoriteRepositories->UpdateFavoriteVideo($find_data, $update_data);
+        $this->videoRepositories->IncrVideoFavoriteNum($video_id, $favor_num);
+
+        $favor_data['favorite_num'] = $video_row->favorite_number + $favor_num;
+        $favor_data['video_id'] = $video_id;
+        $data['data']['video_data'] = $favor_data;
+
+        return $data;
     }
 
 

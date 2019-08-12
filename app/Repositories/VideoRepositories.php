@@ -54,4 +54,31 @@ class VideoRepositories
 
         return $result->max_id;
     }
+
+    public function getVideoById($video_id)
+    {
+        $video_row = DB::table('video_list')->find($video_id);
+        if(empty($video_row)){
+            return false;
+        }
+
+        return $video_row;
+    }
+    /**
+     * 更新喜欢数量
+     * @param $video_id
+     * @param int $num
+     * @return bool
+     */
+    public function IncrVideoFavoriteNum($video_id, $num = 1)
+    {
+        $video_row = DB::table('video_list')->find($video_id);
+
+        if(!empty($video_row)){
+            DB::table('video_list')->increment('favorite_number', $num);
+        }
+
+        return true;
+
+    }
 }
