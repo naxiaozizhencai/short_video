@@ -15,7 +15,7 @@ class AuthController extends Controller
         $user_model = new UserModel();
         $user_info = $user_model->where('uuid', '=', $request->input('uuid'))->first();
         if ($user_info) {
-            if (!$token = Auth::login($user_info)) {
+            if (!$token = Auth::login($user_info, true)) {
                 $response['code']     = '5000';
                 $response['errorMsg'] = '系统错误，无法生成令牌';
             } else {

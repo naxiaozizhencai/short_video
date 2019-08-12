@@ -2,10 +2,19 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Laravel\Lumen\Routing\Controller as BaseController;
+use App\Service\UsersService;
 class LoginController extends BaseController
 {
+
+    private $UsersService;
+    public function __construct(UsersService $UsersService)
+    {
+        $this->UsersService = $UsersService;
+//        $this->middleware('jwt.auth', ['except' => ['login']]);
+    }
 
     /**
      * 用户登录
@@ -15,14 +24,17 @@ class LoginController extends BaseController
     {
 
         $uuid = $request->input("uuid");
-        $result = app('db')->selectone("SELECT * FROM user WHERE uuid=?", array($uuid));
+        $this->UsersService->Login($uuid);
+        exit;
+
+        $result = app('db')->selectone("SELECT * FROM users WHERE uuid=?", array($uuid));
         //初始化用戶
         if(empty($result)){
-            DB::table("user")->insertGetId(
+            $userId = DB::table("users")->insertGetId(
                 [
                     'avatar'=>'a.png',
                     'uuid'=>$uuid,
-                    'user_name'=>'游客账号_' . rand(100000000, 9999999999),
+                    'username'=>'游客账号_' . rand(100000000, 9999999999),
                     'city'=>'深圳',
                     'fans_num'=>0,
                     'support_num'=>0,
@@ -34,6 +46,8 @@ class LoginController extends BaseController
                 ]
             );
         }
+
+
 
 
         $data = [

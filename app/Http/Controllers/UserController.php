@@ -10,7 +10,7 @@ class UserController extends BaseController
     //
     public function __construct()
     {
-        //
+        $this->middleware('auth:api');
     }
 
     public function Index()
