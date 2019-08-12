@@ -2,40 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Service\VideoService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 class VideoController extends Controller
 {
+    protected $videoService;
+    public function __construct(VideoService $videoService)
+    {
+        $this->videoService = $videoService;
+    }
+
     /**
-     * Create a new controller instance.
-     *
-     * @return void
+     * 观看视频
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function __construct()
+    public function ViewVideo(Request $request)
     {
-        //
+        $user_id = Auth::user()->id;
+        $data = $this->videoService->RandViewVideo($user_id);
+        return response()->json($data);
+
     }
 
-    public function VideoDetail(Request $request)
-    {
-
-
-        $data = [
-            'code'=>200,
-            'data'=>[
-                'video_data'=>[
-                    'video_user_avatar'=>'',
-                    'video_user_id'=>'',
-                    'video_user_name'=>'',
-                    'video_title'=>'',
-                    'video_image'=>'',
-                    'video_url'=>'',
-                    'video_label'=>'',
-                    'favorite_number'=>'',
-                    'reply_number'=>'',
-                ],
-            ],
-        ];
-
-    }
     /**
      * 搜索列表
      */
