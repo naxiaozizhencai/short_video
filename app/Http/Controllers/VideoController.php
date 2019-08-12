@@ -27,6 +27,14 @@ class VideoController extends Controller
 
     }
 
+    public function DoFavorite(Request $request)
+    {
+        echo "DoFavorite";
+        exit;
+        $video_id = $request->input('video_id');
+    }
+
+
     /**
      * 搜索列表
      */

@@ -55,6 +55,18 @@ class VideoService
         return $data;
     }
 
+    /**
+     * 点击爱心
+     * @param $video_id
+     * @param $user_id
+     * @return array
+     */
+    public function DoFavorite($video_id, $user_id)
+    {
+        
+        return [];
+    }
+
 
 
 }
