@@ -98,6 +98,16 @@ class VideoService
         return $data;
     }
 
+    public function getDiscussList($video_id)
+    {
+        $video_row = $this->videoRepositories->getVideoById($video_id);
+        if(empty($video_row)){
+            return $data = ['code'=>-1, 'errMsg'=>'视频数据不存在'];
+        }
+
+
+    }
+
 
 
 }

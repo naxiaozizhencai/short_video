@@ -36,6 +36,41 @@ class VideoController extends Controller
         return response()->json($data);
     }
 
+    /**
+     * 评论
+     * @param Request $request
+     */
+    public function Discuss(Request $request)
+    {
+        $video_id = $request->get('video_id', 1);
+
+        $data = ['code'=>200, 'data'=>[
+
+        ]];
+
+    }
+
+    public function AddDiscuss()
+    {
+
+    }
+
+
+    /**
+     * 举报评论
+     */
+    public function ReportDiscuss(Request $request)
+    {
+
+    }
+
+    /**
+     * 喜欢这条评论
+     */
+    public function FavorDiscuss(Request $request)
+    {
+
+    }
 
     /**
      * 搜索列表
