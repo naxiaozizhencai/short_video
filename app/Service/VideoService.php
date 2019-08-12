@@ -92,6 +92,7 @@ class VideoService
 
         $favor_data['favorite_num'] = $video_row->favorite_number + $favor_num;
         $favor_data['video_id'] = $video_id;
+        $favor_data['status'] = $update_data['status'];
         $data['data']['video_data'] = $favor_data;
 
         return $data;
