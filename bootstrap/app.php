@@ -21,10 +21,16 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
+
  $app->withFacades();
 
  $app->withEloquent();
 
+$app->withFacades(true, [
+        'Tymon\JWTAuth\Facades\JWTAuth' => 'JWTAuth',
+        'Tymon\JWTAuth\Facades\JWTFactory' => 'JWTFactory',
+    ]
+);
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -57,13 +63,13 @@ $app->singleton(
 |
 */
 
-// $app->middleware([
-//     App\Http\Middleware\ExampleMiddleware::class
-// ]);
+ $app->middleware([
+     App\Http\Middleware\App::class
+ ]);
 
-// $app->routeMiddleware([
-//     'auth' => App\Http\Middleware\Authenticate::class,
-// ]);
+ $app->routeMiddleware([
+     'auth' => App\Http\Middleware\Authenticate::class,
+ ]);
 
 /*
 |--------------------------------------------------------------------------
@@ -77,9 +83,10 @@ $app->singleton(
 */
 
 // $app->register(App\Providers\AppServiceProvider::class);
-// $app->register(App\Providers\AuthServiceProvider::class);
+ $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
-
+ $app->register(\Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+ $app->register(Wn\Generators\CommandsServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

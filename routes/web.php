@@ -15,9 +15,12 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-
-$router->post('/login', 'LoginController@Login');
+$router->post('user/postLogin', 'AuthController@postLogin');
+$router->group(['prefix'=>'jwt', 'middleware'=>'auth'], function() use ($router){
+});
+$router->post('login', 'LoginController@Login');
 $router->get('user', 'UserController@login');
 $router->get('UserDetail', 'UserController@UserDetail');
 $router->get('UserVideoList', 'UserController@UserVideoList');
 $router->get('UserFavoriteList', 'UserController@UserFavoriteList');
+
