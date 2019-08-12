@@ -1,7 +1,7 @@
 <?php
 namespace App\Repositories;
 
-class UsersDetailRepositories
+class DiscussRepositories
 {
     
 }

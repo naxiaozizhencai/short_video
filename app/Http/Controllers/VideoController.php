@@ -14,8 +14,10 @@ class VideoController extends Controller
         //
     }
 
-    public function videoDetail()
+    public function VideoDetail(Request $request)
     {
+
+
         $data = [
             'code'=>200,
             'data'=>[

@@ -24,7 +24,9 @@ class LoginController extends BaseController
     {
 
         $uuid = $request->input("uuid");
-        $this->UsersService->Login($uuid);
+        $data = $this->UsersService->Login($uuid);
+
+        return response()->json($data);
         exit;
 
         $result = app('db')->selectone("SELECT * FROM users WHERE uuid=?", array($uuid));
