@@ -44,15 +44,30 @@ class VideoController extends Controller
     {
         $video_id = $request->get('video_id', 1);
 
-        $data = ['code'=>200, 'data'=>[
-
-        ]];
+        $data = ['code'=>200, 'data'=>[]];
 
     }
 
-    public function AddDiscuss()
+    /**
+     * 增加评论
+     * @param Request $request
+     */
+    public function AddDiscuss(Request $request)
     {
+        $video_id = $request->input('video_id', 0);//视频id
+        $content = $request->input('content', '');
+        $data = $this->videoService->AddDiscuss($video_id, $content);
+        return response()->json($data);
+    }
 
+    /**
+     * 增加评论
+     * @param Request $request
+     */
+    public function AddReply(Request $request)
+    {
+        $data = $this->videoService->AddReply($request);
+        return response()->json($data);
     }
 
 

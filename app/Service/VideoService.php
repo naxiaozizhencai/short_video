@@ -1,22 +1,31 @@
 <?php
 namespace App\Service;
+use App\Repositories\DiscussRepositories;
 use App\Repositories\FavoriteRepositories;
+use App\Repositories\ReplyRepositories;
 use App\Repositories\TempDataRepositories;
 use App\Repositories\UsersRepositories;
 use App\Repositories\VideoRepositories;
+use Illuminate\Support\Facades\Auth;
 
 class VideoService
 {
     protected $videoRepositories;
     protected $tempDataRepositories;
     protected $favoriteRepositories;
+    protected $discussRepositories;
+    protected $replyRepositories;
     public function __construct(VideoRepositories $videoRepositories,
                                 TempDataRepositories $tempDataRepositories,
-                                FavoriteRepositories $favoriteRepositories)
+                                FavoriteRepositories $favoriteRepositories, DiscussRepositories $discussRepositories,
+                                ReplyRepositories $replyRepositories
+)
     {
         $this->videoRepositories = $videoRepositories;
         $this->tempDataRepositories = $tempDataRepositories;
         $this->favoriteRepositories = $favoriteRepositories;
+        $this->discussRepositories = $discussRepositories;
+        $this->replyRepositories = $replyRepositories;
     }
 
     /**
@@ -98,11 +107,60 @@ class VideoService
         return $data;
     }
 
+    /**
+     * @param $video_id
+     * @param $content
+     */
+    public function AddDiscuss($video_id, $content)
+    {
+        $video_row = $this->videoRepositories->getVideoById($video_id);
+
+        if(empty($video_row)){
+            return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
+        }
+
+        if(empty($content)){
+            return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
+        }
+
+        $discuss_data['video_id'] = $video_id;
+        $discuss_data['content'] = $content;
+        $discuss_data['from_uid'] = Auth::id();
+        $discuss_data['favorite_number'] = 0;
+        $discuss_data['discuss_time'] = time();
+        $discuss_data['add_time'] = date("y-m-d H:i:s");
+        $this->discussRepositories->InsertDiscuss($discuss_data);
+
+        return $data = ['code'=>200, 'msg'=>'评论成功'];
+    }
+
+    public function AddReply($request)
+    {
+        $video_row = $this->videoRepositories->getVideoById($request->input('video_id'));
+
+        if(empty($video_row)){
+            return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
+        }
+        $reply_id = $request->input('reply_id', $request->input('discuss_id'));
+        $reply_id = ($reply_id == 0) ? $request->input('discuss_id') : $reply_id;
+        $reply['discuss_id'] = $request->input('discuss_id');
+        $reply['reply_id'] = $reply_id;
+        $reply['to_uid'] = $request->input('video_id');
+        $reply['content'] = $request->input('content');
+        $reply['from_uid'] = Auth::id();
+        $reply['favorite_number'] = 0;
+        $reply['reply_time'] = time();
+        $reply['add_time'] = date("Y-m-d H:i:s");
+        $this->replyRepositories->InsertReply($reply);
+
+        return $data = ['code'=>200, 'msg'=>'回复成功'];
+
+    }
     public function getDiscussList($video_id)
     {
         $video_row = $this->videoRepositories->getVideoById($video_id);
         if(empty($video_row)){
-            return $data = ['code'=>-1, 'errMsg'=>'视频数据不存在'];
+            return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
         }
 
 

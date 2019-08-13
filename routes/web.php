@@ -15,13 +15,12 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 $router->post('user/postLogin', 'AuthController@postLogin');
-$router->Post('favorite', 'VideoController@DoFavorite');
 
 $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($router){
     $router->post('login', 'LoginController@Login');
     $router->get('video', 'VideoController@ViewVideo');
-
-
+    $router->Post('favorite', 'VideoController@DoFavorite');
+    $router->Post('adddiscuss', 'VideoController@AddDiscuss');
 });
 
 
