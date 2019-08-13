@@ -17,7 +17,12 @@ class DiscussRepositories
         return DB::table($this->table_name)->insertGetId($data);
     }
 
-
+    /**
+     * 获取子评论
+     * @param $video_id
+     * @param int $pid
+     * @return array
+     */
     public function getSubList($video_id, $pid=0){
 
         $sub_list = DB::select("select * from video_discuss WHERE video_id=$video_id AND parent_id=$pid");
@@ -42,7 +47,7 @@ class DiscussRepositories
     {
 
         return DB::table($this->table_name)->
-        where('video_id' ,'=',$video_id)->orderBy('discuss_time', 'desc')->paginate(5)->toarray();
+        where([['video_id' ,'=',$video_id], ['parent_id' ,'=',0]])->orderBy('discuss_time', 'desc')->paginate(5)->toarray();
 
     }
 }

@@ -6,27 +6,27 @@ use App\Repositories\ReplyRepositories;
 use App\Repositories\TempDataRepositories;
 use App\Repositories\UsersRepositories;
 use App\Repositories\VideoRepositories;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class VideoService
 {
+
     protected $videoRepositories;
     protected $tempDataRepositories;
     protected $favoriteRepositories;
     protected $discussRepositories;
-    protected $replyRepositories;
     protected $usersRepositories;
     public function __construct(VideoRepositories $videoRepositories,
                                 TempDataRepositories $tempDataRepositories,
                                 FavoriteRepositories $favoriteRepositories, DiscussRepositories $discussRepositories,
-                                ReplyRepositories $replyRepositories, UsersRepositories $usersRepositories
+                                UsersRepositories $usersRepositories
 )
     {
         $this->videoRepositories = $videoRepositories;
         $this->tempDataRepositories = $tempDataRepositories;
         $this->favoriteRepositories = $favoriteRepositories;
         $this->discussRepositories = $discussRepositories;
-        $this->replyRepositories = $replyRepositories;
         $this->usersRepositories = $usersRepositories;
     }
 
@@ -122,9 +122,10 @@ class VideoService
         }
 
         if(empty($content)){
-            return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
+            return $data = ['code'=>-1, 'msg'=>'評論内容不能爲空'];
         }
-
+        $parent_id = app('request')->input('parent_id', 0);
+        $discuss_data['parent_id'] = $parent_id;
         $discuss_data['video_id'] = $video_id;
         $discuss_data['content'] = $content;
         $discuss_data['from_uid'] = Auth::id();
@@ -136,36 +137,6 @@ class VideoService
         return $data = ['code'=>200, 'msg'=>'评论成功'];
     }
 
-    public function AddReply($request)
-    {
-        $video_row = $this->videoRepositories->getVideoById($request->input('video_id'));
-
-        if(empty($video_row)){
-            return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
-        }
-        $reply_id = $request->input('reply_id', $request->input('discuss_id'));
-        $reply_id = ($reply_id == 0) ? $request->input('discuss_id') : $reply_id;
-        $reply['discuss_id'] = $request->input('discuss_id');
-        $reply['reply_id'] = $reply_id;
-        $reply['to_uid'] = $request->input('to_uid');
-        $reply['content'] = $request->input('content');
-        $reply['from_uid'] = Auth::id();
-        $reply['favorite_number'] = 0;
-        $reply['reply_time'] = time();
-        $reply['add_time'] = date("Y-m-d H:i:s");
-        $this->replyRepositories->InsertReply($reply);
-
-        return $data = ['code'=>200, 'msg'=>'回复成功'];
-
-    }
-
-    private function makeReplayStruct($reply_data)
-    {
-        $result = [];
-        if(empty($reply_data)) {
-            return [];
-        }
-    }
     /**
      * 获取视频评论列表
      * @param $video_id
@@ -180,43 +151,62 @@ class VideoService
 
         $discuss_list = $this->discussRepositories->getDiscussList($video_id);
 
-        if(empty($discuss_list['data'])){
-
-        }
-
-        $data = $this->discussRepositories->getSubList(1, 0);
-        print_r($data);
-        exit;
         $data = ['code'=>200, 'data'=>[]];
-        $discuss_reply_data = [];
-        foreach($discuss_list['data'] as $key=>$value){
-            $user_data = $this->usersRepositories->getUserInfoById($value->from_uid);
-            if(empty($user_data)) {
-                $discuss_reply_data['user_info']['user_id'] = '';
-                $discuss_reply_data['user_info']['username'] = '';
-                $discuss_reply_data['user_info']['avatar'] = '';
-                $discuss_reply_data['user_info']['sex'] = '';
-                $discuss_reply_data['user_info']['city'] = '';
-            }else{
-                $discuss_reply_data['user_info']['user_id'] = $user_data->id;
-                $discuss_reply_data['user_info']['username'] = $user_data->username;
-                $discuss_reply_data['user_info']['avatar'] = $user_data->avatar;
-                $discuss_reply_data['user_info']['sex'] = $user_data->sex;
-                $discuss_reply_data['user_info']['city'] = $user_data->city;
+
+        if(!empty($discuss_list['data'])){
+            foreach($discuss_list['data'] as $key=>$value){
+
+                $sub_list = $this->discussRepositories->getSubList($value->video_id, $value->id);
+                $user_data = $this->usersRepositories->getUserInfoById($value->from_uid);
+
+                if(empty($user_data)){
+                    continue;
+                }
+                $temp_data = [];
+                $temp_data['user_info']['user_id'] = $user_data->id;
+                $temp_data['user_info']['username'] = $user_data->username;
+                $temp_data['user_info']['vip_level'] = $user_data->vip_level;
+                $temp_data['user_info']['avatar'] = $user_data->avatar;
+                $temp_data['user_info']['sex'] = $user_data->sex;
+                $temp_data['user_info']['city'] = $user_data->city;
+                $temp_data['discuss_info']['discuss_id'] = $value->id;
+                $temp_data['discuss_info']['discuss_time'] = $value->discuss_time;
+                $temp_data['discuss_info']['content'] = $value->content;
+                $temp_data['discuss_info']['favorite_number'] = $value->favorite_number;
+                $temp_data['reply_info'] = [];
+
+                if(!empty($sub_list)){
+                    //最多回复三级
+                    $sub_temp_data = [];
+                    foreach ($sub_list as $sub_key=>$sub_value){
+                        $sub_user_data = $this->usersRepositories->getUserInfoById($value->from_uid);
+                        if(empty($sub_user_data)){
+                            continue;
+                        }
+
+                        $sub_temp_data['user_info']['user_id'] = $sub_user_data->id;
+                        $sub_temp_data['user_info']['username'] = $sub_user_data->username;
+                        $sub_temp_data['user_info']['vip_level'] = $sub_user_data->vip_level;
+                        $sub_temp_data['user_info']['avatar'] = $sub_user_data->avatar;
+                        $sub_temp_data['user_info']['sex'] = $sub_user_data->sex;
+                        $sub_temp_data['user_info']['city'] = $sub_user_data->city;
+                        $sub_temp_data['discuss_info']['discuss_id'] = $sub_value->id;
+                        $sub_temp_data['discuss_info']['discuss_time'] = $sub_value->discuss_time;
+                        $sub_temp_data['discuss_info']['content'] = $sub_value->content;
+                        $sub_temp_data['discuss_info']['favorite_number'] = $sub_value->favorite_number;
+                        $temp_data['reply_info'][] = $sub_temp_data;
+                    }
+                }
+
+
+                $data['data']['discuss_list'][] = $temp_data;
+
             }
 
-            $discuss_reply_data['discuss_info']['discuss_id'] = $value->id;
-            $discuss_reply_data['discuss_info']['video_id'] = $value->video_id;
-            $discuss_reply_data['discuss_info']['content'] = $value->content;
-            $discuss_reply_data['discuss_info']['favorite_number'] = $value->favorite_number;
-            $discuss_reply_data['discuss_info']['discuss_time'] = $value->discuss_time;
-            $reply_data = $this->replyRepositories->getReplyByDisscussId($value->id);
+            unset($discuss_list['data']);
+            $data['page'] = $discuss_list;
 
-
-
-            $data['data']['discuss'][] = $discuss_reply_data;
         }
-
         return $data;
 
     }
