@@ -19,8 +19,10 @@ $router->post('user/postLogin', 'AuthController@postLogin');
 $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($router){
     $router->post('login', 'LoginController@Login');
     $router->get('video', 'VideoController@ViewVideo');
-    $router->Post('favorite', 'VideoController@DoFavorite');
-    $router->Post('adddiscuss', 'VideoController@AddDiscuss');
+    $router->post('favorite', 'VideoController@DoFavorite');
+
+    $router->get('discusslist', 'VideoController@DiscussList');
+    $router->post('adddiscuss', 'VideoController@AddDiscuss');
 });
 
 

@@ -17,6 +17,22 @@ class DiscussRepositories
         return DB::table($this->table_name)->insertGetId($data);
     }
 
+
+    public function getSubList($video_id, $pid=0){
+
+        $sub_list = DB::select("select * from video_discuss WHERE video_id=$video_id AND parent_id=$pid");
+        if(empty($sub_list)){
+            return [];
+        }
+
+        foreach ($sub_list as $k=>&$v){
+            $v->sub = $this->getSubList($video_id, $v->id);
+        }
+
+        return $sub_list;
+    }
+
+
     /**
      * 获取评论列表
      * @param $video_id
@@ -24,6 +40,7 @@ class DiscussRepositories
      */
     public function getDiscussList($video_id)
     {
+
         return DB::table($this->table_name)->
         where('video_id' ,'=',$video_id)->orderBy('discuss_time', 'desc')->paginate(5)->toarray();
 

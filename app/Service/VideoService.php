@@ -147,7 +147,7 @@ class VideoService
         $reply_id = ($reply_id == 0) ? $request->input('discuss_id') : $reply_id;
         $reply['discuss_id'] = $request->input('discuss_id');
         $reply['reply_id'] = $reply_id;
-        $reply['to_uid'] = $request->input('video_id');
+        $reply['to_uid'] = $request->input('to_uid');
         $reply['content'] = $request->input('content');
         $reply['from_uid'] = Auth::id();
         $reply['favorite_number'] = 0;
@@ -184,16 +184,27 @@ class VideoService
 
         }
 
+        $data = $this->discussRepositories->getSubList(1, 0);
+        print_r($data);
+        exit;
         $data = ['code'=>200, 'data'=>[]];
         $discuss_reply_data = [];
         foreach($discuss_list['data'] as $key=>$value){
             $user_data = $this->usersRepositories->getUserInfoById($value->from_uid);
+            if(empty($user_data)) {
+                $discuss_reply_data['user_info']['user_id'] = '';
+                $discuss_reply_data['user_info']['username'] = '';
+                $discuss_reply_data['user_info']['avatar'] = '';
+                $discuss_reply_data['user_info']['sex'] = '';
+                $discuss_reply_data['user_info']['city'] = '';
+            }else{
+                $discuss_reply_data['user_info']['user_id'] = $user_data->id;
+                $discuss_reply_data['user_info']['username'] = $user_data->username;
+                $discuss_reply_data['user_info']['avatar'] = $user_data->avatar;
+                $discuss_reply_data['user_info']['sex'] = $user_data->sex;
+                $discuss_reply_data['user_info']['city'] = $user_data->city;
+            }
 
-            $discuss_reply_data['user_info']['user_id'] = $user_data->id;
-            $discuss_reply_data['user_info']['username'] = $user_data->username;
-            $discuss_reply_data['user_info']['avatar'] = $user_data->avatar;
-            $discuss_reply_data['user_info']['sex'] = $user_data->sex;
-            $discuss_reply_data['user_info']['city'] = $user_data->city;
             $discuss_reply_data['discuss_info']['discuss_id'] = $value->id;
             $discuss_reply_data['discuss_info']['video_id'] = $value->video_id;
             $discuss_reply_data['discuss_info']['content'] = $value->content;
@@ -202,15 +213,7 @@ class VideoService
             $reply_data = $this->replyRepositories->getReplyByDisscussId($value->id);
 
 
-            if(empty($reply_data)) {
-                $discuss_reply_data['discuss_info']['reply_info'] = [];
 
-            }else{
-//                foreach($reply_data) {
-//
-//                }
-                $discuss_reply_data['discuss_info']['reply_info'] = [];
-            }
             $data['data']['discuss'][] = $discuss_reply_data;
         }
 
