@@ -24,6 +24,7 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
     $router->get('discusslist', 'VideoController@DiscussList');
     $router->post('adddiscuss', 'VideoController@AddDiscuss');
     $router->post('favordiscuss', 'VideoController@FavorDiscuss');
+    $router->post('reportdiscuss', 'VideoController@ReportDiscuss');
 });
 
 

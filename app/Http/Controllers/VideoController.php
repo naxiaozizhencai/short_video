@@ -63,9 +63,10 @@ class VideoController extends Controller
     /**
      * 举报评论
      */
-    public function ReportDiscuss(Request $request)
+    public function ReportDiscuss()
     {
-
+        $data = $this->videoService->ReportDiscuss();
+        return response()->json($data);
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 namespace App\Service;
+use App\Repositories\DiscussReportRepositories;
 use App\Repositories\DiscussRepositories;
 use App\Repositories\FavoriteRepositories;
 use App\Repositories\ReplyRepositories;
@@ -12,15 +13,17 @@ use Illuminate\Support\Facades\Auth;
 class VideoService
 {
 
+
     protected $videoRepositories;
     protected $tempDataRepositories;
     protected $favoriteRepositories;
     protected $discussRepositories;
     protected $usersRepositories;
+    protected $discussReportRepositories;
     public function __construct(VideoRepositories $videoRepositories,
                                 TempDataRepositories $tempDataRepositories,
                                 FavoriteRepositories $favoriteRepositories, DiscussRepositories $discussRepositories,
-                                UsersRepositories $usersRepositories
+                                UsersRepositories $usersRepositories, DiscussReportRepositories $discussReportRepositories
 )
     {
         $this->videoRepositories = $videoRepositories;
@@ -28,6 +31,7 @@ class VideoService
         $this->favoriteRepositories = $favoriteRepositories;
         $this->discussRepositories = $discussRepositories;
         $this->usersRepositories = $usersRepositories;
+        $this->discussReportRepositories = $discussReportRepositories;
     }
 
     /**
@@ -177,6 +181,27 @@ class VideoService
 
         $this->discussRepositories->DecrDiscussfavorById($discuss_id);
         return $data = ['code'=>200, 'msg'=>'操作成功'];
+    }
+
+    public function ReportDiscuss()
+    {
+        $discuss_id = app('request')->input('discuss_id');
+        if(empty($discuss_id)) {
+            return $data = ['code'=>-1, 'msg'=>'參數錯誤'];
+        }
+
+        $discuss_data = $this->discussRepositories->getDiscussById($discuss_id);
+
+        if(empty($discuss_data)){
+            return $data = ['code'=>-1, 'msg'=>'評論不存在'];
+        }
+
+        $data['discuss_id'] = $discuss_id;
+        $data['content'] = $discuss_data->content;
+        $data['add_time'] = date('Y-m-d H:i:s');
+        $this->discussReportRepositories->InsertDiscussReport($data);
+        return $data = ['code'=>200, 'msg'=>'操作成功'];
+
     }
 
     /**
