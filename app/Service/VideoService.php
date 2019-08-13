@@ -15,10 +15,11 @@ class VideoService
     protected $favoriteRepositories;
     protected $discussRepositories;
     protected $replyRepositories;
+    protected $usersRepositories;
     public function __construct(VideoRepositories $videoRepositories,
                                 TempDataRepositories $tempDataRepositories,
                                 FavoriteRepositories $favoriteRepositories, DiscussRepositories $discussRepositories,
-                                ReplyRepositories $replyRepositories
+                                ReplyRepositories $replyRepositories, UsersRepositories $usersRepositories
 )
     {
         $this->videoRepositories = $videoRepositories;
@@ -26,6 +27,7 @@ class VideoService
         $this->favoriteRepositories = $favoriteRepositories;
         $this->discussRepositories = $discussRepositories;
         $this->replyRepositories = $replyRepositories;
+        $this->usersRepositories = $usersRepositories;
     }
 
     /**
@@ -156,6 +158,19 @@ class VideoService
         return $data = ['code'=>200, 'msg'=>'回复成功'];
 
     }
+
+    private function makeReplayStruct($reply_data)
+    {
+        $result = [];
+        if(empty($reply_data)) {
+            return [];
+        }
+    }
+    /**
+     * 获取视频评论列表
+     * @param $video_id
+     * @return array
+     */
     public function getDiscussList($video_id)
     {
         $video_row = $this->videoRepositories->getVideoById($video_id);
@@ -163,6 +178,43 @@ class VideoService
             return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
         }
 
+        $discuss_list = $this->discussRepositories->getDiscussList($video_id);
+
+        if(empty($discuss_list['data'])){
+
+        }
+
+        $data = ['code'=>200, 'data'=>[]];
+        $discuss_reply_data = [];
+        foreach($discuss_list['data'] as $key=>$value){
+            $user_data = $this->usersRepositories->getUserInfoById($value->from_uid);
+
+            $discuss_reply_data['user_info']['user_id'] = $user_data->id;
+            $discuss_reply_data['user_info']['username'] = $user_data->username;
+            $discuss_reply_data['user_info']['avatar'] = $user_data->avatar;
+            $discuss_reply_data['user_info']['sex'] = $user_data->sex;
+            $discuss_reply_data['user_info']['city'] = $user_data->city;
+            $discuss_reply_data['discuss_info']['discuss_id'] = $value->id;
+            $discuss_reply_data['discuss_info']['video_id'] = $value->video_id;
+            $discuss_reply_data['discuss_info']['content'] = $value->content;
+            $discuss_reply_data['discuss_info']['favorite_number'] = $value->favorite_number;
+            $discuss_reply_data['discuss_info']['discuss_time'] = $value->discuss_time;
+            $reply_data = $this->replyRepositories->getReplyByDisscussId($value->id);
+
+
+            if(empty($reply_data)) {
+                $discuss_reply_data['discuss_info']['reply_info'] = [];
+
+            }else{
+//                foreach($reply_data) {
+//
+//                }
+                $discuss_reply_data['discuss_info']['reply_info'] = [];
+            }
+            $data['data']['discuss'][] = $discuss_reply_data;
+        }
+
+        return $data;
 
     }
 

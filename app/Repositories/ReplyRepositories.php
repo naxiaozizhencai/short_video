@@ -11,4 +11,9 @@ class ReplyRepositories
     {
         return DB::table($this->table_name)->insertGetId($reply_data);
     }
+
+    public function  getReplyByDisscussId($discuss_id)
+    {
+        return DB::table($this->table_name)->where('discuss_id', '=', $discuss_id)->select()->orderBy('reply_time', 'asc')->get();
+    }
 }

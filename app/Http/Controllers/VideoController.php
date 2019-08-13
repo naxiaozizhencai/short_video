@@ -40,12 +40,12 @@ class VideoController extends Controller
      * 评论
      * @param Request $request
      */
-    public function Discuss(Request $request)
+    public function DiscussList(Request $request)
     {
         $video_id = $request->get('video_id', 1);
 
-        $data = ['code'=>200, 'data'=>[]];
-
+        $data = $this->videoService->getDiscussList($video_id);
+        return response()->json($data);
     }
 
     /**

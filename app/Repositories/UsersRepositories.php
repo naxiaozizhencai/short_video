@@ -23,8 +23,24 @@ class UsersRepositories
         return $user_info;
     }
 
+    /**
+     * 返回用户信息
+     * @param $uid
+     * @return array
+     */
+    public function getUserInfoById($uid)
+    {
+       return  DB::selectOne("SELECT users.*, d .user_id, d .avatar, d .phone_number,d.sign,d.sex,d.birthday,d.age, d.city, d.fans_num, d.follow_num, d.support_num, d.invitation_num,
+                                        d.upload_num, d.coin_num, d.popularize_number
+                                        FROM `users` LEFT JOIN `users_detail` as d 
+                                        ON `users`.`id` = d.`user_id`WHERE users.`id` = $uid");
+
+
+    }
+
     public function InsertUser($uuid)
     {
+
 
         $userId = DB::table("users")->insertGetId(
             [
