@@ -138,6 +138,48 @@ class VideoService
     }
 
     /**
+     * 喜歡這條評論
+     */
+    public function DoFavorDiscuss()
+    {
+        $discuss_id = app('request')->input('discuss_id');
+
+        if(empty($discuss_id)) {
+            return $data = ['code'=>-1, 'msg'=>'參數錯誤'];
+        }
+
+        $discuss_data = $this->discussRepositories->getDiscussById($discuss_id);
+
+        if(empty($discuss_data)){
+            return $data = ['code'=>-1, 'msg'=>'評論不存在'];
+        }
+
+        $this->discussRepositories->IncrDiscussfavorById($discuss_id);
+        return $data = ['code'=>200, 'msg'=>'操作成功'];
+    }
+
+    /**
+     * 喜歡這條評論
+     */
+    public function CancelFavorDiscuss()
+    {
+        $discuss_id = app('request')->input('discuss_id');
+
+        if(empty($discuss_id)) {
+            return $data = ['code'=>-1, 'msg'=>'參數錯誤'];
+        }
+
+        $discuss_data = $this->discussRepositories->getDiscussById($discuss_id);
+
+        if(empty($discuss_data)){
+            return $data = ['code'=>-1, 'msg'=>'評論不存在'];
+        }
+
+        $this->discussRepositories->DecrDiscussfavorById($discuss_id);
+        return $data = ['code'=>200, 'msg'=>'操作成功'];
+    }
+
+    /**
      * 获取视频评论列表
      * @param $video_id
      * @return array

@@ -61,17 +61,6 @@ class VideoController extends Controller
     }
 
     /**
-     * 增加评论
-     * @param Request $request
-     */
-    public function AddReply(Request $request)
-    {
-        $data = $this->videoService->AddReply($request);
-        return response()->json($data);
-    }
-
-
-    /**
      * 举报评论
      */
     public function ReportDiscuss(Request $request)
@@ -82,9 +71,19 @@ class VideoController extends Controller
     /**
      * 喜欢这条评论
      */
-    public function FavorDiscuss(Request $request)
+    public function FavorDiscuss()
     {
+        $data = $this->videoService->DoFavorDiscuss();
+        return response()->json($data);
+    }
 
+    /**
+     * 喜欢这条评论
+     */
+    public function CancelFavorDiscuss()
+    {
+        $data = $this->videoService->CancelFavorDiscuss();
+        return response()->json($data);
     }
 
     /**

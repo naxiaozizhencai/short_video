@@ -17,6 +17,41 @@ class DiscussRepositories
         return DB::table($this->table_name)->insertGetId($data);
     }
 
+
+    public function getDiscussById($id)
+    {
+        return DB::table($this->table_name)->find($id);
+    }
+
+    /**
+     * 增加喜欢
+     */
+    public function IncrDiscussfavorById($id)
+    {
+        return DB::table($this->table_name)->where('id', '=', $id)->increment('favorite_number');
+    }
+
+    /**
+     * 增加喜欢
+     */
+    public function DecrDiscussfavorById($id)
+    {
+        return DB::table($this->table_name)->where('id', '=', $id)->decrement('favorite_number');
+    }
+
+    /**
+     * 获取评论列表
+     * @param $video_id
+     * @return array
+     */
+    public function getDiscussList($video_id)
+    {
+
+        return DB::table($this->table_name)->
+        where([['video_id' ,'=',$video_id], ['parent_id' ,'=',0]])->orderBy('discuss_time', 'desc')->paginate(5)->toarray();
+
+    }
+
     /**
      * 获取子评论
      * @param $video_id
@@ -35,19 +70,5 @@ class DiscussRepositories
         }
 
         return $sub_list;
-    }
-
-
-    /**
-     * 获取评论列表
-     * @param $video_id
-     * @return array
-     */
-    public function getDiscussList($video_id)
-    {
-
-        return DB::table($this->table_name)->
-        where([['video_id' ,'=',$video_id], ['parent_id' ,'=',0]])->orderBy('discuss_time', 'desc')->paginate(5)->toarray();
-
     }
 }
