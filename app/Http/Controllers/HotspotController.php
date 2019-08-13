@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Service\HotspotService;
+
 class HotspotController extends Controller
 {
     /**
@@ -9,9 +11,10 @@ class HotspotController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    protected $hotspotService;
+    public function __construct(HotspotService $hotspotService)
     {
-        //
+         $this->hotspotService = $hotspotService;
     }
 
     /**
@@ -19,18 +22,9 @@ class HotspotController extends Controller
      */
     public function InvitationRank()
     {
-        $data = [
-            'code'=>200,
-            'data'=>[
-                'list'=>[[
-                    'rank'=>'',
-                    'user_id'=>'',
-                    'invitation_num'=>'',
-                    'user_name'=>'',
-                ]],
+        $data = $this->hotspotService->InvitationRankData();
+        return response()->json($data);
 
-            ],
-        ];
     }
 
     /**
@@ -38,35 +32,16 @@ class HotspotController extends Controller
      */
     public function UploadRank()
     {
-        $data = [
-            'code'=>200,
-            'data'=>[
-                'list'=>[[
-                    'rank'=>'',
-                    'user_id'=>'',
-                    'upload_num'=>'',
-                    'user_name'=>'',
-                ]],
+        $data =$this->hotspotService->UploadRankData();
+        return response()->json($data);
 
-            ],
-        ];
     }
 
     public function SupportRank()
     {
-        $data = [
-            'code'=>200,
-            'data'=>[
-                'list'=>[[
-                    'rank'=>'',
-                    'video_id'=>'',
-                    'support_num'=>'',
-                    'video_title'=>'',
-                    'video_image'=>'',
-                ]],
+        $data =$this->hotspotService->SupportRankData();
+        return response()->json($data);
 
-            ],
-        ];
     }
 
 
