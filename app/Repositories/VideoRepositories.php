@@ -6,12 +6,17 @@ use Illuminate\Support\Facades\DB;
 class VideoRepositories
 {
 
+    protected $table_name = 'video_list';
     protected $tempDataRepositories;
     public function __construct(TempDataRepositories $tempDataRepositories)
     {
         $this->tempDataRepositories = $tempDataRepositories;
     }
 
+    public function InsertVideo($data)
+    {
+        return DB::table($this->table_name)->insertGetId($data);
+    }
     /**
      *
      * @param $view_max_id

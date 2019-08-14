@@ -278,6 +278,46 @@ class VideoService
 
     }
 
+    /**
+     * 上传视频
+     * @return array
+     */
+    public function UploadVideo()
+    {
+        $title = app('request')->input('title');
+        $video_image = app('request')->file('video_image');
+        $video = app('request')->file('video');
+        $video_label = app('request')->input('video_label');
 
 
+        if (!$video_image->isValid()) {
+            return ['code'=>-1, 'msg'=>'封面上传失败'];
+        }
+
+        if (!$video->isValid()) {
+            return ['code'=>-1, 'msg'=>'视频上传失败'];
+        }
+
+        $dir = env("UPLOAD_DIR");
+
+        $video_image_name = time().rand(0, 1000).'.'.$video_image->guessExtension();
+        $video_image->move($dir, $video_image_name);
+
+        $video_name = time().rand(0, 1000).'.'.$video->guessExtension();
+        $video->move($dir, $video_name);
+
+        $video_data = [];
+        $user_id = Auth::id();
+        $video_data['user_id'] = $user_id;
+        $video_data['video_title'] = $title;
+        $video_data['video_image'] = $video_image_name;
+        $video_data['video_url'] = $video_name;
+        $video_data['video_label'] = $video_label;
+        $video_data['add_time'] = date('Y-m-d H:i:s');
+        $this->videoRepositories->InsertVideo($video_data);
+        $this->usersRepositories->IncrUsersDetailNum($user_id, 'upload_num');
+        return ['code'=>200, 'msg'=>'上传成功'];
+
+    }
+    
 }

@@ -37,8 +37,8 @@ class VideoController extends Controller
     }
 
     /**
-     * 评论
      * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function DiscussList(Request $request)
     {
@@ -49,8 +49,8 @@ class VideoController extends Controller
     }
 
     /**
-     * 增加评论
      * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function AddDiscuss(Request $request)
     {
@@ -112,7 +112,7 @@ class VideoController extends Controller
      */
     public function UploadVideo()
     {
-
-
+       $data = $this->videoService->UploadVideo();
+        return response()->json($data);
     }
 }
