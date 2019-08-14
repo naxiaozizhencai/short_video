@@ -113,10 +113,10 @@ class UsersService
      */
     public function DoFollow()
     {
-        $uid = app('request')->input('uid');
+
         $fans_id = app('request')->input('fans_id');
 
-        if(empty($uid) || empty($fans_id)) {
+        if(empty($fans_id)) {
             return ['code'=>-1, 'msg'=>'参数错误'];
         }
 
@@ -134,6 +134,41 @@ class UsersService
         $this->fansRepositories->InsertFans($fans_data);
         $this->UsersRepositories->IncrUsersDetailNum($fans_id, 'follow_num');
         return ['code'=>200, 'msg'=>'关注成功'];
+
+    }
+
+    /**
+     * 取消关注
+     * @return array
+     */
+    public function CancelFollow()
+    {
+        $fans_id = app('request')->input('fans_id');
+
+        if(empty($fans_id)) {
+            return ['code'=>-1, 'msg'=>'参数错误'];
+        }
+
+        $fans_data = $this->UsersRepositories->getUserInfoById($fans_id);
+
+        if(empty($fans_data)) {
+            return ['code'=>-1, 'msg'=>'参数错误'];
+        }
+
+        $this->fansRepositories->DeleteFans($fans_data);
+        $this->UsersRepositories->DecrUsersDetailNum($fans_id, 'follow_num');
+
+        return ['code'=>200, 'msg'=>'取消成功'];
+
+    }
+
+    public function FollowList()
+    {
+        $user_id = Auth::id();
+        $flow_data = $this->fansRepositories->GetUsersFans($user_id);
+        if(empty($flow_data)){
+            return ['code'=>200, 'data'=>[]];
+        }
 
     }
 

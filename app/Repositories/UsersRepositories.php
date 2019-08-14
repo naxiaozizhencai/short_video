@@ -74,6 +74,11 @@ class UsersRepositories
         return DB::table('users_detail')->where('user_id', '=', $uid)->increment($column, $amount);
     }
 
+    public function DecrUsersDetailNum($uid, $column, $amount = 1)
+    {
+        return DB::table('users_detail')->where('user_id', '=', $uid)->decrement($column, $amount);
+    }
+
     /**
      * 获取邀请排行
      */

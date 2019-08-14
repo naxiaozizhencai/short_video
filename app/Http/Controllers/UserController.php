@@ -113,7 +113,8 @@ class UserController extends BaseController
      */
     public function FollowList()
     {
-
+        $data = $this->usersService->FollowList();
+        return response()->json($data);
     }
 
     /**
@@ -130,7 +131,8 @@ class UserController extends BaseController
      */
     public function CancelFollow()
     {
-
+        $data = $this->usersService->CancelFollow();
+        return response()->json($data);
     }
 
 
