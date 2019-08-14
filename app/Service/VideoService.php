@@ -319,5 +319,5 @@ class VideoService
         return ['code'=>200, 'msg'=>'上传成功'];
 
     }
-    
+
 }

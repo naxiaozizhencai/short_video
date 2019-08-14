@@ -2,6 +2,7 @@
 namespace App\Service;
 use App\Repositories\PopularListRepositories;
 use App\Repositories\UsersDetailRepositories;
+use App\Repositories\UsersFansRepositories;
 use App\Repositories\UsersRepositories;
 use Illuminate\Support\Facades\Auth;
 class UsersService
@@ -9,13 +10,15 @@ class UsersService
 
     public $UsersRepositories;
     protected $popularListRepositories;
+    protected $fansRepositories;
     public function __construct(UsersRepositories $UsersRepositories,
                                 UsersDetailRepositories $usersDetailRepositories,
-                                PopularListRepositories $popularListRepositories)
+                                PopularListRepositories $popularListRepositories,UsersFansRepositories $fansRepositories)
     {
         $this->UsersRepositories = $UsersRepositories;
         $this->UsersDetailRepositories = $usersDetailRepositories;
         $this->popularListRepositories = $popularListRepositories;
+        $this->fansRepositories = $fansRepositories;
     }
 
     /**
@@ -104,5 +107,36 @@ class UsersService
         $return_data['msg'] = '添加成功';
         return $return_data;
     }
+
+    /**
+     * 關注用戶
+     */
+    public function DoFollow()
+    {
+        $uid = app('request')->input('uid');
+        $fans_id = app('request')->input('fans_id');
+
+        if(empty($uid) || empty($fans_id)) {
+            return ['code'=>-1, 'msg'=>'参数错误'];
+        }
+
+        $fans_data = $this->UsersRepositories->getUserInfoById($fans_id);
+
+        if(empty($fans_data)) {
+            return ['code'=>-1, 'msg'=>'参数错误'];
+        }
+
+        $fans_data  = [];
+        $fans_data['user_id'] = Auth::id();
+        $fans_data['fans_id'] = $fans_id;
+        $fans_data['add_time'] = $fans_id;
+
+        $this->fansRepositories->InsertFans($fans_data);
+        $this->UsersRepositories->IncrUsersDetailNum($fans_id, 'follow_num');
+        return ['code'=>200, 'msg'=>'关注成功'];
+
+    }
+
+
 
 }

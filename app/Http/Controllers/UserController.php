@@ -117,6 +117,15 @@ class UserController extends BaseController
     }
 
     /**
+     * 关注
+     */
+    public function DoFollow()
+    {
+        $data = $this->usersService->DoFollow();
+        return response()->json($data);
+    }
+
+    /**
      * 取消关注
      */
     public function CancelFollow()
@@ -124,18 +133,11 @@ class UserController extends BaseController
 
     }
 
-    /**
-     * 关注
-     */
-    public function DoFollow()
-    {
-
-    }
 
     /**
      * 被贊列表
      */
-    public function SupportLsit()
+    public function SupportList()
     {
 
     }
