@@ -85,6 +85,16 @@ class UsersRepositories
     }
 
     /**
+     * 获取邀请排行
+     */
+    public function GetUploadRankData()
+    {
+        return DB::table('users')->
+        leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->
+        select(['users.*','users_detail.*'])->orderBy('invitation_num', 'desc')->limit(50)->get();
+    }
+
+    /**
      * 获取上传排行
      */
     public function UploadRankData()
