@@ -62,10 +62,45 @@ class UsersRepositories
         select(['users.*','users_detail.*'])->where(['users_detail.popular_num'=>$popular_num])->first();
     }
 
+    /**
+     * 更新某一列的数据
+     * @param $uid
+     * @param $column
+     * @param int $amount
+     * @return int
+     */
     public function IncrUsersDetailNum($uid, $column, $amount = 1)
     {
         return DB::table('users_detail')->where('user_id', '=', $uid)->increment($column, $amount);
     }
+
+    /**
+     * 获取邀请排行
+     */
+    public function GetInvitationRankData()
+    {
+        return DB::table('users')->
+        leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->
+        select(['users.*','users_detail.*'])->orderBy('invitation_num', 'desc')->limit(50)->get();
+    }
+
+    /**
+     * 获取上传排行
+     */
+    public function UploadRankData()
+    {
+
+    }
+
+    /**
+     * 获取点赞排行
+     */
+    public function SupportRankData()
+    {
+
+    }
+
+
     /**
      * 初始化用户
      * @param $uuid
@@ -100,6 +135,5 @@ class UsersRepositories
         }
 
         return true;
-
     }
 }

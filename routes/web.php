@@ -25,6 +25,7 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
     $router->post('favordiscuss', 'VideoController@FavorDiscuss');
     $router->post('reportdiscuss', 'VideoController@ReportDiscuss');
     $router->post('addpopularnum', 'UserController@AddPopularizeNum');
+    $router->get('invitationrank', 'HotspotController@InvitationRank');
 });
 
 
