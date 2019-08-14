@@ -176,11 +176,24 @@ class UsersService
     public function FollowList()
     {
         $user_id = Auth::id();
-        $flow_data = $this->fansRepositories->GetUsersFans($user_id);
-        if(empty($flow_data)){
+        $follow_data = $this->fansRepositories->GetUsersFans($user_id);
+
+        if(empty($follow_data['data'])){
             return ['code'=>200, 'data'=>[]];
         }
 
+        foreach($follow_data['data'] as $key=>$value) {
+            $temp_data = [];
+            $temp_data['user_id'] = $value->id;
+            $temp_data['vip_level'] = $value->vip_level;
+            $temp_data['username'] = $value->username;
+            $temp_data['avatar'] = $value->avatar;
+            $data['data']['follow_data'][] = $temp_data;
+        }
+
+        unset($follow_data['data']);
+        $data['page'] = $follow_data;
+        return $data;
     }
 
 
