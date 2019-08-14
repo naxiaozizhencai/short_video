@@ -45,8 +45,8 @@ class UsersService
         $data['total_viewed_times'] = 10;
 
         if(!empty($userDetail)){
-            $data['coin_num'] = $userDetail['coin_num'];
-            $data['viewed_times'] = $userDetail['coin_num'];
+            $data['coin_num'] = $userDetail->coin_num;
+            $data['viewed_times'] = $userDetail->coin_num;
         }
 
 
@@ -99,6 +99,7 @@ class UsersService
         $this->popularListRepositories->InsertPopularData($popular_data);
         //增加会员时间
         $this->UsersRepositories->UpdateVipTime(Auth::id(), 86400);
+        $this->UsersRepositories->IncrUsersDetailNum($user_data->id, 'invitation_num');
         $return_data['code'] = 200;
         $return_data['msg'] = '添加成功';
         return $return_data;

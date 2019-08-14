@@ -31,16 +31,23 @@ class UsersRepositories
      */
     public function getUserInfoById($uid)
     {
-       return  DB::selectOne("SELECT users.*, d .user_id, d .avatar, d .phone_number,d.sign,d.sex,d.birthday,d.age, d.city, d.fans_num, d.follow_num, d.support_num, d.invitation_num,
-                                        d.upload_num, d.coin_num, d.popularize_number
-                                        FROM `users` LEFT JOIN `users_detail` as d 
-                                        ON `users`.`id` = d.`user_id`WHERE users.`id` = $uid");
+       return  $users = DB::table('users')->
+       leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->
+       select(['users.*','users_detail.*'])->where(['users.id'=>$uid])->first();
 
     }
 
     public function UpdateVipTime($uid, $amount)
     {
-        return DB::table($this->users_table_name)->where('id', '=', $uid)->increment('vip_expired_time', $amount);
+        $user_data = $this->getUserInfoById($uid);
+
+        if($user_data->vip_expired_time > time()) {
+            $vip_expired_time = $user_data->vip_expired_time + $amount;
+        }else{
+            $vip_expired_time = time() + $amount;
+        }
+
+        return DB::table($this->users_table_name)->where('id', '=', $uid)->update(['vip_expired_time'=>$vip_expired_time]);
     }
 
     /**
@@ -55,6 +62,10 @@ class UsersRepositories
         select(['users.*','users_detail.*'])->where(['users_detail.popular_num'=>$popular_num])->first();
     }
 
+    public function IncrUsersDetailNum($uid, $column, $amount = 1)
+    {
+        return DB::table('users_detail')->where('user_id', '=', $uid)->increment($column, $amount);
+    }
     /**
      * 初始化用户
      * @param $uuid
@@ -82,7 +93,7 @@ class UsersRepositories
                     'user_id' =>$userId,
                     'avatar'=>'a.png',
                     'city'=>'深圳',
-                    'popularize_number'=>randomString(),
+                    'popular_num'=>randomString(),
                     'add_time'=>date('Y-m-d H:i:s'),
                 ]
             );

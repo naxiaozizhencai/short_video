@@ -15,9 +15,9 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 $router->post('user/postLogin', 'AuthController@postLogin');
+$router->post('login', 'LoginController@Login');
 
 $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($router){
-    $router->post('login', 'LoginController@Login');
     $router->get('video', 'VideoController@ViewVideo');
     $router->post('favorite', 'VideoController@DoFavorite');
     $router->get('discusslist', 'VideoController@DiscussList');
