@@ -76,6 +76,37 @@ class VideoService
     }
 
     /**
+     * 观看关注视频
+     * @param $uid
+     * @return array
+     */
+    public function FollowViewVideo()
+    {
+        $uid = Auth::id();
+        $page = app('request')->input('page', 0);
+
+        $temp_data = $this->tempDataRepositories->GetValue($uid, 'follow_view_max_id');
+
+        if(!empty($temp_data) && empty($page)){
+            $page = $temp_data->temp_value;
+        }
+
+        $result = $this->videoRepositories->GetFollowVideoData($uid, $page);
+
+
+        if(!empty($temp_data)){
+            if($temp_data->temp_value >= $result['total']){
+                $this->tempDataRepositories->ClearValue($uid, 'follow_view_max_id');
+            }
+        }
+        $this->tempDataRepositories->UpdateValue($uid, 'follow_view_max_id');
+
+
+        return [];
+    }
+
+
+    /**
      * 点击爱心
      * @param $video_id
      * @param $user_id

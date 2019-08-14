@@ -17,10 +17,10 @@ class VideoRepositories
     {
         return DB::table($this->table_name)->insertGetId($data);
     }
+
     /**
-     *
-     * @param $view_max_id
-     * @return array
+     * @param $user_id
+     * @return array|mixed
      */
     public function getViewVideoData($user_id)
     {
@@ -45,6 +45,20 @@ class VideoRepositories
 
         return $video_data;
     }
+
+    /**
+     * 获取随机观看视频
+     * @param $uid
+     * @param $page
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function GetFollowVideoData($uid, $page)
+    {
+        return DB::table("users_fans")->leftjoin('video_list', 'users_fans.fans_id', '=', 'video_list.user_id')
+            ->where('users_fans.user_id', '=', $uid)->where('video_list.is_check', '=', 1)->orderby('video_list.add_time', 'desc')
+            ->paginate(1, ['video_list.*',],'page', $page)->toarray();
+    }
+
 
     /**
      * 获取视频目前最大的id
