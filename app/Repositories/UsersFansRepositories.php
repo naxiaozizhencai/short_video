@@ -23,6 +23,12 @@ class UsersFansRepositories
         return DB::table($this->table_name)->where(['user_id'=>$uid, 'fans_id'=>$fans_id])->delete();
     }
 
+    public function GetUserFansByUidFanId($uid, $fans_id)
+    {
+        return DB::table($this->table_name)->where(['user_id'=>$uid, 'fans_id'=>$fans_id])->first();
+    }
+
+
 
     public function GetUsersFans($uid)
     {

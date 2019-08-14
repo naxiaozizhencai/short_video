@@ -28,6 +28,8 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
 
 
     $router->post('addpopularnum', 'UserController@AddPopularizeNum');
+    $router->post('dofollow', 'UserController@DoFollow');
+    $router->post('cancelfollow', 'UserController@CancelFollow');
     $router->get('invitationrank', 'HotspotController@InvitationRank');
 });
 
