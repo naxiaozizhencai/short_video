@@ -23,6 +23,7 @@ class HotspotService
        foreach($invitation_data as $key=>$value){
             $temp_data['rank'] = $key + 1;
             $temp_data['user_id'] = $value->id;
+            $temp_data['vip_level'] = $value->vip_level;
             $temp_data['avatar'] = $value->avatar;
             $temp_data['user_name'] = $value->username;
             $temp_data['invitation_num'] = $value->invitation_num;
