@@ -1,5 +1,6 @@
 <?php
 namespace App\Service;
+use App\Repositories\PopularListRepositories;
 use App\Repositories\UsersDetailRepositories;
 use App\Repositories\UsersRepositories;
 use Illuminate\Support\Facades\Auth;
@@ -7,10 +8,14 @@ class UsersService
 {
 
     public $UsersRepositories;
-    public function __construct(UsersRepositories $UsersRepositories, UsersDetailRepositories $usersDetailRepositories)
+    protected $popularListRepositories;
+    public function __construct(UsersRepositories $UsersRepositories,
+                                UsersDetailRepositories $usersDetailRepositories,
+                                PopularListRepositories $popularListRepositories)
     {
         $this->UsersRepositories = $UsersRepositories;
         $this->UsersDetailRepositories = $usersDetailRepositories;
+        $this->popularListRepositories = $popularListRepositories;
     }
 
     /**
@@ -49,7 +54,7 @@ class UsersService
         $token_data = [];
         if (!$token = Auth::login($user_info, true)) {
             $resultData['code']     = 5000;
-            $resultData['errorMsg'] = '系统错误，无法生成令牌';
+            $resultData['msg'] = '系统错误，无法生成令牌';
         } else {
             $token_data['user_id']      = strval($user_info->id);
             $token_data['access_token'] = $token;
@@ -59,6 +64,44 @@ class UsersService
         $resultData['data']['user_data'] = $data;
         $resultData['data']['token_data'] = $token_data;
         return $resultData;
+    }
+
+    /**
+     * 填写推广吗
+     */
+    public function AddPopularNum()
+    {
+        $popular_num = app('request')->input('popular_num');
+        $return_data = [];
+
+        if(empty($popular_num)){
+            return ['code'=>-1, 'msg'=>'推广码不存在'];
+        }
+
+        $user_data = $this->UsersRepositories->GetUserInfoByCondition($popular_num);
+
+        if(empty($user_data)){
+            return ['code'=>-1, 'msg'=>'推广码不存在'];
+        }
+
+        $condition_data['user_id'] = Auth::id();
+        $popular_data = $this->popularListRepositories->GetUserPopularData($condition_data);
+
+        if(!empty($popular_data)){
+            return ['code'=>-1, 'msg'=>'你已经推广过不能再次推广！'];
+        }
+
+        $popular_data = [];
+        $popular_data['user_id'] = Auth::id();
+        $popular_data['popular_num'] = $user_data->popular_num;
+        $popular_data['popular_uid'] = $user_data->id;
+        $popular_data['add_time'] = date("Y-m-d H:i:s");
+        $this->popularListRepositories->InsertPopularData($popular_data);
+        //增加会员时间
+        $this->UsersRepositories->UpdateVipTime(Auth::id(), 86400);
+        $return_data['code'] = 200;
+        $return_data['msg'] = '添加成功';
+        return $return_data;
     }
 
 }

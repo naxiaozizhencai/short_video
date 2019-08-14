@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 class UsersRepositories
 {
 
+    protected $users_table_name = 'users';
     /**
      * 获取用户信息
      * @param $uuid
@@ -35,9 +36,30 @@ class UsersRepositories
                                         FROM `users` LEFT JOIN `users_detail` as d 
                                         ON `users`.`id` = d.`user_id`WHERE users.`id` = $uid");
 
-
     }
 
+    public function UpdateVipTime($uid, $amount)
+    {
+        return DB::table($this->users_table_name)->where('id', '=', $uid)->increment('vip_expired_time', $amount);
+    }
+
+    /**
+     * 通过条件获取用户信息
+     * @param $condition
+     * @return \Illuminate\Support\Collection
+     */
+    public function GetUserInfoByCondition($popular_num)
+    {
+        return $users = DB::table('users')->
+        leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->
+        select(['users.*','users_detail.*'])->where(['users_detail.popular_num'=>$popular_num])->first();
+    }
+
+    /**
+     * 初始化用户
+     * @param $uuid
+     * @return bool
+     */
     public function InsertUser($uuid)
     {
 

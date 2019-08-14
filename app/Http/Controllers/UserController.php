@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Service\UsersService;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
 
 class UserController extends BaseController
 {
-    //
-    public function __construct()
+    protected $usersService;
+    public function __construct(UsersService $usersService)
     {
-        $this->middleware('auth:api');
+
+        $this->usersService = $usersService;
     }
 
     public function Index()
@@ -146,6 +148,15 @@ class UserController extends BaseController
 
     }
 
+
+    /**
+     * 填写推广码
+     */
+    public function AddPopularizeNum()
+    {
+        $data = $this->usersService->AddPopularNum();
+        return response()->json($data);
+    }
 
 
 
