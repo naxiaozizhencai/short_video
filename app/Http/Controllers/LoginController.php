@@ -26,12 +26,20 @@ class LoginController extends BaseController
 
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function PhoneLoginOrRegister(Request $request)
     {
         $data = $this->UsersService->PhoneLoginOrRegister($request);
         return response()->json($data);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function Register(Request $request)
     {
         $data = $this->UsersService->PhoneRegister($request);
@@ -44,6 +52,18 @@ class LoginController extends BaseController
     public function PhoneLogin(Request $request)
     {
         $data = $this->UsersService->PhoneLogin($request);
+        return response()->json($data);
+    }
+
+    public function SendCode(Request $request)
+    {
+        $data = $this->UsersService->SendCode($request);
+        return response()->json($data);
+    }
+
+    public function Logout()
+    {
+        $data = $this->UsersService->Logout();
         return response()->json($data);
     }
 

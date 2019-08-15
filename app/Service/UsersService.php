@@ -177,6 +177,22 @@ class UsersService
     }
 
     /**
+     * 登出
+     * @return array
+     */
+    public function Logout()
+    {
+        $user_id = Auth::id();
+        $user_data = $this->UsersRepositories->getUserInfoById($user_id);
+
+        if(empty($user_data)){
+            return ['code'=>-1, 'msg'=>'用户不存在'];
+        }
+        $update_data['is_phone_login'] = 0;
+        $this->UsersRepositories->UpdateUserById($user_id, $update_data);
+        return ['code'=>200, 'msg'=>'操作成功'];
+    }
+    /**
      * 发送验证码
      * @param $request
      * @return array
