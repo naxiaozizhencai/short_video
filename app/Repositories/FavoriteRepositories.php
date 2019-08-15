@@ -28,7 +28,7 @@ class FavoriteRepositories
     }*/
     public function UpdateFavoriteVideo($data, $update_data)
     {
-
+        return DB::table(self::$table_name)->updateOrInsert($data, $update_data);
 
     }
 }

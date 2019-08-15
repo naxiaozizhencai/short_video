@@ -108,7 +108,7 @@ class VideoRepositories
      */
     public function GetFavoriteVideoList($user_id)
     {
-        return DB::table($this->table_name)->leftjoin('video_list', 'video_favorite_list.video_id', '=', 'video_list.id')->
+        return DB::table('video_favorite_list')->leftjoin('video_list', 'video_favorite_list.video_id', '=', 'video_list.id')->
         where('video_favorite_list.user_id', '=', $user_id)->orderby('video_favorite_list.add_time', 'desc')->paginate(6)->toarray();
     }
 
