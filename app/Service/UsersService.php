@@ -106,8 +106,8 @@ class UsersService
         $code = $request->input('code');
         $password = $request->input('password');
         $user_id = Auth::id();
-        if(empty($phone)){
-            return ['code'=>-1, 'msg'=>'请输入手机号'];
+        if(empty($phone) || empty($code) || empty($password)){
+            return ['code'=>-1, 'msg'=>'参数错误'];
         }
 
         $user_data = $this->UsersRepositories->getUserInfoById($user_id);
@@ -121,7 +121,7 @@ class UsersService
 
         $phone_user_data = $this->UsersRepositories->GetUserInfoByPhone($phone);
 
-        if(empty($phone_user_data)){
+        if(!empty($phone_user_data)){
             return ['code'=>-1, 'msg'=>'手机号已经注册不能再次注册'];
         }
 
@@ -152,7 +152,8 @@ class UsersService
      * @param $request
      * @return array
      */
-    public function PhoneLogin($request){
+    public function PhoneLogin($request)
+    {
 
         $phone = $request->input('phone');
         $password = $request->input('password');
