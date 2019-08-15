@@ -22,28 +22,11 @@ class VideoRepositories
      * @param $user_id
      * @return array|mixed
      */
-    public function getViewVideoData($user_id)
+    public function getViewVideoData($uid, $page)
     {
-        $temp_data = $this->tempDataRepositories->GetValue($user_id, 'view_max_id');
-        $view_max_id = 0;
+        return DB::table('video_list')->where(['is_check'=>1])
+            ->orderBy('add_time', 'desc')->paginate(1, ['*'], 'page', $page)->toarray();
 
-        if(!empty($temp_data)){
-            $view_max_id = $temp_data->temp_value;
-        }
-
-        $max_id = $this->GetMaxVideoId();
-
-        if($view_max_id >= $max_id){
-            $view_max_id = 0;
-            $this->tempDataRepositories->ClearValue($user_id, 'view_max_id');
-        }
-
-        $video_data = DB::selectOne('select video_list.*, users_detail.avatar from video_list left JOIN users_detail ON video_list.user_id=users_detail.id WHERE video_list.id > ? AND is_check=1 limit 1', [$view_max_id]);
-        if(empty($video_data)){
-            return [];
-        }
-
-        return $video_data;
     }
 
     /**

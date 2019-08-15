@@ -22,8 +22,7 @@ class VideoController extends Controller
      */
     public function ViewVideo(Request $request)
     {
-        $user_id = Auth::user()->id;
-        $data = $this->videoService->RandViewVideo($user_id);
+        $data = $this->videoService->RandViewVideo();
         return response()->json($data);
 
     }
