@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : 本地
+Source Server         : 127.0.0.1
 Source Server Version : 50726
-Source Host           : localhost:3306
+Source Host           : 127.0.0.1:3306
 Source Database       : short_video
 
 Target Server Type    : MYSQL
 Target Server Version : 50726
 File Encoding         : 65001
 
-Date: 2019-08-15 00:21:14
+Date: 2019-08-15 18:19:02
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -67,17 +67,16 @@ CREATE TABLE `temp_data` (
   `user_id` int(11) DEFAULT NULL,
   `temp_key` varchar(50) DEFAULT NULL,
   `temp_value` varchar(255) DEFAULT NULL,
-  `expire_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '过期时间',
+  `expire_time` int(11) DEFAULT NULL COMMENT '过期时间',
   `add_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`,`temp_key`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of temp_data
 -- ----------------------------
-INSERT INTO `temp_data` VALUES ('1', '2', 'view_max_id', '6', '2019-08-12 17:53:36', '2019-08-12 09:40:48');
-INSERT INTO `temp_data` VALUES ('3', '8', 'follow_view_max_id', '5', '2019-08-15 00:20:39', '2019-08-14 16:15:31');
+INSERT INTO `temp_data` VALUES ('5', '8', '13122859371', '9536', '1565865082', '2019-08-15 09:31:22');
 
 -- ----------------------------
 -- Table structure for users
@@ -89,19 +88,20 @@ CREATE TABLE `users` (
   `username` varchar(255) DEFAULT NULL COMMENT '用户名字',
   `password` varchar(255) DEFAULT NULL COMMENT '用户密码',
   `api_token` varchar(255) DEFAULT NULL,
-  `phone_number` int(11) DEFAULT NULL COMMENT '手机号',
+  `phone` varchar(50) DEFAULT NULL COMMENT '手机号',
   `vip_level` int(10) unsigned DEFAULT '0' COMMENT 'vip等级',
   `vip_expired_time` int(11) DEFAULT '0' COMMENT 'vip 过期时间',
   `is_phone_login` tinyint(4) DEFAULT '0' COMMENT '0 未手机登录 1 手机登录',
   `add_time` datetime DEFAULT NULL COMMENT '添加时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uuid` (`uuid`) USING BTREE
+  UNIQUE KEY `uuid` (`uuid`) USING BTREE,
+  UNIQUE KEY `phone` (`phone`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES ('8', '756235', '游客账号_6733162833', null, null, null, '0', '0', '0', '2019-08-14 09:30:44');
+INSERT INTO `users` VALUES ('8', '756235', '游客账号_6733162833', '25d55ad283aa400af464c76d713c07ad', null, '13122859371', '0', '0', '1', '2019-08-14 09:30:44');
 INSERT INTO `users` VALUES ('9', '7562', '游客账号_2534355814', null, null, null, '0', '0', '0', '2019-08-14 09:30:50');
 INSERT INTO `users` VALUES ('10', '75623', '游客账号_3357400155', null, null, null, '0', '0', '0', '2019-08-14 09:30:53');
 INSERT INTO `users` VALUES ('11', '756234', '游客账号_1241089348', null, null, null, '0', '0', '0', '2019-08-14 09:30:55');
@@ -133,7 +133,6 @@ CREATE TABLE `users_detail` (
   `detail_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户详情id',
   `user_id` int(11) DEFAULT NULL,
   `avatar` varchar(255) DEFAULT NULL COMMENT '用户头像',
-  `phone` int(11) DEFAULT NULL COMMENT '手机号',
   `sign` varchar(255) DEFAULT NULL COMMENT '签名',
   `sex` varchar(2) DEFAULT NULL COMMENT '性别',
   `birthday` varchar(255) DEFAULT NULL COMMENT '生日',
@@ -156,29 +155,29 @@ CREATE TABLE `users_detail` (
 -- ----------------------------
 -- Records of users_detail
 -- ----------------------------
-INSERT INTO `users_detail` VALUES ('6', '8', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '1', '2', '0', 'aUUV', null, '2019-08-14 09:30:44');
-INSERT INTO `users_detail` VALUES ('7', '9', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'wPej', null, '2019-08-14 09:30:50');
-INSERT INTO `users_detail` VALUES ('8', '10', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'W5sF', null, '2019-08-14 09:30:53');
-INSERT INTO `users_detail` VALUES ('9', '11', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'Xh47', null, '2019-08-14 09:30:55');
-INSERT INTO `users_detail` VALUES ('10', '12', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'UM5C', null, '2019-08-14 09:30:57');
-INSERT INTO `users_detail` VALUES ('11', '13', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'BxNc', null, '2019-08-14 09:30:59');
-INSERT INTO `users_detail` VALUES ('12', '14', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', '9PEp', null, '2019-08-14 09:31:25');
-INSERT INTO `users_detail` VALUES ('13', '15', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'h7tb', null, '2019-08-14 09:31:28');
-INSERT INTO `users_detail` VALUES ('14', '16', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'eP4H', null, '2019-08-14 09:31:29');
-INSERT INTO `users_detail` VALUES ('15', '17', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'ZB5f', null, '2019-08-14 09:32:11');
-INSERT INTO `users_detail` VALUES ('16', '18', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', '3Ucm', null, '2019-08-14 09:32:13');
-INSERT INTO `users_detail` VALUES ('17', '19', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'zXnm', null, '2019-08-14 09:32:15');
-INSERT INTO `users_detail` VALUES ('18', '20', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', '82jP', null, '2019-08-14 09:32:17');
-INSERT INTO `users_detail` VALUES ('19', '21', 'a.png', null, null, null, null, '0', '深圳', '0', '4', '0', '0', '0', '0', 'Bxb7', null, '2019-08-14 09:32:19');
-INSERT INTO `users_detail` VALUES ('20', '22', 'a.png', null, null, null, null, '0', '深圳', '0', '1', '0', '0', '0', '0', 'bKzX', null, '2019-08-14 09:32:20');
-INSERT INTO `users_detail` VALUES ('21', '23', 'a.png', null, null, null, null, '0', '深圳', '0', '1', '0', '0', '0', '0', 'wfvr', null, '2019-08-14 09:32:22');
-INSERT INTO `users_detail` VALUES ('22', '24', 'a.png', null, null, null, null, '0', '深圳', '0', '1', '0', '0', '0', '0', 'ffKg', null, '2019-08-14 09:32:23');
-INSERT INTO `users_detail` VALUES ('23', '25', 'a.png', null, null, null, null, '0', '深圳', '0', '1', '0', '0', '0', '0', '5Ta5', null, '2019-08-14 09:32:25');
-INSERT INTO `users_detail` VALUES ('24', '26', 'a.png', null, null, null, null, '0', '深圳', '0', '1', '0', '0', '0', '0', '8cjp', null, '2019-08-14 09:32:26');
-INSERT INTO `users_detail` VALUES ('25', '27', 'a.png', null, null, null, null, '0', '深圳', '0', '1', '0', '0', '0', '0', 'CEYq', null, '2019-08-14 09:32:28');
-INSERT INTO `users_detail` VALUES ('26', '28', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'DWWk', null, '2019-08-14 09:32:30');
-INSERT INTO `users_detail` VALUES ('27', '29', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'sptM', null, '2019-08-14 09:32:32');
-INSERT INTO `users_detail` VALUES ('28', '30', 'a.png', null, null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'yS3E', null, '2019-08-14 09:32:33');
+INSERT INTO `users_detail` VALUES ('6', '8', 'a.png', '12345678', '1', '1dadadada', '0', '上海', '0', '0', '0', '1', '2', '0', 'aUUV', null, '2019-08-14 09:30:44');
+INSERT INTO `users_detail` VALUES ('7', '9', 'a.png', null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'wPej', null, '2019-08-14 09:30:50');
+INSERT INTO `users_detail` VALUES ('8', '10', 'a.png', null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'W5sF', null, '2019-08-14 09:30:53');
+INSERT INTO `users_detail` VALUES ('9', '11', 'a.png', null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'Xh47', null, '2019-08-14 09:30:55');
+INSERT INTO `users_detail` VALUES ('10', '12', 'a.png', null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'UM5C', null, '2019-08-14 09:30:57');
+INSERT INTO `users_detail` VALUES ('11', '13', 'a.png', null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'BxNc', null, '2019-08-14 09:30:59');
+INSERT INTO `users_detail` VALUES ('12', '14', 'a.png', null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', '9PEp', null, '2019-08-14 09:31:25');
+INSERT INTO `users_detail` VALUES ('13', '15', 'a.png', null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'h7tb', null, '2019-08-14 09:31:28');
+INSERT INTO `users_detail` VALUES ('14', '16', 'a.png', null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'eP4H', null, '2019-08-14 09:31:29');
+INSERT INTO `users_detail` VALUES ('15', '17', 'a.png', null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'ZB5f', null, '2019-08-14 09:32:11');
+INSERT INTO `users_detail` VALUES ('16', '18', 'a.png', null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', '3Ucm', null, '2019-08-14 09:32:13');
+INSERT INTO `users_detail` VALUES ('17', '19', 'a.png', null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'zXnm', null, '2019-08-14 09:32:15');
+INSERT INTO `users_detail` VALUES ('18', '20', 'a.png', null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', '82jP', null, '2019-08-14 09:32:17');
+INSERT INTO `users_detail` VALUES ('19', '21', 'a.png', null, null, null, '0', '深圳', '0', '4', '0', '0', '0', '0', 'Bxb7', null, '2019-08-14 09:32:19');
+INSERT INTO `users_detail` VALUES ('20', '22', 'a.png', null, null, null, '0', '深圳', '0', '1', '0', '0', '0', '0', 'bKzX', null, '2019-08-14 09:32:20');
+INSERT INTO `users_detail` VALUES ('21', '23', 'a.png', null, null, null, '0', '深圳', '0', '1', '0', '0', '0', '0', 'wfvr', null, '2019-08-14 09:32:22');
+INSERT INTO `users_detail` VALUES ('22', '24', 'a.png', null, null, null, '0', '深圳', '0', '1', '0', '0', '0', '0', 'ffKg', null, '2019-08-14 09:32:23');
+INSERT INTO `users_detail` VALUES ('23', '25', 'a.png', null, null, null, '0', '深圳', '0', '1', '0', '0', '0', '0', '5Ta5', null, '2019-08-14 09:32:25');
+INSERT INTO `users_detail` VALUES ('24', '26', 'a.png', null, null, null, '0', '深圳', '0', '1', '0', '0', '0', '0', '8cjp', null, '2019-08-14 09:32:26');
+INSERT INTO `users_detail` VALUES ('25', '27', 'a.png', null, null, null, '0', '深圳', '0', '1', '0', '0', '0', '0', 'CEYq', null, '2019-08-14 09:32:28');
+INSERT INTO `users_detail` VALUES ('26', '28', 'a.png', null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'DWWk', null, '2019-08-14 09:32:30');
+INSERT INTO `users_detail` VALUES ('27', '29', 'a.png', null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'sptM', null, '2019-08-14 09:32:32');
+INSERT INTO `users_detail` VALUES ('28', '30', 'a.png', null, null, null, '0', '深圳', '0', '0', '0', '0', '0', '0', 'yS3E', null, '2019-08-14 09:32:33');
 
 -- ----------------------------
 -- Table structure for users_fans
@@ -238,7 +237,7 @@ CREATE TABLE `video_favorite_list` (
   `status` tinyint(3) unsigned DEFAULT '0' COMMENT '0 未点爱心 1 点击爱心',
   `add_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='喜欢视频列表';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='喜欢视频列表';
 
 -- ----------------------------
 -- Records of video_favorite_list
@@ -256,8 +255,10 @@ CREATE TABLE `video_list` (
   `video_url` varchar(255) DEFAULT NULL COMMENT '视频地址',
   `video_label` varchar(255) DEFAULT NULL COMMENT '视频标签',
   `is_check` tinyint(4) DEFAULT '1' COMMENT '是否审核0 未审核 1审核',
+  `is_recommend` tinyint(3) unsigned DEFAULT '0' COMMENT '是否推荐',
   `favorite_num` int(11) DEFAULT '0' COMMENT '喜爱数量',
   `reply_num` int(11) DEFAULT '0' COMMENT '回复数量',
+  `play_num` int(11) DEFAULT '0' COMMENT '播放次数',
   `price` int(11) DEFAULT '0' COMMENT '视频价格',
   `add_time` datetime DEFAULT NULL COMMENT '添加时间',
   PRIMARY KEY (`id`)
@@ -266,15 +267,15 @@ CREATE TABLE `video_list` (
 -- ----------------------------
 -- Records of video_list
 -- ----------------------------
-INSERT INTO `video_list` VALUES ('28', '21', '33222', '156578772779.png', '1565787727756.mp4', 'wocaocoaocaocoocaosdada', '1', '0', '0', '0', null);
-INSERT INTO `video_list` VALUES ('29', '23', '33222', '1565787728332.png', '156578772818.mp4', 'wocaocoaocaocoocaosdada', '1', '0', '0', '0', null);
-INSERT INTO `video_list` VALUES ('30', '23', '33222', '156578772885.png', '1565787728250.mp4', 'wocaocoaocaocoocaosdada', '1', '0', '0', '0', null);
-INSERT INTO `video_list` VALUES ('31', '24', '33222', '1565787729422.png', '1565787729403.mp4', 'wocaocoaocaocoocaosdada', '1', '0', '0', '0', null);
-INSERT INTO `video_list` VALUES ('32', '25', '33222', '1565787767126.png', '1565787767945.mp4', 'wocaocoaocaocoocaosdada', '1', '0', '0', '0', '2019-08-14 13:02:47');
-INSERT INTO `video_list` VALUES ('33', '26', '33222', '1565787768532.png', '1565787768460.mp4', 'wocaocoaocaocoocaosdada', '1', '0', '0', '0', '2019-08-14 13:02:48');
-INSERT INTO `video_list` VALUES ('34', '8', '33222', '1565787768714.png', '1565787768428.mp4', 'wocaocoaocaocoocaosdada', '1', '0', '0', '0', '2019-08-14 13:02:48');
-INSERT INTO `video_list` VALUES ('35', '8', '33222', '1565787847211.png', '1565787847952.mp4', 'wocaocoaocaocoocaosdada', '1', '0', '0', '0', '2019-08-14 13:04:07');
-INSERT INTO `video_list` VALUES ('36', '8', '33222', '1565787848546.png', '1565787848268.mp4', 'wocaocoaocaocoocaosdada', '1', '0', '0', '0', '2019-08-14 13:04:08');
+INSERT INTO `video_list` VALUES ('28', '21', '33222', '156578772779.png', '1565787727756.mp4', 'wocaocoaocaocoocaosdada', '1', null, '1', '0', null, '0', null);
+INSERT INTO `video_list` VALUES ('29', '23', '33222', '1565787728332.png', '156578772818.mp4', 'wocaocoaocaocoocaosdada', '1', null, '5', '0', null, '0', null);
+INSERT INTO `video_list` VALUES ('30', '23', '33222', '156578772885.png', '1565787728250.mp4', 'wocaocoaocaocoocaosdada', '1', null, '6', '0', null, '0', null);
+INSERT INTO `video_list` VALUES ('31', '24', '33222', '1565787729422.png', '1565787729403.mp4', 'wocaocoaocaocoocaosdada', '1', null, '7', '0', null, '0', null);
+INSERT INTO `video_list` VALUES ('32', '25', '33222', '1565787767126.png', '1565787767945.mp4', 'wocaocoaocaocoocaosdada', '1', null, '8', '0', null, '0', '2019-08-14 13:02:47');
+INSERT INTO `video_list` VALUES ('33', '26', '33222', '1565787768532.png', '1565787768460.mp4', 'wocaocoaocaocoocaosdada', '1', null, '9', '0', null, '0', '2019-08-14 13:02:48');
+INSERT INTO `video_list` VALUES ('34', '26', '33222', '1565787768714.png', '1565787768428.mp4', 'wocaocoaocaocoocaosdada', '1', null, '10', '0', null, '0', '2019-08-14 13:02:48');
+INSERT INTO `video_list` VALUES ('35', '8', '33222', '1565787847211.png', '1565787847952.mp4', 'wocaocoaocaocoocaosdada', '1', null, '11', '0', null, '0', '2019-08-14 13:04:07');
+INSERT INTO `video_list` VALUES ('36', '8', '33222', '1565787848546.png', '1565787848268.mp4', 'wocaocoaocaocoocaosdada', '1', null, '12', '0', null, '0', '2019-08-14 13:04:08');
 
 -- ----------------------------
 -- Table structure for video_message
