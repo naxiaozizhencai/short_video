@@ -124,6 +124,15 @@ class UserController extends BaseController
 
     }
 
+    /**
+     * 更新用户信息
+     */
+    public function UpdateUsersInfo(Request $request)
+    {
+        $data = $this->usersService->UpdateUsersInfo($request);
+        return response()->json($data);
+    }
+
 
     /**
      * 填写推广码

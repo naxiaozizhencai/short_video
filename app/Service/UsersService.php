@@ -5,6 +5,7 @@ use App\Repositories\TempDataRepositories;
 use App\Repositories\UsersDetailRepositories;
 use App\Repositories\UsersFansRepositories;
 use App\Repositories\UsersRepositories;
+use http\Env\Request;
 use Illuminate\Support\Facades\Auth;
 class UsersService
 {
@@ -177,7 +178,42 @@ class UsersService
         return $data;
     }
 
+    public function UpdateUsersInfo($request)
+    {
+        $user_id = Auth::id();
+        $sign = $request->input('sign', '');
+        $username = $request->input('username', '');
+        $sex = $request->input('sex', '');
+        $birthday = $request->input('birthday', '');
+        $city = $request->input('city', '');
+        $update_data = [];
 
+        if(!empty($sign)){
+            $update_data['sign'] = $sign;
+        }
+
+        if(!empty($username)){
+            $update_data['username'] = $username;
+        }
+
+        if(!empty($sex)){
+            $update_data['sex'] = $sex;
+        }
+
+        if(!empty($birthday)){
+            $update_data['birthday'] = $birthday;
+        }
+
+        if(!empty($city)){
+            $update_data['city'] = $city;
+        }
+
+        if(empty($update_data)){
+            return ['code'=>-1, 'msg'=>'数据不能为空'];
+        }
+        $this->UsersRepositories->UpdateUsersInfo($user_id, $update_data);
+        return ['code'=>200, 'msg'=>'修改成功'];
+    }
     /**
      * 登出
      * @return array

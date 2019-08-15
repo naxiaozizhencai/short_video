@@ -24,7 +24,7 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
     $router->post('register', 'LoginController@Register');
     $router->post('sendcode', 'LoginController@SendCode');
     $router->post('forgetpasswd', 'LoginController@ForgetPassword');
-    $router->post('logout', 'LoginController@Logout');
+    $router->get('logout', 'LoginController@Logout');
 
     $router->get('video', 'VideoController@ViewVideo');
     $router->get('followvideo', 'VideoController@FollowViewVideo');
@@ -41,6 +41,7 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
     $router->post('cancelfollow', 'UserController@CancelFollow');
     $router->post('followlist', 'UserController@FollowList');
     $router->post('userinfo', 'UserController@UserInfo');
+    $router->post('updateuserinfo', 'UserController@UpdateUsersInfo');
 
     $router->get('invitationrank', 'HotspotController@InvitationRank');
     $router->get('supportrank', 'HotspotController@SupportRank');

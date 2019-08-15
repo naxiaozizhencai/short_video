@@ -6,6 +6,7 @@ class UsersRepositories
 {
 
     protected $users_table_name = 'users';
+    protected $users_detail_table_name = 'users_detail';
     /**
      * 获取用户信息
      * @param $uuid
@@ -175,6 +176,16 @@ class UsersRepositories
     public function UpdateUserById($uid, $update_data)
     {
         DB::table($this->users_table_name)->where('id', '=', $uid)->update($update_data);
+    }
+
+    /**
+     * 更新用户数据
+     * @param $uid
+     * @param $update_data
+     */
+    public function UpdateUsersInfo($uid, $update_data)
+    {
+        DB::table($this->users_detail_table_name)->where('user_id', '=', $uid)->update($update_data);
     }
 
 }
