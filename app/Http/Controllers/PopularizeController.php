@@ -29,11 +29,10 @@ class PopularizeController extends Controller
     }
 
     /**
-     * 输入分享码
+     * 分享记录
      */
-    public function InputShareCode()
+    public function ShareList()
     {
 
     }
-    //
 }
