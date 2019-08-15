@@ -1,6 +1,7 @@
 <?php
 namespace App\Service;
 use App\Repositories\PopularListRepositories;
+use App\Repositories\TempDataRepositories;
 use App\Repositories\UsersDetailRepositories;
 use App\Repositories\UsersFansRepositories;
 use App\Repositories\UsersRepositories;
@@ -8,17 +9,19 @@ use Illuminate\Support\Facades\Auth;
 class UsersService
 {
 
-    public $UsersRepositories;
+    protected $UsersRepositories;
     protected $popularListRepositories;
     protected $fansRepositories;
-    public function __construct(UsersRepositories $UsersRepositories,
-                                UsersDetailRepositories $usersDetailRepositories,
-                                PopularListRepositories $popularListRepositories,UsersFansRepositories $fansRepositories)
+    protected$tempDataRepositories;
+    public function __construct(UsersRepositories $UsersRepositories, UsersDetailRepositories $usersDetailRepositories,
+                                PopularListRepositories $popularListRepositories,UsersFansRepositories $fansRepositories,
+                                TempDataRepositories $tempDataRepositories)
     {
         $this->UsersRepositories = $UsersRepositories;
         $this->UsersDetailRepositories = $usersDetailRepositories;
         $this->popularListRepositories = $popularListRepositories;
         $this->fansRepositories = $fansRepositories;
+        $this->tempDataRepositories = $tempDataRepositories;
     }
 
     /**
@@ -67,6 +70,180 @@ class UsersService
         $resultData['data']['user_data'] = $data;
         $resultData['data']['token_data'] = $token_data;
         return $resultData;
+    }
+
+    /**
+     * 告诉前端登录还是注册
+     * @param $request
+     * @return array
+     */
+      public function PhoneLoginOrRegister($request)
+    {
+        $phone = $request->input('phone');
+        $user_id = Auth::id();
+        if(empty($phone)){
+            return ['code'=>-1, 'msg'=>'请输入手机号'];
+        }
+
+        $user_data = $this->UsersRepositories->GetUserInfoByPhone($phone);
+        if(empty($user_data)){
+            $data = ['code'=>200, 'data'=>['action'=>'register']];
+        }else{
+            $data =  ['code'=>200, 'data'=>['action'=>'login']];
+        }
+
+        return $data;
+    }
+
+    /**
+     * 手机注册
+     * @param $request
+     * @return array
+     */
+    public function PhoneRegister($request)
+    {
+        $phone = $request->input('phone');
+        $code = $request->input('code');
+        $password = $request->input('password');
+        $user_id = Auth::id();
+        if(empty($phone)){
+            return ['code'=>-1, 'msg'=>'请输入手机号'];
+        }
+
+        $user_data = $this->UsersRepositories->getUserInfoById($user_id);
+        if(empty($user_data)){
+            return ['code'=>-1, 'msg'=>'用户不存在'];
+        }
+
+        if($user_data->phone == $phone){
+            return ['code'=>-1, 'msg'=>'用户已经绑定,不能注册'];
+        }
+
+        $phone_user_data = $this->UsersRepositories->GetUserInfoByPhone($phone);
+
+        if(empty($phone_user_data)){
+            return ['code'=>-1, 'msg'=>'手机号已经注册不能再次注册'];
+        }
+
+        $temp_data = $this->tempDataRepositories->GetValue($user_id, $phone);
+
+        if(empty($temp_data)){
+            return ['code'=>-1, 'msg'=>'验证码还未发送'];
+        }
+
+        if($temp_data->expire_time < time()){
+            return ['code'=>-1, 'msg'=>'验证码已经过期'];
+        }
+
+        if($temp_data->temp_value != $code){
+            return ['code'=>-1, 'msg'=>'验证码错误'];
+        }
+
+        $data['phone'] = $phone;
+        $data['password'] = md5($password);
+        $data['is_phone_login'] = 1;
+        $this->UsersRepositories->UpdateUserById($user_id, $data);
+        return ['code'=>200, 'msg'=>'注册成功'];
+    }
+
+
+    /**
+     * 登录
+     * @param $request
+     * @return array
+     */
+    public function PhoneLogin($request){
+
+        $phone = $request->input('phone');
+        $password = $request->input('password');
+        if(empty($phone)){
+            return ['code'=>-1, 'msg'=>'请输入手机号'];
+        }
+        $md_password = md5($password);
+        $user_data = $this->UsersRepositories->GetUserInfoByPhonePasswd($phone, $md_password);
+
+        if(empty($user_data)) {
+            return ['code'=>-1, 'msg'=>'密码错误'];
+        }
+
+        $user_info = $this->UsersRepositories->GetAuthUserData($user_data->uuid);
+        $update_data['is_phone_login'] = 1;
+        $this->UsersRepositories->UpdateUserById($user_info->id, $update_data);
+
+        $data['code'] = 200;
+        $data['msg'] = '登录成功';
+        return $data;
+    }
+
+    /**
+     * 发送验证码
+     * @param $request
+     * @return array
+     */
+    public function SendCode($request)
+    {
+        $phone = $request->input('phone');
+
+        if(empty($phone)){
+            return ['code'=>-1, 'msg'=>'请输入手机号'];
+        }
+
+        $user_id = Auth::id();
+        $temp_data = [];
+        $code = rand(1000, 9999);
+        $temp_data['user_id'] = $user_id;
+        $temp_data['temp_key'] = $phone;
+        $find_data = $temp_data;
+
+        $temp_data['temp_value'] = $code;
+        $temp_data['expire_time'] = time() + 3600;
+        $temp_data['add_time'] = date("Y-m-d H:i:s");
+
+        $this->tempDataRepositories->UpateOrInsertTempData($find_data, $temp_data);
+        return ['code'=>200, 'msg'=>'发送成功'];
+    }
+
+    /**
+     * 找回密码
+     * @param $request
+     * @return array
+     */
+    public function ForgetPassword($request)
+    {
+        $phone = $request->input('phone');
+        $code = $request->input('code');
+        $new_password = $request->input('new_password');
+
+        if(empty($phone) || empty($code) || empty($new_password)){
+            return ['code'=>-1, 'msg'=>'参数错误'];
+        }
+
+
+        $phone_user_data = $this->UsersRepositories->GetUserInfoByPhone($phone);
+
+        if(empty($phone_user_data)){
+            return ['code'=>-1, 'msg'=>'手机号还未注册'];
+        }
+
+        $temp_data = $this->tempDataRepositories->GetValue($phone_user_data->user_id, $phone);
+
+        if(empty($temp_data)){
+            return ['code'=>-1, 'msg'=>'验证码还未发送'];
+        }
+
+        if($temp_data->expire_time < time()){
+            return ['code'=>-1, 'msg'=>'验证码已经过期'];
+        }
+
+        if($temp_data->temp_value != $code){
+            return ['code'=>-1, 'msg'=>'验证码错误'];
+        }
+        $update_data = [];
+        $update_data['password'] = md5($new_password);
+        $update_data['is_phone_login'] = 1;
+
+        $this->UsersRepositories->UpdateUserById($phone_user_data->id, $update_data);
+        return ['code'=>200, 'msg'=>'修改密码成功'];
     }
 
     /**
@@ -203,8 +380,27 @@ class UsersService
     {
         $user_id = Auth::id();
         $user_data = $this->UsersRepositories->getUserInfoById($user_id);
-        print_r($user_data);
-        exit;
+
+        if(empty($user_data)){
+            return ['code'=>-1, 'msg'=>'用户数据不存在'];
+        }
+
+        $user_info = [];
+        $user_info['id'] = $user_data->id;
+        $user_info['username'] = $user_data->username;
+        $user_info['vip_level'] = $user_data->vip_level;
+        $user_info['vip_expired_time'] = $user_data->vip_expired_time;
+        $user_info['is_phone_login'] = $user_data->is_phone_login;
+        $user_info['sex'] = $user_data->sex;
+        $user_info['sign'] = $user_data->sign;
+        $user_info['city'] = $user_data->city;
+        $user_info['fans_num'] = $user_data->fans_num;
+        $user_info['follow_num'] = $user_data->follow_num;
+        $user_info['support_num'] = $user_data->support_num;
+        $data = [];
+        $data['code'] = 200;
+        $data['data'] = ['user_info'=>$user_info];
+        return $data;
     }
 
 

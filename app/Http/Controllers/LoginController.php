@@ -15,8 +15,8 @@ class LoginController extends BaseController
     }
 
     /**
-     * 用户登录
      * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function Login(Request $request)
     {
@@ -27,13 +27,13 @@ class LoginController extends BaseController
     }
 
     /**
-     * 用户登录
      * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function PhoneLogin(Request $request)
     {
-
+        $data = $this->UsersService->PhoneLogin($request);
+        return response()->json($data);
     }
 
-    //
 }

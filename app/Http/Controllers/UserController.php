@@ -23,35 +23,7 @@ class UserController extends BaseController
 
     public function UserInfo(Request $request)
     {
-        $this->usersService->UserInfo();
-        $data = [];
-        $data['code'] = 200;
-        $data['data'] = [
-            'user_info'=>[
-                'user_id'=>'',
-                'uuid'=>'',
-                'user_name'=>'',
-                'sign'=>'',
-                'sex'=>'',
-                'age'=>'',
-                'city'=>'',
-                'viewed_num'=>'',
-                'total_view_num'=>'',
-                'coin_num'=>'',
-                'fans_num'=>'',
-                'follow_num'=>'',
-                'support_num'=>'',
-            ],
-            'video_list'=>[
-                'id'=>'',
-                'user_id'=>'',
-                'video_image'=>'',
-                'favorite_number'=>'',
-            ],
-
-
-        ];
-
+        $data = $this->usersService->UserInfo();
         return response()->json($data);
 
     }

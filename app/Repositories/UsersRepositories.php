@@ -62,6 +62,21 @@ class UsersRepositories
         select(['users.*','users_detail.*'])->where(['users_detail.popular_num'=>$popular_num])->first();
     }
 
+    public function GetUserInfoByPhone($phone)
+    {
+        return $users = DB::table('users')->
+        leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->
+        select(['users.*','users_detail.*'])->where(['users.phone'=>$phone])->first();
+    }
+
+
+    public function GetUserInfoByPhonePasswd($phone, $passwd)
+    {
+        return $users = DB::table('users')->
+        leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->
+        select(['users.*','users_detail.*'])->where(['users.phone'=>$phone, 'users.password'=>$passwd])->first();
+    }
+
     /**
      * 更新某一列的数据
      * @param $uid
@@ -151,4 +166,15 @@ class UsersRepositories
 
         return true;
     }
+
+    /**
+     * 更新用户数据
+     * @param $uid
+     * @param $update_data
+     */
+    public function UpdateUserById($uid, $update_data)
+    {
+        DB::table($this->users_table_name)->where('id', '=', $uid)->update($update_data);
+    }
+
 }
