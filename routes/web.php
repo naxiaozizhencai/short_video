@@ -21,6 +21,7 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
     $router->get('video', 'VideoController@ViewVideo');
     $router->get('followvideo', 'VideoController@FollowViewVideo');
     $router->post('favorite', 'VideoController@DoFavorite');
+    $router->post('cancelfavorite', 'VideoController@CancelFavorite');
     $router->get('discusslist', 'VideoController@DiscussList');
     $router->post('adddiscuss', 'VideoController@AddDiscuss');
     $router->post('favordiscuss', 'VideoController@FavorDiscuss');

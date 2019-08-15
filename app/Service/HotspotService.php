@@ -81,7 +81,7 @@ class HotspotService
             $temp_data['support_num'] = $value->favorite_num;
             $temp_data['video_title'] = $value->video_title;
             $temp_data['video_image'] = $value->video_image;
-            $data['data']['list'][] = $temp_data;
+            $data['data']['rank_list'][] = $temp_data;
         }
         return $data;
     }

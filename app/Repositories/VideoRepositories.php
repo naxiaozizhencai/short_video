@@ -72,17 +72,23 @@ class VideoRepositories
      * @param int $num
      * @return bool
      */
-    public function IncrVideoFavoriteNum($video_id, $num = 1)
+    public function IncrVideoNum($video_id, $column, $num = 1)
     {
-        $video_row = DB::table($this->table_name)->find($video_id);
-
-        if(!empty($video_row)){
-            DB::table('video_list')->increment('favorite_number', $num);
-        }
-
-        return true;
-
+        return DB::table('video_list')->where(['id'=>$video_id])->increment($column, $num);
     }
+
+    /**
+     * @param $video_id
+     * @param $column
+     * @param int $num
+     * @return int
+     */
+    public function DecrVideoNum($video_id, $column, $num = 1)
+    {
+        return DB::table('video_list')->where(['id'=>$video_id])->decrement($column, $num);
+    }
+
+
 
     /**
      * 获取支持最多的额

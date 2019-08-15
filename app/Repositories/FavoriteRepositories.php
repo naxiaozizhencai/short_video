@@ -16,9 +16,15 @@ class FavoriteRepositories
         return $result;
     }
 
+    public function DeleteFavoriteVideo($user_id, $video_id)
+    {
+        return DB::table(self::$table_name)->where([['video_id', '=', $video_id],['user_id', '=', $user_id]])->delete();
+    }
+
+
     public function UpdateFavoriteVideo($data, $update_data)
     {
-        return DB::table(self::$table_name)->updateOrInsert($data, $update_data);
+
 
     }
 }

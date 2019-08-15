@@ -40,10 +40,16 @@ class VideoController extends Controller
     public function DoFavorite(Request $request)
     {
 
-        $video_id = $request->input('video_id');
-        $data = $this->videoService->DoFavorite(1, 2);
+        $data = $this->videoService->DoFavorite($request);
         return response()->json($data);
     }
+
+    public function CancelFavorite(Request $request)
+    {
+        $data = $this->videoService->CancelFavorite($request);
+        return response()->json($data);
+    }
+
 
     /**
      * @param Request $request

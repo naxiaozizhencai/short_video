@@ -37,10 +37,38 @@ class HotspotController extends Controller
 
     }
 
+    /**
+     * 最多爱心
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function SupportRank()
     {
         $data =$this->hotspotService->SupportRankData();
         return response()->json($data);
+
+    }
+
+    /**
+     * 最新上传
+     */
+    public function NewUploadRank()
+    {
+
+    }
+
+    /**
+     * 最多播放
+     */
+    public function PlayVideoRank()
+    {
+
+    }
+
+    /**
+     * 最多评论
+     */
+    public function DiscussVideoRank()
+    {
 
     }
 

@@ -148,36 +148,65 @@ class VideoService
      * @param $user_id
      * @return array
      */
-    public function DoFavorite($video_id, $user_id)
+    public function DoFavorite($request)
     {
 
-        $data = ['code'=>200, 'data'=>[]];
+        $video_id = $request->input('video_id');
+        $user_id  = Auth::id();
 
         $video_row = $this->videoRepositories->getVideoById($video_id);
+
         if(empty($video_row)){
-            return $data = ['code'=>-1, 'errMsg'=>'视频数据不存在'];
+            return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
         }
+
         $favor_row = $this->favoriteRepositories->FindFavoriteRow($user_id, $video_id);
+        if(!empty($favor_row)){
+            return $data = ['code'=>-1, 'msg'=>'已经喜欢'];
+        }
+
         $find_data['user_id'] = $user_id;
         $find_data['video_id'] = $video_id;
         $update_data = $find_data;
-
-        if(empty($favor_row)){
-            $update_data['status'] = 1;
-        }else{
-            $update_data['status'] = ($favor_row->status == 1) ? 0 : 1;
-        }
-        $favor_num = ($update_data['status'] == 1) ? 1 : -1;
+        $update_data['status'] = 1;
         $update_data['add_time'] = date("Y-m-d H:i:s");
         $this->favoriteRepositories->UpdateFavoriteVideo($find_data, $update_data);
-        $this->videoRepositories->IncrVideoFavoriteNum($video_id, $favor_num);
+        $this->videoRepositories->IncrVideoNum($video_id, 'favorite_num');
 
-        $favor_data['favorite_num'] = $video_row->favorite_number + $favor_num;
-        $favor_data['video_id'] = $video_id;
-        $favor_data['status'] = $update_data['status'];
-        $data['data']['video_data'] = $favor_data;
-
+        $data = ['code'=>200, 'msg'=>'关注成功'];
         return $data;
+    }
+
+    /**
+     * 取消喜欢这条视频
+     */
+    public function CancelFavorite($request)
+    {
+        $video_id = $request->input('video_id');
+        $user_id  = Auth::id();
+
+        $video_row = $this->videoRepositories->getVideoById($video_id);
+
+        if(empty($video_row)){
+            return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
+        }
+
+        $favor_row = $this->favoriteRepositories->FindFavoriteRow($user_id, $video_id);
+        if(empty($favor_row)){
+            return $data = ['code'=>-1, 'msg'=>'已经取消'];
+        }
+
+        $find_data['user_id'] = $user_id;
+        $find_data['video_id'] = $video_id;
+        $update_data = $find_data;
+        $update_data['status'] = 0;
+        $update_data['add_time'] = date("Y-m-d H:i:s");
+        $this->favoriteRepositories->DeleteFavoriteVideo($user_id, $video_id);
+        $this->videoRepositories->DecrVideoNum($video_id, 'favorite_num');
+
+        $data = ['code'=>200, 'msg'=>'操作成功'];
+        return $data;
+
     }
 
     /**
