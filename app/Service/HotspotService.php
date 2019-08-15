@@ -1,14 +1,17 @@
 <?php
 namespace App\Service;
 use App\Repositories\UsersRepositories;
+use App\Repositories\VideoRepositories;
 
 class HotspotService
 {
 
     protected $usersRepositories;
-   public function __construct(UsersRepositories $usersRepositories)
+    protected $videoRepositories;
+   public function __construct(UsersRepositories $usersRepositories, VideoRepositories $videoRepositories)
    {
        $this->usersRepositories = $usersRepositories;
+       $this->videoRepositories = $videoRepositories;
    }
 
    public function InvitationRankData()
@@ -61,19 +64,26 @@ class HotspotService
 
     public function SupportRankData()
     {
-        return $data = [
-            'code'=>200,
-            'data'=>[
-                'list'=>[[
-                    'rank'=>'',
-                    'video_id'=>'',
-                    'support_num'=>'',
-                    'video_title'=>'',
-                    'video_image'=>'',
-                ]],
 
-            ],
-        ];
+        $result = $this->videoRepositories->GetVideoSupportRankData();
+
+        if(empty($result['data'])){
+            return ['code'=>200, 'data'=>[]];
+        }
+
+        $data = ['code'=>200];
+        foreach($result['data'] as $key=>$value){
+            $temp_data = [];
+            $temp_data['rank'] = $key;
+            $temp_data['video_id'] = $value;
+            $temp_data['user_id'] = $value->user_id;
+            $temp_data['video_id'] = $value->id;
+            $temp_data['support_num'] = $value->favorite_num;
+            $temp_data['video_title'] = $value->video_title;
+            $temp_data['video_image'] = $value->video_image;
+            $data['data']['list'][] = $temp_data;
+        }
+        return $data;
     }
 
 

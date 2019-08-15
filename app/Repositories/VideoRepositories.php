@@ -59,7 +59,7 @@ class VideoRepositories
 
     public function getVideoById($video_id)
     {
-        $video_row = DB::table('video_list')->find($video_id);
+        $video_row = DB::table($this->table_name)->find($video_id);
         if(empty($video_row)){
             return false;
         }
@@ -74,7 +74,7 @@ class VideoRepositories
      */
     public function IncrVideoFavoriteNum($video_id, $num = 1)
     {
-        $video_row = DB::table('video_list')->find($video_id);
+        $video_row = DB::table($this->table_name)->find($video_id);
 
         if(!empty($video_row)){
             DB::table('video_list')->increment('favorite_number', $num);
@@ -82,5 +82,15 @@ class VideoRepositories
 
         return true;
 
+    }
+
+    /**
+     * 获取支持最多的额
+     * @return mixed
+     */
+    public function GetVideoSupportRankData()
+    {
+        return DB::table($this->table_name)->where('favorite_num', '>', 0)->
+        orderBy('favorite_num', 'desc')->paginate(20)->toarray();
     }
 }

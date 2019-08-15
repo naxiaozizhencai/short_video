@@ -31,6 +31,7 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
     $router->post('cancelfollow', 'UserController@CancelFollow');
     $router->post('followlist', 'UserController@FollowList');
     $router->get('invitationrank', 'HotspotController@InvitationRank');
+    $router->get('supportrank', 'HotspotController@SupportRank');
 });
 
 
