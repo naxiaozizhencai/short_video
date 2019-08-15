@@ -67,6 +67,12 @@ class LoginController extends BaseController
         return response()->json($data);
     }
 
+    public function ForgetPassword(Request $request)
+    {
+        $data = $this->UsersService->ForgetPassword($request);
+        return response()->json($data);
+    }
+
 
 
 }

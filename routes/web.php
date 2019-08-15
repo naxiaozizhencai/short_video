@@ -23,6 +23,7 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
     $router->post('phonelogin', 'LoginController@PhoneLogin');
     $router->post('register', 'LoginController@Register');
     $router->post('sendcode', 'LoginController@SendCode');
+    $router->post('forgetpasswd', 'LoginController@ForgetPassword');
     $router->post('logout', 'LoginController@Logout');
 
     $router->get('video', 'VideoController@ViewVideo');

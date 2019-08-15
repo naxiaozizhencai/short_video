@@ -161,6 +161,7 @@ class UsersService
             return ['code'=>-1, 'msg'=>'请输入手机号'];
         }
         $md_password = md5($password);
+
         $user_data = $this->UsersRepositories->GetUserInfoByPhonePasswd($phone, $md_password);
 
         if(empty($user_data)) {
@@ -175,6 +176,7 @@ class UsersService
         $data['msg'] = '登录成功';
         return $data;
     }
+
 
     /**
      * 登出
@@ -192,6 +194,7 @@ class UsersService
         $this->UsersRepositories->UpdateUserById($user_id, $update_data);
         return ['code'=>200, 'msg'=>'操作成功'];
     }
+
     /**
      * 发送验证码
      * @param $request
@@ -234,7 +237,6 @@ class UsersService
         if(empty($phone) || empty($code) || empty($new_password)){
             return ['code'=>-1, 'msg'=>'参数错误'];
         }
-
 
         $phone_user_data = $this->UsersRepositories->GetUserInfoByPhone($phone);
 
