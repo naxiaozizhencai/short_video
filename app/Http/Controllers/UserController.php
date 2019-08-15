@@ -21,9 +21,9 @@ class UserController extends BaseController
     }
 
 
-    public function UserDetail(Request $request)
+    public function UserInfo(Request $request)
     {
-
+        $this->usersService->UserInfo();
         $data = [];
         $data['code'] = 200;
         $data['data'] = [

@@ -196,6 +196,16 @@ class UsersService
         return $data;
     }
 
+    /**
+     * 获取用户详情
+     */
+    public function UserInfo()
+    {
+        $user_id = Auth::id();
+        $user_data = $this->UsersRepositories->getUserInfoById($user_id);
+        print_r($user_data);
+        exit;
+    }
 
 
 }

@@ -18,6 +18,7 @@ $router->post('user/postLogin', 'AuthController@postLogin');
 $router->post('login', 'LoginController@Login');
 
 $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($router){
+
     $router->get('video', 'VideoController@ViewVideo');
     $router->get('followvideo', 'VideoController@FollowViewVideo');
     $router->post('favorite', 'VideoController@DoFavorite');
@@ -27,10 +28,13 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
     $router->post('favordiscuss', 'VideoController@FavorDiscuss');
     $router->post('reportdiscuss', 'VideoController@ReportDiscuss');
     $router->post('uploadvideo', 'VideoController@UploadVideo');
+
     $router->post('addpopularnum', 'UserController@AddPopularizeNum');
     $router->post('dofollow', 'UserController@DoFollow');
     $router->post('cancelfollow', 'UserController@CancelFollow');
     $router->post('followlist', 'UserController@FollowList');
+    $router->post('userinfo', 'UserController@UserInfo');
+
     $router->get('invitationrank', 'HotspotController@InvitationRank');
     $router->get('supportrank', 'HotspotController@SupportRank');
 });
