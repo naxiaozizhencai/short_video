@@ -141,7 +141,42 @@ class VideoService
         return $data;
     }
 
+    public function formatVideoData($result)
+    {
+        $video_data = [];
+        foreach($result['data'] as $key=>$value){
+            $user_data = $this->usersRepositories->getUserInfoById($value->user_id);
+            $video_data['video_id'] = $value->id;
+            $video_data['video_user_avatar'] = $user_data->avatar;
+            $video_data['video_user_id'] = $value->user_id;
+            $video_data['video_vip_level'] = $user_data->vip_level;
+            $video_data['video_username'] = $user_data->username;
+            $video_data['video_title'] = $value->video_title;
+            $video_data['video_image'] = $value->video_image;
+            $video_data['video_url'] = $value->video_url;
+            $video_data['video_label'] = $value->video_label;
+            $video_data['favorite_number'] = $value->favorite_num;
+            $video_data['reply_number'] = $value->reply_num;
+        }
 
+        $data['video_data'][] = $video_data;
+        unset($result['data']);
+        $data['page'] = $result;
+        return $data;
+    }
+    public function FavorViewVideo($request)
+    {
+        $my_user_id = Auth::id();
+        $user_id = $request->input('user_id', $my_user_id);
+        $video_list = $this->videoRepositories->GetFavoriteVideoList($user_id);
+        $this->formatVideoData($video_list);
+
+    }
+
+    public function UserWorksViewVideo($request)
+    {
+
+    }
     /**
      * 点击爱心
      * @param $video_id
