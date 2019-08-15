@@ -37,6 +37,8 @@ class VideoController extends Controller
         return response()->json($data);
     }
 
+
+
     public function DoFavorite(Request $request)
     {
 

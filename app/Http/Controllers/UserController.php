@@ -60,16 +60,27 @@ class UserController extends BaseController
 
     }
 
-
+    /**
+     * 作品列表
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function UserVideoList(Request $request)
     {
-
+        $data = $this->usersService->UserVideoList($request);
+        return response()->json($data);
     }
 
 
+    /**
+     * 用户喜欢的列表
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function UserFavoriteList(Request $request)
     {
-
+        $data = $this->usersService->UserFavoriteList($request);
+        return response()->json($data);
     }
 
     /**

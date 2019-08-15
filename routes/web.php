@@ -43,6 +43,9 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
     $router->post('followlist', 'UserController@FollowList');
     $router->post('userinfo', 'UserController@UserInfo');
     $router->post('updateuserinfo', 'UserController@UpdateUsersInfo');
+    $router->get('favorvideolist', 'UserController@UserFavoriteList');
+    $router->get('uservideolist', 'UserController@UserVideoList');
+
 
     $router->get('invitationrank', 'HotspotController@InvitationRank');
     $router->get('supportrank', 'HotspotController@SupportRank');

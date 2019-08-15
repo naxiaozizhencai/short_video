@@ -5,6 +5,7 @@ use App\Repositories\TempDataRepositories;
 use App\Repositories\UsersDetailRepositories;
 use App\Repositories\UsersFansRepositories;
 use App\Repositories\UsersRepositories;
+use App\Repositories\VideoRepositories;
 use http\Env\Request;
 use Illuminate\Support\Facades\Auth;
 class UsersService
@@ -13,16 +14,18 @@ class UsersService
     protected $UsersRepositories;
     protected $popularListRepositories;
     protected $fansRepositories;
-    protected$tempDataRepositories;
+    protected $tempDataRepositories;
+    protected $videoRepositories;
     public function __construct(UsersRepositories $UsersRepositories, UsersDetailRepositories $usersDetailRepositories,
                                 PopularListRepositories $popularListRepositories,UsersFansRepositories $fansRepositories,
-                                TempDataRepositories $tempDataRepositories)
+                                TempDataRepositories $tempDataRepositories, VideoRepositories $videoRepositories)
     {
         $this->UsersRepositories = $UsersRepositories;
         $this->UsersDetailRepositories = $usersDetailRepositories;
         $this->popularListRepositories = $popularListRepositories;
         $this->fansRepositories = $fansRepositories;
         $this->tempDataRepositories = $tempDataRepositories;
+        $this->videoRepositories = $videoRepositories;
     }
 
     /**
@@ -455,6 +458,67 @@ class UsersService
         $data = [];
         $data['code'] = 200;
         $data['data'] = ['user_info'=>$user_info];
+        return $data;
+    }
+
+    /**
+     * 用户自己上传列表
+     */
+    public function UserVideoList($request)
+    {
+
+        $my_user_id = Auth::id();
+        $user_id = $request->input('user_id', $my_user_id);
+        $video_list = $this->videoRepositories->GetUsersVideoList($user_id);
+
+        if(empty($video_list['data'])){
+            return ['code'=>200, 'data'=>[]];
+        }
+
+        $data = ['code'=>200];
+        foreach($video_list['data'] as $key=>$value){
+            $temp_data = [];
+            $temp_data['video_page'] = ($video_list['current_page'] - 1) * 6 + $key + 1 ;//播放时的页
+            $temp_data['video_id'] = $value;
+            $temp_data['user_id'] = $value->user_id;
+            $temp_data['video_id'] = $value->id;
+            $temp_data['support_num'] = $value->favorite_num;
+            $temp_data['video_title'] = $value->video_title;
+            $temp_data['video_image'] = $value->video_image;
+            $data['data']['video_list'][] = $temp_data;
+        }
+        unset($video_list['data']);
+        $data['data']['page'] = $video_list;
+       return $data;
+    }
+
+    /**
+     * 用户喜欢的列表
+     */
+    public function UserFavoriteList($request)
+    {
+        $my_user_id = Auth::id();
+        $user_id = $request->input('user_id', $my_user_id);
+        $video_list = $this->videoRepositories->GetFavoriteVideoList($user_id);
+
+        if(empty($video_list['data'])){
+            return ['code'=>200, 'data'=>[]];
+        }
+
+        $data = ['code'=>200];
+        foreach($video_list['data'] as $key=>$value){
+            $temp_data = [];
+            $temp_data['video_page'] = ($video_list['current_page'] - 1) * 6 + $key + 1 ;//播放时的页
+            $temp_data['video_id'] = $value;
+            $temp_data['user_id'] = $value->user_id;
+            $temp_data['video_id'] = $value->id;
+            $temp_data['support_num'] = $value->favorite_num;
+            $temp_data['video_title'] = $value->video_title;
+            $temp_data['video_image'] = $value->video_image;
+            $data['data']['video_list'][] = $temp_data;
+        }
+        unset($video_list['data']);
+        $data['data']['page'] = $video_list;
         return $data;
     }
 

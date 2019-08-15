@@ -19,8 +19,9 @@ class VideoRepositories
     }
 
     /**
-     * @param $user_id
-     * @return array|mixed
+     * @param $uid
+     * @param $page
+     * @return mixed
      */
     public function getViewVideoData($uid, $page)
     {
@@ -99,4 +100,27 @@ class VideoRepositories
         return DB::table($this->table_name)->where('favorite_num', '>', 0)->
         orderBy('favorite_num', 'desc')->paginate(20)->toarray();
     }
+
+    /**
+     * 获取喜欢的视频列表
+     * @param $user_id
+     * @return mixed
+     */
+    public function GetFavoriteVideoList($user_id)
+    {
+        return DB::table($this->table_name)->leftjoin('video_list', 'video_favorite_list.video_id', '=', 'video_list.id')->
+        where('video_favorite_list.user_id', '=', $user_id)->orderby('video_favorite_list.add_time', 'desc')->paginate(6)->toarray();
+    }
+
+    /**
+     * 获取我的作品列表
+     * @param $user_id
+     * @return mixed
+     */
+    public function GetUsersVideoList($user_id)
+    {
+        return DB::table('video_list')->where(['is_check'=>1, 'user_id'=>$user_id])
+            ->orderBy('add_time', 'desc')->paginate(6)->toarray();
+    }
+
 }
