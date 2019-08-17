@@ -43,4 +43,9 @@ class UsersFansRepositories
             leftjoin('users_detail', 'users_detail.user_id', '=', 'users.id')->where('users_fans.fans_id', '=', $uid)
             ->get(['users.id', 'users.vip_level','users.username', 'users_detail.avatar']);
     }
+
+    public function GetUsersFollowData($uid)
+    {
+        return DB::table($this->table_name)->where(['user_id'=>$uid])->pluck('user_id', 'fans_id');
+    }
 }

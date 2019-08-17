@@ -38,6 +38,22 @@ class UsersRepositories
 
     }
 
+    public function GetUsersList($search_arr)
+    {
+        $query = DB::table('users')->
+        leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->select(['users.*','users_detail.*']);
+
+        return  $query->where(function ($query) use ($search_arr){
+            foreach($search_arr as $key=>$search){
+                switch ($key){
+                    case 'username':
+                        $query->where('username', 'like', '%'.$search.'%');
+                        break;
+                }
+            }
+        })->paginate()->toarray();
+    }
+
     public function UpdateVipTime($uid, $amount)
     {
         $user_data = $this->getUserInfoById($uid);
@@ -187,5 +203,7 @@ class UsersRepositories
     {
         return DB::table($this->users_detail_table_name)->where('user_id', '=', $uid)->update($update_data);
     }
+
+
 
 }

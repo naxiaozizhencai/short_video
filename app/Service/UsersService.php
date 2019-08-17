@@ -555,5 +555,37 @@ class UsersService
         return $data;
     }
 
+    /**
+     * 模糊查询用户列表
+     * @param $request
+     * @return array
+     */
+    public function UsersList($request)
+    {
+
+        $query_string = $request->input("query_string", '');
+        $search_name['username'] = $query_string;
+        $user_data = $this->UsersRepositories->GetUsersList($search_name);
+        $user_id = Auth::id();
+        if(empty($user_data['data'])){
+            return ['code'=>200, 'data'=>[]];
+        }
+
+        $fans_ids = $this->fansRepositories->GetUsersFollowData($user_id);
+        $data = ['code'=>200];
+        foreach ($user_data['data'] as $key=>$value){
+            $temp_data = [];
+            $temp_data['user_id'] = $value->id;
+            $temp_data['username'] = $value->username;
+            $temp_data['avatar'] = $value->avatar;
+            $temp_data['popular_num'] = $value->popular_num;
+            $temp_data['is_follow'] = isset($fans_ids[$value->id]) ? 1 : 0;
+            $data['data']['search_result'][] = $temp_data;
+        }
+
+        return $data;
+
+    }
+
 
 }

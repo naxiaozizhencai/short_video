@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
-class ExampleController extends Controller
+use App\Service\UsersService;
+use Illuminate\Http\Request;
+
+class SearchController extends Controller
 {
+
     /**
-     * Create a new controller instance.
-     *
-     * @return void
+     * @var UsersService
      */
-    public function __construct()
+    protected $usersService;
+    public function __construct(UsersService $usersService)
     {
-        //
+        $this->usersService = $usersService;
     }
 
     /**
@@ -26,9 +29,10 @@ class ExampleController extends Controller
     /**
      * 搜索用户
      */
-    public function SearchUsers()
+    public function SearchUsers(Request $request)
     {
-
+       $data = $this->usersService->UsersList($request);
+        return response()->json($data);
     }
 
 }
