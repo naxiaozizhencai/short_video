@@ -50,8 +50,6 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
 
 
     $router->post('searchusers', 'SearchController@SearchUsers');
-    $router->post('searchvideo', 'SearchController@SearchVideo');
-
 
 
     $router->get('invitationrank', 'HotspotController@InvitationRank');

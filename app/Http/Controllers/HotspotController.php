@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Service\HotspotService;
 use App\Service\VideoService;
+use Illuminate\Http\Request;
 
 class HotspotController extends Controller
 {
@@ -17,6 +18,11 @@ class HotspotController extends Controller
          $this->hotspotService = $hotspotService;
     }
 
+    public function VideoRank(Request $request)
+    {
+        $data = $this->hotspotService->VideoRankData($request);
+        return response()->json($data);
+    }
     /**
      * 邀請排行榜
      */
@@ -36,53 +42,5 @@ class HotspotController extends Controller
         return response()->json($data);
 
     }
-
-    /**
-     * 最多爱心
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function SupportRank()
-    {
-        $data =$this->hotspotService->SupportRankData();
-        return response()->json($data);
-
-    }
-
-    /**
-     * 最新上传
-     */
-    public function NewUploadRank()
-    {
-        $data = $this->hotspotService->NewUploadRankData();
-        return response()->json($data);
-    }
-
-    /**
-     * 最多播放
-     */
-    public function PlayVideoRank()
-    {
-        $data = $this->hotspotService->PlayVideoRankData();
-        return response()->json($data);
-    }
-
-    /**
-     * 最多评论
-     */
-    public function DiscussVideoRank()
-    {
-        $data = $this->hotspotService->DiscussVideoRankData();
-        return response()->json($data);
-    }
-
-    /**
-     * 官方推荐
-     */
-    public function RecommendVideoRank()
-    {
-        $data = $this->hotspotService->RecommendVideoRankData();
-        return response()->json($data);
-    }
-
 
 }

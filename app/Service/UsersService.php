@@ -582,7 +582,8 @@ class UsersService
             $temp_data['is_follow'] = isset($fans_ids[$value->id]) ? 1 : 0;
             $data['data']['search_result'][] = $temp_data;
         }
-
+        unset($user_data['data']);
+        $data['page'] = $user_data;
         return $data;
 
     }

@@ -18,11 +18,17 @@ class VideoController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function ViewVideo(Request $request)
+/*    public function ViewVideo(Request $request)
     {
         $data = $this->videoService->RandViewVideo();
         return response()->json($data);
 
+    }*/
+
+    public function ViewVideo(Request $request)
+    {
+        $data = $this->videoService->ViewVideo($request);
+        return response()->json($data);
     }
 
     /**

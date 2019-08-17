@@ -19,6 +19,50 @@ class VideoRepositories
     }
 
     /**
+     * 获取视频数据
+     * @param $search_arr
+     * @return mixed
+     */
+    public function GetVideoData($search_arr)
+    {
+        $query = DB::table('video_list');
+        $query->where(function ($query) use ($search_arr){
+            foreach($search_arr as $key=>$search){
+                switch ($key){
+                    case 'video_title':
+                        $query->where('video_list.video_title', 'like', '%'.$search.'%');
+                        break;
+                    case 'is_recommend':
+                        $query->where('video_list.is_recommend', '=', $search);
+                        break;
+                }
+            }
+        })->where('is_check', '=', 1);
+
+        if(!empty($search_arr['add_time'])){
+            $query->orderby('video_list.add_time', $search_arr['add_time']);
+        }
+
+        if(!empty($search_arr['favorite_num'])){
+            $query->orderby('video_list.favorite_num', $search_arr['add_time']);
+        }
+
+        if(!empty($search_arr['favorite_num'])){
+            $query->orderby('video_list.favorite_num', $search_arr['favorite_num']);
+        }
+
+        if(!empty($search_arr['reply_num'])){
+            $query->orderby('video_list.reply_num', $search_arr['reply_num']);
+        }
+
+        if(!empty($search_arr['play_num'])){
+            $query->orderby('video_list.play_num', $search_arr['play_num']);
+        }
+        $query->leftjoin('users', 'video_list.user_id', '=', 'users.id')->leftjoin('users_detail', 'users.id', '=', 'users_detail.user_id');
+
+        return $query->paginate(6, ['video_list.id as video_id', 'video_list.*', 'users.*', 'users_detail.*'])->toarray();
+    }
+    /**
      * @param $uid
      * @param $page
      * @return mixed
@@ -91,15 +135,7 @@ class VideoRepositories
 
 
 
-    /**
-     * 获取支持最多的额
-     * @return mixed
-     */
-    public function GetVideoSupportRankData()
-    {
-        return DB::table($this->table_name)->where('favorite_num', '>', 0)->
-        orderBy('favorite_num', 'desc')->paginate(20)->toarray();
-    }
+
 
     /**
      * 获取喜欢的视频列表
@@ -112,51 +148,7 @@ class VideoRepositories
         where('video_favorite_list.user_id', '=', $user_id)->orderby('video_favorite_list.add_time', 'desc')->paginate($page_size)->toarray();
     }
 
-    /**
-     *最新上传
-     * @param $page_size
-     * @return mixed
-     */
-    public function GetNewUploadRankList($page_size = 6)
-    {
-        return DB::table('video_list')->where(['is_check'=>1])
-            ->orderBy('add_time', 'desc')->paginate($page_size)->toarray();
-    }
 
-    /**
-     * 播放次数最多
-     * @param $page_size
-     * @return mixed
-     */
-    public function GetPlayVideoRankList($page_size = 6)
-    {
-        return DB::table('video_list')->where(['is_check'=>1])
-            ->orderBy('play_num', 'desc')->paginate($page_size)->toarray();
-    }
-
-    /**
-     * 评论次数排行
-     * @param $page_size
-     * @return mixed
-     */
-    public function GetDiscussVideoRankList($page_size = 6)
-    {
-
-        return DB::table('video_list')->where(['is_check'=>1])
-            ->orderBy('reply_num', 'desc')->paginate($page_size)->toarray();
-    }
-
-    /**
-     * 评论次数排行
-     * @param $page_size
-     * @return mixed
-     */
-    public function GetRecommendVideoRankData($page_size = 6)
-    {
-
-        return DB::table('video_list')->where(['is_check'=>1])
-            ->orderBy('is_recommend', 'desc')->paginate($page_size)->toarray();
-    }
 
     /**
      * 获取我的作品列表
@@ -167,6 +159,11 @@ class VideoRepositories
     {
         return DB::table('video_list')->where(['is_check'=>1, 'user_id'=>$user_id])
             ->orderBy('add_time', 'desc')->paginate($page_size)->toarray();
+    }
+
+    public function GetSearchVideoList()
+    {
+
     }
 
 }
