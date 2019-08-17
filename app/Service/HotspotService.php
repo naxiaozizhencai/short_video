@@ -86,6 +86,117 @@ class HotspotService
         return $data;
     }
 
+    /**
+     * 最新上传
+     * @return mixed
+     */
+    public function NewUploadRankData()
+    {
+        $result = $this->videoRepositories->GetNewUploadRankList();
+
+        if(empty($result['data'])){
+            return ['code'=>200, 'data'=>[]];
+        }
+
+        $data = ['code'=>200];
+        foreach($result['data'] as $key=>$value){
+            $temp_data = [];
+            $temp_data['rank'] = $key;
+            $temp_data['video_id'] = $value;
+            $temp_data['user_id'] = $value->user_id;
+            $temp_data['video_id'] = $value->id;
+            $temp_data['support_num'] = $value->favorite_num;
+            $temp_data['video_title'] = $value->video_title;
+            $temp_data['video_image'] = $value->video_image;
+            $data['data']['rank_list'][] = $temp_data;
+        }
+        return $data;
+    }
+
+    /**
+     * 播放次数最多
+     * @return mixed
+     */
+    public function PlayVideoRankData()
+    {
+        $result = $this->videoRepositories->GetPlayVideoRankList();
+
+        if(empty($result['data'])){
+            return ['code'=>200, 'data'=>[]];
+        }
+
+        $data = ['code'=>200];
+        foreach($result['data'] as $key=>$value){
+            $temp_data = [];
+            $temp_data['rank'] = $key;
+            $temp_data['video_id'] = $value;
+            $temp_data['user_id'] = $value->user_id;
+            $temp_data['video_id'] = $value->id;
+            $temp_data['support_num'] = $value->favorite_num;
+            $temp_data['video_title'] = $value->video_title;
+            $temp_data['video_image'] = $value->video_image;
+            $data['data']['rank_list'][] = $temp_data;
+        }
+        return $data;
+    }
+
+    /**
+     * 评论最多
+     * @return mixed
+     */
+    public function DiscussVideoRankData()
+    {
+        $result = $this->videoRepositories->GetDiscussVideoRankList();
+
+        if(empty($result['data'])){
+            return ['code'=>200, 'data'=>[]];
+        }
+
+        $data = ['code'=>200];
+        foreach($result['data'] as $key=>$value){
+            $temp_data = [];
+            $temp_data['rank'] = $key;
+            $temp_data['video_id'] = $value;
+            $temp_data['user_id'] = $value->user_id;
+            $temp_data['video_id'] = $value->id;
+            $temp_data['support_num'] = $value->favorite_num;
+            $temp_data['video_title'] = $value->video_title;
+            $temp_data['video_image'] = $value->video_image;
+            $data['data']['rank_list'][] = $temp_data;
+        }
+        return $data;
+    }
+
+    /**
+     * 推荐
+     * @return mixed
+     */
+    public function RecommendVideoRankData()
+    {
+        $result = $this->videoRepositories->GetRecommendVideoRankData();
+
+        if(empty($result['data'])){
+            return ['code'=>200, 'data'=>[]];
+        }
+
+        $data = ['code'=>200];
+        foreach($result['data'] as $key=>$value){
+            $temp_data = [];
+            $temp_data['rank'] = $key;
+            $temp_data['video_id'] = $value;
+            $temp_data['user_id'] = $value->user_id;
+            $temp_data['video_id'] = $value->id;
+            $temp_data['support_num'] = $value->favorite_num;
+            $temp_data['video_title'] = $value->video_title;
+            $temp_data['video_image'] = $value->video_image;
+            $data['data']['rank_list'][] = $temp_data;
+        }
+        return $data;
+    }
+
+
+
+
 
 
 

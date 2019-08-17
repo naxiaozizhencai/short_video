@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\FavoriteRepositories;
 use App\Service\VideoService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class VideoController extends Controller
 {
@@ -96,7 +94,8 @@ class VideoController extends Controller
     }
 
     /**
-     * 喜欢这条评论
+     * 取消喜欢这条评论
+     * @return \Illuminate\Http\JsonResponse
      */
     public function CancelFavorDiscuss()
     {
@@ -132,4 +131,13 @@ class VideoController extends Controller
        $data = $this->videoService->UploadVideo();
         return response()->json($data);
     }
+
+    /**
+     * 分享这条视频
+     */
+    public function ShareVideo()
+    {
+
+    }
+
 }

@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Service\HotspotService;
+use App\Service\VideoService;
 
 class HotspotController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
+     * @var HotspotService
      */
     protected $hotspotService;
-    public function __construct(HotspotService $hotspotService)
+    protected $videoService;
+    public function __construct(HotspotService $hotspotService, VideoService $videoService)
     {
          $this->hotspotService = $hotspotService;
     }
@@ -53,7 +53,8 @@ class HotspotController extends Controller
      */
     public function NewUploadRank()
     {
-
+        $data = $this->hotspotService->NewUploadRankData();
+        return response()->json($data);
     }
 
     /**
@@ -61,7 +62,8 @@ class HotspotController extends Controller
      */
     public function PlayVideoRank()
     {
-
+        $data = $this->hotspotService->PlayVideoRankData();
+        return response()->json($data);
     }
 
     /**
@@ -69,7 +71,17 @@ class HotspotController extends Controller
      */
     public function DiscussVideoRank()
     {
+        $data = $this->hotspotService->DiscussVideoRankData();
+        return response()->json($data);
+    }
 
+    /**
+     * 官方推荐
+     */
+    public function RecommendVideoRank()
+    {
+        $data = $this->hotspotService->RecommendVideoRankData();
+        return response()->json($data);
     }
 
 

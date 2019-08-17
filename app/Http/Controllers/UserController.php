@@ -20,7 +20,11 @@ class UserController extends BaseController
 
     }
 
-
+    /**
+     * 查看用户信息
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function UserInfo(Request $request)
     {
         $data = $this->usersService->UserInfo();
@@ -88,7 +92,8 @@ class UserController extends BaseController
      */
     public function FansList()
     {
-
+        $data = $this->usersService->FansList();
+        return response()->json($data);
     }
 
     /**
@@ -153,6 +158,23 @@ class UserController extends BaseController
         $data = $this->usersService->AddPopularNum();
         return response()->json($data);
     }
+
+    /**
+     * 分享自己
+     */
+    public function UserShare()
+    {
+
+    }
+
+    /**
+     * 分享记录
+     */
+    public function ShareList()
+    {
+
+    }
+
 
 
 

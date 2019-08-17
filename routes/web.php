@@ -41,6 +41,7 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
     $router->post('dofollow', 'UserController@DoFollow');
     $router->post('cancelfollow', 'UserController@CancelFollow');
     $router->post('followlist', 'UserController@FollowList');
+    $router->post('fanslist', 'UserController@FansList');
     $router->post('userinfo', 'UserController@UserInfo');
     $router->post('updateuserinfo', 'UserController@UpdateUsersInfo');
     $router->get('favorvideolist', 'UserController@UserFavoriteList');

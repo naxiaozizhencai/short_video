@@ -189,7 +189,15 @@ class UsersService
         $sex = $request->input('sex', '');
         $birthday = $request->input('birthday', '');
         $city = $request->input('city', '');
+        $avatar = $request->file('avatar', '');
         $update_data = [];
+
+        if ($avatar->isValid()) {
+            $dir = env("UPLOAD_DIR");
+            $avatar_name = time().rand(0, 1000).'.'.$avatar->guessExtension();
+            $avatar->move($dir, $avatar_name);
+            $update_data['avatar'] = $avatar_name;
+        }
 
         if(!empty($sign)){
             $update_data['sign'] = $sign;
@@ -431,6 +439,31 @@ class UsersService
         return $data;
     }
 
+    public function FansList()
+    {
+
+        $user_id = Auth::id();
+        $follow_data = $this->fansRepositories->GetUsersFlowFans($user_id);
+
+        if(empty($follow_data['data'])){
+            return ['code'=>200, 'data'=>[]];
+        }
+
+        foreach($follow_data['data'] as $key=>$value) {
+            $temp_data = [];
+            $temp_data['user_id'] = $value->id;
+            $temp_data['vip_level'] = $value->vip_level;
+            $temp_data['username'] = $value->username;
+            $temp_data['avatar'] = $value->avatar;
+            $data['data']['follow_data'][] = $temp_data;
+        }
+
+        unset($follow_data['data']);
+        $data['page'] = $follow_data;
+        return $data;
+    }
+
+
     /**
      * 获取用户详情
      */
@@ -482,7 +515,7 @@ class UsersService
             $temp_data['video_id'] = $value;
             $temp_data['user_id'] = $value->user_id;
             $temp_data['video_id'] = $value->id;
-            $temp_data['support_num'] = $value->favorite_num;
+            $temp_data['favorite_num'] = $value->favorite_num;
             $temp_data['video_title'] = $value->video_title;
             $temp_data['video_image'] = $value->video_image;
             $data['data']['video_list'][] = $temp_data;
@@ -512,7 +545,7 @@ class UsersService
             $temp_data['video_id'] = $value;
             $temp_data['user_id'] = $value->user_id;
             $temp_data['video_id'] = $value->id;
-            $temp_data['support_num'] = $value->favorite_num;
+            $temp_data['favorite_num'] = $value->favorite_num;
             $temp_data['video_title'] = $value->video_title;
             $temp_data['video_image'] = $value->video_image;
             $data['data']['video_list'][] = $temp_data;

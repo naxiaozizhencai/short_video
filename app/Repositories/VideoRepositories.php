@@ -113,6 +113,52 @@ class VideoRepositories
     }
 
     /**
+     *最新上传
+     * @param $page_size
+     * @return mixed
+     */
+    public function GetNewUploadRankList($page_size = 6)
+    {
+        return DB::table('video_list')->where(['is_check'=>1])
+            ->orderBy('add_time', 'desc')->paginate($page_size)->toarray();
+    }
+
+    /**
+     * 播放次数最多
+     * @param $page_size
+     * @return mixed
+     */
+    public function GetPlayVideoRankList($page_size = 6)
+    {
+        return DB::table('video_list')->where(['is_check'=>1])
+            ->orderBy('play_num', 'desc')->paginate($page_size)->toarray();
+    }
+
+    /**
+     * 评论次数排行
+     * @param $page_size
+     * @return mixed
+     */
+    public function GetDiscussVideoRankList($page_size = 6)
+    {
+
+        return DB::table('video_list')->where(['is_check'=>1])
+            ->orderBy('reply_num', 'desc')->paginate($page_size)->toarray();
+    }
+
+    /**
+     * 评论次数排行
+     * @param $page_size
+     * @return mixed
+     */
+    public function GetRecommendVideoRankData($page_size = 6)
+    {
+
+        return DB::table('video_list')->where(['is_check'=>1])
+            ->orderBy('is_recommend', 'desc')->paginate($page_size)->toarray();
+    }
+
+    /**
      * 获取我的作品列表
      * @param $user_id
      * @return mixed
