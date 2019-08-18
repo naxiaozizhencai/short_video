@@ -153,35 +153,15 @@ class UsersRepositories
      * @param $uuid
      * @return bool
      */
-    public function InsertUser($uuid)
+    public function InsertUser($user_data)
     {
 
+        return DB::table("users")->insertGetId($user_data);
+    }
 
-        $userId = DB::table("users")->insertGetId(
-            [
-
-                'uuid'=>$uuid,
-                'username'=>'游客账号_' . rand(100000000, 9999999999),
-                'vip_level'=>0,
-                'is_phone_login'=>0,
-                'add_time'=>date('Y-m-d H:i:s'),
-            ]
-        );
-
-        if($userId > 0){
-            $userDetailId = DB::table('users_detail')->insertGetId(
-                [
-                    'avatar'=>'a.png',
-                    'user_id' =>$userId,
-                    'avatar'=>'a.png',
-                    'city'=>'深圳',
-                    'popular_num'=>randomString(),
-                    'add_time'=>date('Y-m-d H:i:s'),
-                ]
-            );
-        }
-
-        return true;
+    public function InsertUserDetail($user_detail)
+    {
+        return DB::table('users_detail')->insertGetId($user_detail);
     }
 
     /**

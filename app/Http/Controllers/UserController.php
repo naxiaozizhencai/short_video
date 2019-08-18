@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Service\UsersService;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class UserController extends BaseController
 {
@@ -162,8 +163,10 @@ class UserController extends BaseController
     /**
      * 分享自己
      */
-    public function UserShare()
+    public function UserShare(Request $request)
     {
+        $data = $this->usersService->UserShareData($request);
+        return response()->json($data);
 
     }
 
@@ -172,7 +175,8 @@ class UserController extends BaseController
      */
     public function ShareList()
     {
-
+        $data = $this->usersService->ShareList();
+        return response()->json($data);
     }
 
 

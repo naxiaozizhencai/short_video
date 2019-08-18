@@ -6,8 +6,10 @@ use App\Repositories\UsersDetailRepositories;
 use App\Repositories\UsersFansRepositories;
 use App\Repositories\UsersRepositories;
 use App\Repositories\VideoRepositories;
-use http\Env\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 class UsersService
 {
 
@@ -39,7 +41,30 @@ class UsersService
         $userData = $this->UsersRepositories->GetUserDataByUuid($uuid);
 
         if(empty($userData)){
-            $this->UsersRepositories->InsertUser($uuid);
+            $user_data = [
+                'uuid'=>$uuid,
+                'username'=>'游客账号_' . rand(100000000, 9999999999),
+                'vip_level'=>0,
+                'is_phone_login'=>0,
+                'add_time'=>date('Y-m-d H:i:s'),
+            ];
+            $userId = $this->UsersRepositories->InsertUser($user_data);
+            $popular_num = randomString();
+            $user_detail = [
+                'avatar'=>'a.png',
+                'user_id' =>$userId,
+                'avatar'=>'a.png',
+                'city'=>'深圳',
+                'popular_num'=>$popular_num,
+                'add_time'=>date('Y-m-d H:i:s'),
+            ];
+
+            $userId = $this->UsersRepositories->InsertUserDetail($user_detail);
+            //生成二维码
+            $dir = env("QRCODE_DIR");
+
+            $qr_name = $dir . $popular_num . '.png';
+            file_put_contents($qr_name, QrCode::format('png')->size(253)->generate($popular_num));
             $userData = $this->UsersRepositories->GetUserDataByUuid($uuid);
         }
 
@@ -58,7 +83,6 @@ class UsersService
             $data['coin_num'] = $userDetail->coin_num;
             $data['viewed_times'] = $userDetail->coin_num;
         }
-
 
         $user_info = $this->UsersRepositories->GetAuthUserData($uuid);
         $token_data = [];
@@ -586,6 +610,32 @@ class UsersService
         $data['page'] = $user_data;
         return $data;
 
+    }
+
+    /**
+     * 用户分享数据
+     */
+    public function UserShareData($request)
+    {
+        $user_id = Auth::id();
+        $user_data = $this->UsersRepositories->getUserInfoById($user_id);
+        $data = ['code'=>200, 'data'=>[]];
+
+        if(empty($user_data)){
+            return ['code'=>-1, 'msg'=>'用户不存在'];
+        }
+
+        $share_data['popular_num'] = $user_data->popular_num;
+        $share_data['share_url'] = ' https://aff.91porn005.me/aff/' . $user_data->popular_num;
+        $share_data['qrcode'] = $request->getHttpHost(). '/qrcode/' . $user_data->popular_num . '.png';
+        $data['data']['share_data'] = $share_data;
+        return $data;
+
+    }
+
+    public function ShareList()
+    {
+        return [];
     }
 
 

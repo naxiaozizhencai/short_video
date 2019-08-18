@@ -17,6 +17,7 @@ $router->get('/', function () use ($router) {
 
 $router->post('user/postLogin', 'AuthController@postLogin');
 $router->post('login', 'LoginController@Login');
+$router->get('qr', 'UserController@UserShare');
 
 $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($router){
 
@@ -47,6 +48,7 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
     $router->get('favorvideolist', 'UserController@UserFavoriteList');
     $router->get('uservideolist', 'UserController@UserVideoList');
     $router->get('uservideolist', 'UserController@UserVideoList');
+    $router->get('share', 'UserController@UserShare');
 
 
     $router->post('searchusers', 'SearchController@SearchUsers');
