@@ -125,21 +125,6 @@ class UserController extends BaseController
     }
 
 
-    /**
-     * 被贊列表
-     */
-    public function SupportList()
-    {
-
-    }
-
-    /**
-     * 被贊列表
-     */
-    public function CancelSupport()
-    {
-
-    }
 
     /**
      * 更新用户信息

@@ -109,25 +109,6 @@ class VideoController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * 搜索列表
-     */
-    public function SearchList()
-    {
-        $data = [
-            'code'=>200,
-            'data'=>[
-                'list'=>[[
-                    'rank'=>'',
-                    'video_id'=>'',
-                    'support_num'=>'',
-                    'video_title'=>'',
-                    'video_image'=>'',
-                ]],
-
-            ],
-        ];
-    }
 
     /**
      * 上传视频
