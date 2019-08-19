@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Service\UsersService;
-use Tymon\JWTAuth\JWT;
-use Tymon\JWTAuth\JWTAuth;
-
 class LoginController extends BaseController
 {
 

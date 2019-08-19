@@ -72,6 +72,24 @@ class VideoService
     }
 
     /**
+     * 增加播放次數
+     * @param $request
+     * @return array
+     */
+    public function IncrPlayNum($request)
+    {
+        $video_id = $request->input('video_id');
+
+        $video_data = $this->videoRepositories->getVideoById($video_id);
+
+        if(empty($video_data)){
+            return ['code'=>-1, 'msg'=>'視頻數據不存在'];
+        }
+
+        $this->videoRepositories->IncrVideoNum($video_id, 'play_num', 1);
+        return ['code'=>200, 'msg'=>'操作成功'];
+    }
+    /**
      *随机返回一个
      * @return array
      */

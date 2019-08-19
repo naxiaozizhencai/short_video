@@ -31,6 +31,7 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
 
     //视频列表
     $router->get('video', 'VideoController@ViewVideo');//获取视频列表
+    $router->post('incrplaynum', 'VideoController@IncrPlayNum');//增加視頻播放次數
     $router->get('followvideo', 'VideoController@FollowViewVideo');//获取关注视频列表
     $router->post('favorite', 'VideoController@DoFavorite');//喜爱这个视频
     $router->post('cancelfavorite', 'VideoController@CancelFavorite');//取消喜欢

@@ -25,12 +25,22 @@ class VideoController extends Controller
 
     }*/
 
+    /**
+     * 返回視頻列表
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function ViewVideo(Request $request)
     {
         $data = $this->videoService->ViewVideo($request);
         return response()->json($data);
     }
 
+    public function IncrPlayNum(Request $request)
+    {
+        $data = $this->videoService->IncrPlayNum($request);
+        return response()->json($data);
+    }
     /**
      * 观看关注视频
      * @return \Illuminate\Http\JsonResponse
@@ -41,14 +51,18 @@ class VideoController extends Controller
         return response()->json($data);
     }
 
-
-
+    /**
+     * 點擊喜歡
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function DoFavorite(Request $request)
     {
 
         $data = $this->videoService->DoFavorite($request);
         return response()->json($data);
     }
+
 
     public function CancelFavorite(Request $request)
     {
