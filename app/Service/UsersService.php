@@ -85,8 +85,9 @@ class UsersService
 
             $userId = $this->UsersRepositories->InsertUser($user_data);
             $popular_num = randomString();
+            $avatar = env("AVATAR_DIR") . rand(1, 10) . '.png';
             $user_detail = [
-                'avatar'=>'a.png',
+                'avatar'=>$avatar,
                 'user_id' =>$userId,
                 'city'=>'',
                 'popular_num'=>$popular_num,
