@@ -445,6 +445,7 @@ class VideoService
      */
     public function UploadVideo()
     {
+
         $title = app('request')->input('title');
         $video_image = app('request')->file('video_image');
         $video = app('request')->file('video');
@@ -460,6 +461,7 @@ class VideoService
         }
 
         $dir = env("UPLOAD_DIR");
+        $upload_url = env("UPLOAD_URL");
 
         $video_image_name = time().rand(0, 1000).'.'.$video_image->guessExtension();
         $video_image->move($dir, $video_image_name);
@@ -471,8 +473,8 @@ class VideoService
         $user_id = Auth::id();
         $video_data['user_id'] = $user_id;
         $video_data['video_title'] = $title;
-        $video_data['video_image'] = $video_image_name;
-        $video_data['video_url'] = $video_name;
+        $video_data['video_image'] = $upload_url . $video_image_name;
+        $video_data['video_url'] = $upload_url  . $video_name;
         $video_data['video_label'] = $video_label;
         $video_data['add_time'] = date('Y-m-d H:i:s');
         $this->videoRepositories->InsertVideo($video_data);
