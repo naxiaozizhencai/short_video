@@ -70,6 +70,9 @@ class UsersService
      */
     public function Login($uuid)
     {
+        if(empty($uuid)){
+            return ['code'=>-1, 'msg'=>'参数不能为空'];
+        }
 
         $userData = $this->UsersRepositories->GetUserDataByUuid($uuid);
 
