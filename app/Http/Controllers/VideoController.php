@@ -129,7 +129,13 @@ class VideoController extends Controller
      */
     public function UploadVideo()
     {
-       $data = $this->videoService->UploadVideo();
+        $data = $this->videoService->UploadVideo();
+        return response()->json($data);
+    }
+
+    public function Upload()
+    {
+        $data = $this->videoService->Upload();
         return response()->json($data);
     }
 
