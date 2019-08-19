@@ -94,8 +94,16 @@ class UsersService
                 'add_time'=>date('Y-m-d H:i:s'),
             ];
 
-            $userId = $this->UsersRepositories->InsertUserDetail($user_detail);
+            $user_detail_id = $this->UsersRepositories->InsertUserDetail($user_detail);
             //生成二维码
+            //实例化观看次数
+            $temp_data = [];
+            $temp_data['user_id'] = $userId;
+            $temp_data['temp_key'] = 'play_video_times';
+            $temp_data['temp_value'] = 0;
+            $insert_temp_data = $temp_data;
+            $insert_temp_data['add_time'] = date('Y-m-d H:i:s');
+            $this->tempDataRepositories->UpateOrInsertTempData($temp_data, $insert_temp_data);
             $qr_name =  env("QRCODE_DIR") . $popular_num . '.png';
             file_put_contents($qr_name, QrCode::format('png')->size(253)->generate($popular_num));
             $userData = $this->UsersRepositories->GetUserDataByUuid($uuid);
