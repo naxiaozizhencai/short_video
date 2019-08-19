@@ -119,14 +119,16 @@ class UsersService
         $data['phone'] = $userData->phone;
         $data['is_phone_login'] = $userData->is_phone_login;
         $data['vip_expired_time'] = $userData->vip_expired_time;
-        $data['viewed_times'] = 0;
-        $data['total_viewed_times'] = 10;
+        $play_video_times_data = $this->tempDataRepositories->GetValue($userData->id, 'play_video_times');
+        $data['viewed_times'] = empty($play_video_times_data) ? 0 : $play_video_times_data->temp_value;
+        $total_viewed_times_data = $this->tempDataRepositories->GetValue($userData->id, 'total_viewed_times');
+        $data['total_viewed_times'] = empty($total_viewed_times_data) ? 10 :$total_viewed_times_data->temp_value;
         $data['viewed_times'] = 0;
 
         $user_info = $this->UsersRepositories->GetAuthUserData($uuid);
         $token_data = [];
         if (!$token = Auth::login($user_info, true)) {
-            $resultData['code']     = 5000;
+            $resultData['code']     = -1;
             $resultData['msg'] = '系统错误，无法生成令牌';
         } else {
             $token_data['user_id']      = intval($user_info->id);
