@@ -27,6 +27,7 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
     $router->post('sendcode', 'LoginController@SendCode');//发送手机验证码
     $router->post('forgetpasswd', 'LoginController@ForgetPassword');//忘记密码
     $router->get('logout', 'LoginController@Logout');//注销登录
+    $router->post('refreshtoken', 'LoginController@RefreshToken');//刷新token
 
     //视频列表
     $router->get('video', 'VideoController@ViewVideo');//获取视频列表

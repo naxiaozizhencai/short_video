@@ -6,7 +6,6 @@ use App\Repositories\UsersDetailRepositories;
 use App\Repositories\UsersFansRepositories;
 use App\Repositories\UsersRepositories;
 use App\Repositories\VideoRepositories;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -18,6 +17,7 @@ class UsersService
     protected $fansRepositories;
     protected $tempDataRepositories;
     protected $videoRepositories;
+
     public function __construct(UsersRepositories $UsersRepositories, UsersDetailRepositories $usersDetailRepositories,
                                 PopularListRepositories $popularListRepositories,UsersFansRepositories $fansRepositories,
                                 TempDataRepositories $tempDataRepositories, VideoRepositories $videoRepositories)
@@ -30,7 +30,39 @@ class UsersService
         $this->videoRepositories = $videoRepositories;
     }
 
-    public function Refre
+    /**
+     * 刷新token
+     * @return array
+     */
+    public function DoRefreshToken()
+    {
+
+        $user_id = Auth::id();
+        $userData = $this->UsersRepositories->getUserInfoById($user_id);
+        $resultData = ['code'=>200, 'data'=>[]];
+        $data['user_id'] = $userData->id;
+        $data['uuid'] = $userData->uuid;
+        $data['vip_level'] = $userData->vip_level;
+        $data['is_phone_login'] = $userData->is_phone_login;
+        $data['vip_expired_time'] = $userData->vip_expired_time;
+        $data['viewed_times'] = 0;
+        $data['total_viewed_times'] = 10;
+        $data['viewed_times'] = 0;
+        $token_data = [];
+        if (!$token = Auth::refresh()) {
+            $resultData['code']     = 5000;
+            $resultData['msg'] = '系统错误，无法生成令牌';
+        } else {
+            $token_data['user_id']      = intval($userData->id);
+            $token_data['access_token'] = $token;
+            $token_data['expires_in']   = strval(time() + 3600);
+        }
+
+        $resultData['data']['user_data'] = $data;
+        $resultData['data']['token_data'] = $token_data;
+        return $resultData;
+    }
+
     /**
      * 匿名登录
      * @param $uuid
@@ -56,7 +88,7 @@ class UsersService
             $user_detail = [
                 'avatar'=>'a.png',
                 'user_id' =>$userId,
-                'city'=>'深圳',
+                'city'=>'',
                 'popular_num'=>$popular_num,
                 'add_time'=>date('Y-m-d H:i:s'),
             ];
@@ -76,15 +108,9 @@ class UsersService
         $data['vip_level'] = $userData->vip_level;
         $data['is_phone_login'] = $userData->is_phone_login;
         $data['vip_expired_time'] = $userData->vip_expired_time;
-        $userDetail = $this->UsersDetailRepositories->GetUserDetailByUid($userData->id);
-        $data['coin_num'] = 0;
         $data['viewed_times'] = 0;
         $data['total_viewed_times'] = 10;
-
-        if(!empty($userDetail)){
-            $data['coin_num'] = $userDetail->coin_num;
-            $data['viewed_times'] = $userDetail->coin_num;
-        }
+        $data['viewed_times'] = 0;
 
         $user_info = $this->UsersRepositories->GetAuthUserData($uuid);
         $token_data = [];
@@ -92,7 +118,7 @@ class UsersService
             $resultData['code']     = 5000;
             $resultData['msg'] = '系统错误，无法生成令牌';
         } else {
-            $token_data['user_id']      = strval($user_info->id);
+            $token_data['user_id']      = intval($user_info->id);
             $token_data['access_token'] = $token;
             $token_data['expires_in']   = strval(time() + 86400);
         }

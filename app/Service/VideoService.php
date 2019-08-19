@@ -34,10 +34,13 @@ class VideoService
         $this->discussReportRepositories = $discussReportRepositories;
     }
 
+    /**
+     * 观看视频
+     * @param $request
+     * @return array
+     */
     public function ViewVideo($request)
     {
-
-
         $result = $this->videoRepositories->GetVideoData($request->toarray());
 
         if(empty($result['data'])){
@@ -45,11 +48,11 @@ class VideoService
         }
 
         foreach($result['data'] as $key=>$value){
+
             $video_data['video_id'] = $value->video_id;
             $video_data['video_user_avatar'] = $value->avatar;
             $video_data['video_user_id'] = $value->user_id;
             $video_data['video_vip_level'] = $value->vip_level;
-            $video_data['vip_expired_time'] = $value->vip_expired_time;
             $video_data['video_username'] = $value->username;
             $video_data['video_title'] = $value->video_title;
             $video_data['video_image'] = $value->video_image;
@@ -67,6 +70,7 @@ class VideoService
 
         return $data;
     }
+
     /**
      *随机返回一个
      * @return array
@@ -119,6 +123,7 @@ class VideoService
 
         return $data;
     }
+
 
     /**
      * 观看关注视频

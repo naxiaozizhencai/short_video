@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Service\UsersService;
+use Tymon\JWTAuth\JWT;
+use Tymon\JWTAuth\JWTAuth;
+
 class LoginController extends BaseController
 {
 
@@ -13,6 +16,16 @@ class LoginController extends BaseController
         $this->UsersService = $UsersService;
 //        $this->middleware('jwt.auth', ['except' => ['login']]);
     }
+
+    /**
+     * 刷新token
+     */
+    public function RefreshToken()
+    {
+        $data = $this->UsersService->DoRefreshToken();
+        return response()->json($data);
+    }
+
 
     /**
      * @param Request $request
