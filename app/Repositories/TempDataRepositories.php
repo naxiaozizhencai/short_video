@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\DB;
 
 class TempDataRepositories
 {
+    protected $table_name = 'temp_data';
+
     public function GetValue($user_id, $key)
     {
         return DB::selectOne("select * from temp_data where user_id = ? AND temp_key = ?", [$user_id, $key]);
@@ -15,6 +17,16 @@ class TempDataRepositories
         return DB::update('update temp_data set temp_value = ?  where user_id=? AND temp_key = ? ', [0, $user_id, $key]);
     }
 
+    /**
+     * 更新或者插入
+     * @param $attributes
+     * @param $values
+     * @return bool
+     */
+    public function UpateOrInsertTempData($attributes, $values)
+    {
+       return  DB::table($this->table_name)->updateOrInsert($attributes, $values);
+    }
     /**
      * 更新自己看的数值
      * @param $user_id

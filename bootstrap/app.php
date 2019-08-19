@@ -28,6 +28,7 @@ $app = new Laravel\Lumen\Application(
 
 $app->withFacades(true, [
         'Tymon\JWTAuth\Facades\JWTAuth' => 'JWTAuth',
+        'SimpleSoftwareIO\QrCode\Facades\QrCode::class' => 'QrCode',
         'Tymon\JWTAuth\Facades\JWTFactory' => 'JWTFactory',
     ]
 );
@@ -87,6 +88,7 @@ $app->singleton(
 // $app->register(App\Providers\EventServiceProvider::class);
  $app->register(\Tymon\JWTAuth\Providers\LumenServiceProvider::class);
  $app->register(Wn\Generators\CommandsServiceProvider::class);
+ $app->register(SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

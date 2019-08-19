@@ -6,40 +6,90 @@ use Illuminate\Support\Facades\DB;
 class VideoRepositories
 {
 
+    protected $table_name = 'video_list';
     protected $tempDataRepositories;
     public function __construct(TempDataRepositories $tempDataRepositories)
     {
         $this->tempDataRepositories = $tempDataRepositories;
     }
 
-    /**
-     *
-     * @param $view_max_id
-     * @return array
-     */
-    public function getViewVideoData($user_id)
+    public function InsertVideo($data)
     {
-        $temp_data = $this->tempDataRepositories->GetValue($user_id, 'view_max_id');
-        $view_max_id = 0;
-
-        if(!empty($temp_data)){
-            $view_max_id = $temp_data->temp_value;
-        }
-
-        $max_id = $this->GetMaxVideoId();
-
-        if($view_max_id >= $max_id){
-            $view_max_id = 0;
-            $this->tempDataRepositories->ClearValue($user_id, 'view_max_id');
-        }
-
-        $video_data = DB::selectOne('select video_list.*, users_detail.avatar from video_list left JOIN users_detail ON video_list.user_id=users_detail.id WHERE video_list.id > ? AND is_check=1 limit 1', [$view_max_id]);
-        if(empty($video_data)){
-            return [];
-        }
-
-        return $video_data;
+        return DB::table($this->table_name)->insertGetId($data);
     }
+
+    /**
+     * 获取视频数据
+     * @param $search_arr
+     * @return mixed
+     */
+    public function GetVideoData($search_arr)
+    {
+        $query = DB::table('video_list');
+        $query->where(function ($query) use ($search_arr){
+            foreach($search_arr as $key=>$search){
+                switch ($key){
+                    case 'video_title':
+                        $query->where('video_list.video_title', 'like', '%'.$search.'%');
+                        break;
+                        case 'user_id':
+                        $query->where('video_list.user_id', 'like', '%'.$search.'%');
+                        break;
+                    case 'is_recommend':
+                        $query->where('video_list.is_recommend', '=', $search);
+                        break;
+                }
+            }
+        })->where('is_check', '=', 1);
+
+        if(!empty($search_arr['add_time'])){
+            $query->orderby('video_list.add_time', $search_arr['add_time']);
+        }
+
+        if(!empty($search_arr['favorite_num'])){
+            $query->orderby('video_list.favorite_num', $search_arr['add_time']);
+        }
+
+        if(!empty($search_arr['favorite_num'])){
+            $query->orderby('video_list.favorite_num', $search_arr['favorite_num']);
+        }
+
+        if(!empty($search_arr['reply_num'])){
+            $query->orderby('video_list.reply_num', $search_arr['reply_num']);
+        }
+
+        if(!empty($search_arr['play_num'])){
+            $query->orderby('video_list.play_num', $search_arr['play_num']);
+        }
+        $query->leftjoin('users', 'video_list.user_id', '=', 'users.id')->leftjoin('users_detail', 'users.id', '=', 'users_detail.user_id');
+
+        return $query->paginate(6, ['video_list.id as video_id', 'video_list.*', 'users.*', 'users_detail.*'])->toarray();
+    }
+    /**
+     * @param $uid
+     * @param $page
+     * @return mixed
+     */
+    public function getViewVideoData($uid, $page)
+    {
+        return DB::table('video_list')->where(['is_check'=>1])
+            ->orderBy('add_time', 'desc')->paginate(1, ['*'], 'page', $page)->toarray();
+
+    }
+
+    /**
+     * 获取随机观看视频
+     * @param $uid
+     * @param $page
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function GetFollowVideoData($uid, $page)
+    {
+        return DB::table("users_fans")->leftjoin('video_list', 'users_fans.fans_id', '=', 'video_list.user_id')
+            ->where('users_fans.user_id', '=', $uid)->where('video_list.is_check', '=', 1)->orderby('video_list.add_time', 'desc')
+            ->paginate(1, ['video_list.*',],'page', $page)->toarray();
+    }
+
 
     /**
      * 获取视频目前最大的id
@@ -57,7 +107,7 @@ class VideoRepositories
 
     public function getVideoById($video_id)
     {
-        $video_row = DB::table('video_list')->find($video_id);
+        $video_row = DB::table($this->table_name)->find($video_id);
         if(empty($video_row)){
             return false;
         }
@@ -70,15 +120,46 @@ class VideoRepositories
      * @param int $num
      * @return bool
      */
-    public function IncrVideoFavoriteNum($video_id, $num = 1)
+    public function IncrVideoNum($video_id, $column, $num = 1)
     {
-        $video_row = DB::table('video_list')->find($video_id);
-
-        if(!empty($video_row)){
-            DB::table('video_list')->increment('favorite_number', $num);
-        }
-
-        return true;
-
+        return DB::table('video_list')->where(['id'=>$video_id])->increment($column, $num);
     }
+
+    /**
+     * @param $video_id
+     * @param $column
+     * @param int $num
+     * @return int
+     */
+    public function DecrVideoNum($video_id, $column, $num = 1)
+    {
+        return DB::table('video_list')->where(['id'=>$video_id])->decrement($column, $num);
+    }
+
+
+    /**
+     * 获取喜欢的视频列表
+     * @param $user_id
+     * @return mixed
+     */
+    public function GetFavoriteVideoList($user_id, $page_size = 6)
+    {
+        return DB::table('video_favorite_list')->leftjoin('video_list', 'video_favorite_list.video_id', '=', 'video_list.id')->
+        where('video_favorite_list.user_id', '=', $user_id)->orderby('video_favorite_list.add_time', 'desc')->paginate($page_size)->toarray();
+    }
+
+
+
+    /**
+     * 获取我的作品列表
+     * @param $user_id
+     * @return mixed
+     */
+    public function GetUsersVideoList($user_id, $page_size = 6)
+    {
+        return DB::table('video_list')->where(['is_check'=>1, 'user_id'=>$user_id])
+            ->orderBy('add_time', 'desc')->paginate($page_size)->toarray();
+    }
+
+
 }

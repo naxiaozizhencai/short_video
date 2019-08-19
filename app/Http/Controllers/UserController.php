@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Service\UsersService;
 use Illuminate\Http\Request;
 use Laravel\Lumen\Routing\Controller as BaseController;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class UserController extends BaseController
 {
-    //
-    public function __construct()
+    protected $usersService;
+    public function __construct(UsersService $usersService)
     {
-        $this->middleware('auth:api');
+
+        $this->usersService = $usersService;
     }
 
     public function Index()
@@ -18,38 +21,14 @@ class UserController extends BaseController
 
     }
 
-
-    public function UserDetail(Request $request)
+    /**
+     * 查看用户信息
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function UserInfo(Request $request)
     {
-
-        $data = [];
-        $data['code'] = 200;
-        $data['data'] = [
-            'user_info'=>[
-                'user_id'=>'',
-                'uuid'=>'',
-                'user_name'=>'',
-                'sign'=>'',
-                'sex'=>'',
-                'age'=>'',
-                'city'=>'',
-                'viewed_num'=>'',
-                'total_view_num'=>'',
-                'coin_num'=>'',
-                'fans_num'=>'',
-                'follow_num'=>'',
-                'support_num'=>'',
-            ],
-            'video_list'=>[
-                'id'=>'',
-                'user_id'=>'',
-                'video_image'=>'',
-                'favorite_number'=>'',
-            ],
-
-
-        ];
-
+        $data = $this->usersService->UserInfo();
         return response()->json($data);
 
     }
@@ -86,16 +65,27 @@ class UserController extends BaseController
 
     }
 
-
+    /**
+     * 作品列表
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function UserVideoList(Request $request)
     {
-
+        $data = $this->usersService->UserVideoList($request);
+        return response()->json($data);
     }
 
 
+    /**
+     * 用户喜欢的列表
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function UserFavoriteList(Request $request)
     {
-
+        $data = $this->usersService->UserFavoriteList($request);
+        return response()->json($data);
     }
 
     /**
@@ -103,7 +93,8 @@ class UserController extends BaseController
      */
     public function FansList()
     {
-
+        $data = $this->usersService->FansList();
+        return response()->json($data);
     }
 
     /**
@@ -111,15 +102,8 @@ class UserController extends BaseController
      */
     public function FollowList()
     {
-
-    }
-
-    /**
-     * 取消关注
-     */
-    public function CancelFollow()
-    {
-
+        $data = $this->usersService->FollowList();
+        return response()->json($data);
     }
 
     /**
@@ -127,23 +111,57 @@ class UserController extends BaseController
      */
     public function DoFollow()
     {
+        $data = $this->usersService->DoFollow();
+        return response()->json($data);
+    }
+
+    /**
+     * 取消关注
+     */
+    public function CancelFollow()
+    {
+        $data = $this->usersService->CancelFollow();
+        return response()->json($data);
+    }
+
+
+
+    /**
+     * 更新用户信息
+     */
+    public function UpdateUsersInfo(Request $request)
+    {
+        $data = $this->usersService->UpdateUsersInfo($request);
+        return response()->json($data);
+    }
+
+
+    /**
+     * 填写推广码
+     */
+    public function AddPopularizeNum()
+    {
+        $data = $this->usersService->AddPopularNum();
+        return response()->json($data);
+    }
+
+    /**
+     * 分享自己
+     */
+    public function UserShare(Request $request)
+    {
+        $data = $this->usersService->UserShareData($request);
+        return response()->json($data);
 
     }
 
     /**
-     * 被贊列表
+     * 分享记录
      */
-    public function SupportLsit()
+    public function ShareList()
     {
-
-    }
-
-    /**
-     * 被贊列表
-     */
-    public function CancelSupport()
-    {
-
+        $data = $this->usersService->ShareList();
+        return response()->json($data);
     }
 
 

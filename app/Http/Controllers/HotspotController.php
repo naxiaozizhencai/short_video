@@ -2,35 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Service\HotspotService;
+use App\Service\VideoService;
+use Illuminate\Http\Request;
+
 class HotspotController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
+     * @var HotspotService
      */
-    public function __construct()
+    protected $hotspotService;
+    protected $videoService;
+    public function __construct(HotspotService $hotspotService, VideoService $videoService)
     {
-        //
+         $this->hotspotService = $hotspotService;
     }
 
+    public function VideoRank(Request $request)
+    {
+        $data = $this->hotspotService->VideoRankData($request);
+        return response()->json($data);
+    }
     /**
      * 邀請排行榜
      */
     public function InvitationRank()
     {
-        $data = [
-            'code'=>200,
-            'data'=>[
-                'list'=>[[
-                    'rank'=>'',
-                    'user_id'=>'',
-                    'invitation_num'=>'',
-                    'user_name'=>'',
-                ]],
+        $data = $this->hotspotService->InvitationRankData();
+        return response()->json($data);
 
-            ],
-        ];
     }
 
     /**
@@ -38,36 +38,9 @@ class HotspotController extends Controller
      */
     public function UploadRank()
     {
-        $data = [
-            'code'=>200,
-            'data'=>[
-                'list'=>[[
-                    'rank'=>'',
-                    'user_id'=>'',
-                    'upload_num'=>'',
-                    'user_name'=>'',
-                ]],
+        $data =$this->hotspotService->UploadRankData();
+        return response()->json($data);
 
-            ],
-        ];
     }
-
-    public function SupportRank()
-    {
-        $data = [
-            'code'=>200,
-            'data'=>[
-                'list'=>[[
-                    'rank'=>'',
-                    'video_id'=>'',
-                    'support_num'=>'',
-                    'video_title'=>'',
-                    'video_image'=>'',
-                ]],
-
-            ],
-        ];
-    }
-
 
 }

@@ -1,62 +1,228 @@
 <?php
 namespace App\Service;
+use App\Repositories\DiscussReportRepositories;
+use App\Repositories\DiscussRepositories;
 use App\Repositories\FavoriteRepositories;
+use App\Repositories\ReplyRepositories;
 use App\Repositories\TempDataRepositories;
 use App\Repositories\UsersRepositories;
 use App\Repositories\VideoRepositories;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class VideoService
 {
+
+
     protected $videoRepositories;
     protected $tempDataRepositories;
     protected $favoriteRepositories;
+    protected $discussRepositories;
+    protected $usersRepositories;
+    protected $discussReportRepositories;
     public function __construct(VideoRepositories $videoRepositories,
                                 TempDataRepositories $tempDataRepositories,
-                                FavoriteRepositories $favoriteRepositories)
+                                FavoriteRepositories $favoriteRepositories, DiscussRepositories $discussRepositories,
+                                UsersRepositories $usersRepositories, DiscussReportRepositories $discussReportRepositories
+)
     {
         $this->videoRepositories = $videoRepositories;
         $this->tempDataRepositories = $tempDataRepositories;
         $this->favoriteRepositories = $favoriteRepositories;
+        $this->discussRepositories = $discussRepositories;
+        $this->usersRepositories = $usersRepositories;
+        $this->discussReportRepositories = $discussReportRepositories;
     }
 
+    /**
+     * 观看视频
+     * @param $request
+     * @return array
+     */
+    public function ViewVideo($request)
+    {
+        $result = $this->videoRepositories->GetVideoData($request->toarray());
+
+        if(empty($result['data'])){
+            return ['code'=>200, 'data'=>[]];
+        }
+
+        foreach($result['data'] as $key=>$value){
+
+            $video_data['video_id'] = $value->video_id;
+            $video_data['video_user_avatar'] = $value->avatar;
+            $video_data['video_user_id'] = $value->user_id;
+            $video_data['video_vip_level'] = $value->vip_level;
+            $video_data['video_username'] = $value->username;
+            $video_data['video_title'] = $value->video_title;
+            $video_data['video_image'] = $value->video_image;
+            $video_data['video_url'] = $value->video_url;
+            $video_data['video_label'] = $value->video_label;
+            $video_data['favorite_number'] = $value->favorite_num;
+            $video_data['reply_number'] = $value->reply_num;
+            $data['data']['video_data'][] = $video_data;
+
+        }
+
+        $data['code'] = 200;
+        unset($result['data']);
+        $data['data']['page'] = $result;
+
+        return $data;
+    }
+
+    /**
+     * 增加播放次數
+     * @param $request
+     * @return array
+     */
+    public function PlayVideo($request)
+    {
+        $video_id = $request->input('video_id');
+        $user_id = Auth::id();
+        $video_data = $this->videoRepositories->getVideoById($video_id);
+
+        if(empty($video_data)){
+            return ['code'=>-1, 'msg'=>'視頻數據不存在'];
+        }
+        
+        $this->tempDataRepositories->UpateOrInsertTempData();
+        $this->videoRepositories->IncrVideoNum($video_id, 'play_num', 1);
+        return ['code'=>200, 'msg'=>'操作成功'];
+    }
     /**
      *随机返回一个
      * @return array
      */
-    public function RandViewVideo($uid)
+    public function RandViewVideo()
     {
-        $result = $this->videoRepositories->getViewVideoData($uid);
+        $uid = Auth::id();
+        $page = app('request')->input('page', 0);
 
-        $data = ['code'=>200, 'data'=>[]];
+        $temp_data = $this->tempDataRepositories->GetValue($uid, 'view_max_id');
 
-        $video_data['avatar'] = '';
-        $video_data['video_id'] = '';
-        $video_data['video_user_id'] = '';
-        $video_data['username'] = '';
-        $video_data['video_title'] = '';
-        $video_data['video_image'] = '';
-        $video_data['video_url'] = '';
-        $video_data['video_label'] = '';
-        $video_data['favorite_number'] = '';
-        $video_data['reply_number'] = '';
+        if(!empty($temp_data) && empty($page)){
+            $page = $temp_data->temp_value;
+        }
 
-        $video_data['is_favorite'] = 0;
+        $result = $this->videoRepositories->getViewVideoData($uid, $page);
 
-        if(!empty($result)){
-            $video_data['video_id'] = $result->id;
-            $video_data['avatar'] = $result->avatar;
-            $video_data['video_user_id'] = $result->user_id;
-            $video_data['username'] = '';
-            $video_data['video_title'] = $result->video_title;
-            $video_data['video_image'] = $result->video_image;
-            $video_data['video_url'] = $result->video_url;
-            $video_data['video_label'] = $result->video_label;
-            $video_data['favorite_number'] = $result->favorite_number;
-            $video_data['reply_number'] = $result->reply_number;
+        if(empty($result)) {
+            return ['code'=>-1, 'msg'=>'还未上传视频'];
+        }
+
+        $video_data = [];
+
+        foreach($result['data'] as $key=>$value){
+            $user_data = $this->usersRepositories->getUserInfoById($value->user_id);
+            $video_data['video_id'] = $value->id;
+            $video_data['video_user_avatar'] = $user_data->avatar;
+            $video_data['video_user_id'] = $value->user_id;
+            $video_data['video_vip_level'] = $user_data->vip_level;
+            $video_data['video_username'] = $user_data->username;
+            $video_data['video_title'] = $value->video_title;
+            $video_data['video_image'] = $value->video_image;
+            $video_data['video_url'] = $value->video_url;
+            $video_data['video_label'] = $value->video_label;
+            $video_data['favorite_number'] = $value->favorite_num;
+            $video_data['reply_number'] = $value->reply_num;
+        }
+
+        if(!empty($temp_data)){
+            if($temp_data->temp_value >= $result['total']){
+                $this->tempDataRepositories->ClearValue($uid, 'view_max_id');
+            }
         }
 
         $this->tempDataRepositories->UpdateValue($uid, 'view_max_id');
+        $data['code'] = 200;
         $data['data']['video_data'] = $video_data;
+        unset($result['data']);
+        $data['data']['page'] = $result;
+
+        return $data;
+    }
+
+
+    /**
+     * 观看关注视频
+     * @param $uid
+     * @return array
+     */
+    public function FollowViewVideo()
+    {
+        $uid = Auth::id();
+        $page = app('request')->input('page', 0);
+
+        $temp_data = $this->tempDataRepositories->GetValue($uid, 'follow_view_max_id');
+
+        if(!empty($temp_data) && empty($page)){
+            $page = $temp_data->temp_value;
+        }
+
+        $result = $this->videoRepositories->GetFollowVideoData($uid, $page);
+
+        if(empty($result)){
+            return ['code'=>-1, 'msg'=>'关注还未上传视频'];
+        }
+
+        $video_data = [];
+        foreach($result['data'] as $key=>$value){
+            $user_data = $this->usersRepositories->getUserInfoById($value->user_id);
+            $video_data['video_id'] = $value->id;
+            $video_data['video_user_avatar'] = $user_data->avatar;
+            $video_data['video_user_id'] = $value->user_id;
+            $video_data['video_vip_level'] = $user_data->vip_level;
+            $video_data['video_username'] = $user_data->username;
+            $video_data['video_title'] = $value->video_title;
+            $video_data['video_image'] = $value->video_image;
+            $video_data['video_url'] = $value->video_url;
+            $video_data['video_label'] = $value->video_label;
+            $video_data['favorite_number'] = $value->favorite_num;
+            $video_data['reply_number'] = $value->reply_num;
+        }
+
+
+        if(!empty($temp_data)){
+            if($temp_data->temp_value >= $result['total']){
+                $this->tempDataRepositories->ClearValue($uid, 'follow_view_max_id');
+            }
+        }
+
+        $this->tempDataRepositories->UpdateValue($uid, 'follow_view_max_id');
+        $data['code'] = 200;
+        $data['data']['video_data'][] = $video_data;
+        unset($result['data']);
+        $data['data']['page'] = $result;
+
+        return $data;
+    }
+
+    /**
+     * 格式化视频数据
+     * @param $result
+     * @return mixed
+     */
+    public function formatVideoData($result)
+    {
+        $video_data = [];
+        foreach($result['data'] as $key=>$value){
+            $video_data['video_id'] = $value->id;
+            $video_data['video_user_avatar'] = $value->avatar;
+            $video_data['video_user_id'] = $value->user_id;
+            $video_data['video_vip_level'] = $value->vip_level;
+            $video_data['video_username'] = $value->username;
+            $video_data['video_title'] = $value->video_title;
+            $video_data['video_image'] = $value->video_image;
+            $video_data['video_url'] = $value->video_url;
+            $video_data['video_label'] = $value->video_label;
+            $video_data['favorite_number'] = $value->favorite_num;
+            $video_data['reply_number'] = $value->reply_num;
+        }
+
+        $data['video_data'][] = $video_data;
+        unset($result['data']);
+        $data['page'] = $result;
         return $data;
     }
 
@@ -66,48 +232,283 @@ class VideoService
      * @param $user_id
      * @return array
      */
-    public function DoFavorite($video_id, $user_id)
+    public function DoFavorite($request)
     {
 
-        $data = ['code'=>200, 'data'=>[]];
+        $video_id = $request->input('video_id');
+        $user_id  = Auth::id();
 
         $video_row = $this->videoRepositories->getVideoById($video_id);
+
         if(empty($video_row)){
-            return $data = ['code'=>-1, 'errMsg'=>'视频数据不存在'];
+            return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
         }
+
         $favor_row = $this->favoriteRepositories->FindFavoriteRow($user_id, $video_id);
+        if(!empty($favor_row)){
+            return $data = ['code'=>-1, 'msg'=>'已经喜欢'];
+        }
+
         $find_data['user_id'] = $user_id;
         $find_data['video_id'] = $video_id;
         $update_data = $find_data;
-
-        if(empty($favor_row)){
-            $update_data['status'] = 1;
-        }else{
-            $update_data['status'] = ($favor_row->status == 1) ? 0 : 1;
-        }
-        $favor_num = ($update_data['status'] == 1) ? 1 : -1;
+        $update_data['status'] = 1;
         $update_data['add_time'] = date("Y-m-d H:i:s");
         $this->favoriteRepositories->UpdateFavoriteVideo($find_data, $update_data);
-        $this->videoRepositories->IncrVideoFavoriteNum($video_id, $favor_num);
+        $this->videoRepositories->IncrVideoNum($video_id, 'favorite_num');
 
-        $favor_data['favorite_num'] = $video_row->favorite_number + $favor_num;
-        $favor_data['video_id'] = $video_id;
-        $favor_data['status'] = $update_data['status'];
-        $data['data']['video_data'] = $favor_data;
-
+        $data = ['code'=>200, 'msg'=>'关注成功'];
         return $data;
     }
 
+    /**
+     * 取消喜欢这条视频
+     */
+    public function CancelFavorite($request)
+    {
+        $video_id = $request->input('video_id');
+        $user_id  = Auth::id();
+
+        $video_row = $this->videoRepositories->getVideoById($video_id);
+
+        if(empty($video_row)){
+            return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
+        }
+
+        $favor_row = $this->favoriteRepositories->FindFavoriteRow($user_id, $video_id);
+        if(empty($favor_row)){
+            return $data = ['code'=>-1, 'msg'=>'已经取消'];
+        }
+
+        $find_data['user_id'] = $user_id;
+        $find_data['video_id'] = $video_id;
+        $update_data = $find_data;
+        $update_data['status'] = 0;
+        $update_data['add_time'] = date("Y-m-d H:i:s");
+        $this->favoriteRepositories->DeleteFavoriteVideo($user_id, $video_id);
+        $this->videoRepositories->DecrVideoNum($video_id, 'favorite_num');
+
+        $data = ['code'=>200, 'msg'=>'操作成功'];
+        return $data;
+
+    }
+
+    /**
+     * @param $video_id
+     * @param $content
+     */
+    public function AddDiscuss($video_id, $content)
+    {
+        $video_row = $this->videoRepositories->getVideoById($video_id);
+
+        if(empty($video_row)){
+            return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
+        }
+
+        if(empty($content)){
+            return $data = ['code'=>-1, 'msg'=>'評論内容不能爲空'];
+        }
+        $parent_id = app('request')->input('parent_id', 0);
+        $discuss_data['parent_id'] = $parent_id;
+        $discuss_data['video_id'] = $video_id;
+        $discuss_data['content'] = $content;
+        $discuss_data['from_uid'] = Auth::id();
+        $discuss_data['favorite_number'] = 0;
+        $discuss_data['discuss_time'] = time();
+        $discuss_data['add_time'] = date("y-m-d H:i:s");
+        $this->discussRepositories->InsertDiscuss($discuss_data);
+
+        return $data = ['code'=>200, 'msg'=>'评论成功'];
+    }
+
+    /**
+     * 喜歡這條評論
+     */
+    public function DoFavorDiscuss()
+    {
+        $discuss_id = app('request')->input('discuss_id');
+
+        if(empty($discuss_id)) {
+            return $data = ['code'=>-1, 'msg'=>'參數錯誤'];
+        }
+
+        $discuss_data = $this->discussRepositories->getDiscussById($discuss_id);
+
+        if(empty($discuss_data)){
+            return $data = ['code'=>-1, 'msg'=>'評論不存在'];
+        }
+
+        $this->discussRepositories->IncrDiscussfavorById($discuss_id);
+        return $data = ['code'=>200, 'msg'=>'操作成功'];
+    }
+
+    /**
+     * 喜歡這條評論
+     */
+    public function CancelFavorDiscuss()
+    {
+        $discuss_id = app('request')->input('discuss_id');
+
+        if(empty($discuss_id)) {
+            return $data = ['code'=>-1, 'msg'=>'參數錯誤'];
+        }
+
+        $discuss_data = $this->discussRepositories->getDiscussById($discuss_id);
+
+        if(empty($discuss_data)){
+            return $data = ['code'=>-1, 'msg'=>'評論不存在'];
+        }
+
+        $this->discussRepositories->DecrDiscussfavorById($discuss_id);
+        return $data = ['code'=>200, 'msg'=>'操作成功'];
+    }
+
+    public function ReportDiscuss()
+    {
+        $discuss_id = app('request')->input('discuss_id');
+        if(empty($discuss_id)) {
+            return $data = ['code'=>-1, 'msg'=>'參數錯誤'];
+        }
+
+        $discuss_data = $this->discussRepositories->getDiscussById($discuss_id);
+
+        if(empty($discuss_data)){
+            return $data = ['code'=>-1, 'msg'=>'評論不存在'];
+        }
+
+        $data['discuss_id'] = $discuss_id;
+        $data['content'] = $discuss_data->content;
+        $data['add_time'] = date('Y-m-d H:i:s');
+        $this->discussReportRepositories->InsertDiscussReport($data);
+        return $data = ['code'=>200, 'msg'=>'操作成功'];
+
+    }
+
+    /**
+     * 获取视频评论列表
+     * @param $video_id
+     * @return array
+     */
     public function getDiscussList($video_id)
     {
         $video_row = $this->videoRepositories->getVideoById($video_id);
         if(empty($video_row)){
-            return $data = ['code'=>-1, 'errMsg'=>'视频数据不存在'];
+            return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
         }
 
+        $discuss_list = $this->discussRepositories->getDiscussList($video_id);
+
+        $data = ['code'=>200, 'data'=>[]];
+
+        if(!empty($discuss_list['data'])){
+            foreach($discuss_list['data'] as $key=>$value){
+
+                $sub_list = $this->discussRepositories->getSubList($value->video_id, $value->id);
+                $user_data = $this->usersRepositories->getUserInfoById($value->from_uid);
+
+                if(empty($user_data)){
+                    continue;
+                }
+                $temp_data = [];
+                $temp_data['user_info']['user_id'] = $user_data->id;
+                $temp_data['user_info']['username'] = $user_data->username;
+                $temp_data['user_info']['vip_level'] = $user_data->vip_level;
+                $temp_data['user_info']['avatar'] = $user_data->avatar;
+                $temp_data['user_info']['sex'] = $user_data->sex;
+                $temp_data['user_info']['city'] = $user_data->city;
+                $temp_data['discuss_info']['discuss_id'] = $value->id;
+                $temp_data['discuss_info']['discuss_time'] = $value->discuss_time;
+                $temp_data['discuss_info']['content'] = $value->content;
+                $temp_data['discuss_info']['favorite_number'] = $value->favorite_number;
+                $temp_data['reply_info'] = [];
+
+                if(!empty($sub_list)){
+                    //最多回复三级
+                    $sub_temp_data = [];
+                    foreach ($sub_list as $sub_key=>$sub_value){
+                        $sub_user_data = $this->usersRepositories->getUserInfoById($value->from_uid);
+                        if(empty($sub_user_data)){
+                            continue;
+                        }
+
+                        $sub_temp_data['user_info']['user_id'] = $sub_user_data->id;
+                        $sub_temp_data['user_info']['username'] = $sub_user_data->username;
+                        $sub_temp_data['user_info']['vip_level'] = $sub_user_data->vip_level;
+                        $sub_temp_data['user_info']['avatar'] = $sub_user_data->avatar;
+                        $sub_temp_data['user_info']['sex'] = $sub_user_data->sex;
+                        $sub_temp_data['user_info']['city'] = $sub_user_data->city;
+                        $sub_temp_data['discuss_info']['discuss_id'] = $sub_value->id;
+                        $sub_temp_data['discuss_info']['discuss_time'] = $sub_value->discuss_time;
+                        $sub_temp_data['discuss_info']['content'] = $sub_value->content;
+                        $sub_temp_data['discuss_info']['favorite_number'] = $sub_value->favorite_number;
+                        $temp_data['reply_info'][] = $sub_temp_data;
+                    }
+                }
+
+
+                $data['data']['discuss_list'][] = $temp_data;
+
+            }
+
+            unset($discuss_list['data']);
+            $data['page'] = $discuss_list;
+
+        }
+        return $data;
 
     }
 
+    /**
+     * 上传视频
+     * @return array
+     */
+    public function UploadVideo()
+    {
 
+        $title = app('request')->input('title');
+        $video_image = app('request')->file('video_image');
+        $video = app('request')->file('video');
+        $video_label = app('request')->input('video_label');
+        
+        if(empty($video_image) || empty($video_label) || empty($video_label) || empty($video)){
+            return ['code'=>-1, 'msg'=>'参数错误'];
+
+        }
+
+        if (!$video_image->isValid()) {
+            return ['code'=>-1, 'msg'=>'封面上传失败'];
+        }
+
+        if (!$video->isValid()) {
+            return ['code'=>-1, 'msg'=>'视频上传失败'];
+        }
+
+        $dir = env("UPLOAD_DIR");
+        $upload_url = env("UPLOAD_URL");
+
+        $video_image_name = time().rand(0, 1000).'.'.$video_image->guessExtension();
+        $video_image->move($dir, $video_image_name);
+
+        $video_name = time().rand(0, 1000).'.'.$video->guessExtension();
+        $video->move($dir, $video_name);
+
+        $video_data = [];
+        $user_id = Auth::id();
+        $video_data['user_id'] = $user_id;
+        $video_data['video_title'] = $title;
+        $video_data['video_image'] = $upload_url . $video_image_name;
+        $video_data['video_url'] = $upload_url  . $video_name;
+        $video_data['video_label'] = $video_label;
+        $video_data['add_time'] = date('Y-m-d H:i:s');
+        $this->videoRepositories->InsertVideo($video_data);
+        $this->usersRepositories->IncrUsersDetailNum($user_id, 'upload_num');
+        return ['code'=>200, 'msg'=>'上传成功'];
+
+    }
+
+    public function SearchVideoList($request)
+    {
+
+    }
 
 }
