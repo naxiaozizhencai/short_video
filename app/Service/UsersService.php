@@ -30,6 +30,7 @@ class UsersService
         $this->videoRepositories = $videoRepositories;
     }
 
+    public function Refre
     /**
      * 匿名登录
      * @param $uuid
@@ -41,19 +42,20 @@ class UsersService
         $userData = $this->UsersRepositories->GetUserDataByUuid($uuid);
 
         if(empty($userData)){
+            $username = '游客账号_' . rand(100000000, 9999999999);
             $user_data = [
                 'uuid'=>$uuid,
-                'username'=>'游客账号_' . rand(100000000, 9999999999),
+                'username'=>$username,
                 'vip_level'=>0,
                 'is_phone_login'=>0,
                 'add_time'=>date('Y-m-d H:i:s'),
             ];
+
             $userId = $this->UsersRepositories->InsertUser($user_data);
             $popular_num = randomString();
             $user_detail = [
                 'avatar'=>'a.png',
                 'user_id' =>$userId,
-                'avatar'=>'a.png',
                 'city'=>'深圳',
                 'popular_num'=>$popular_num,
                 'add_time'=>date('Y-m-d H:i:s'),
