@@ -469,7 +469,11 @@ class VideoService
         $video_image = app('request')->file('video_image');
         $video = app('request')->file('video');
         $video_label = app('request')->input('video_label');
+        
+        if(empty($video_image) || empty($video_label) || empty($video_label) || empty($video)){
+            return ['code'=>-1, 'msg'=>'参数错误'];
 
+        }
 
         if (!$video_image->isValid()) {
             return ['code'=>-1, 'msg'=>'封面上传失败'];
