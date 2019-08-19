@@ -96,7 +96,6 @@ class UsersService
             $userId = $this->UsersRepositories->InsertUserDetail($user_detail);
             //生成二维码
             $dir = env("QRCODE_DIR");
-
             $qr_name = $dir . $popular_num . '.png';
             file_put_contents($qr_name, QrCode::format('png')->size(253)->generate($popular_num));
             $userData = $this->UsersRepositories->GetUserDataByUuid($uuid);
@@ -120,7 +119,7 @@ class UsersService
         } else {
             $token_data['user_id']      = intval($user_info->id);
             $token_data['access_token'] = $token;
-            $token_data['expires_in']   = strval(time() + 86400);
+            $token_data['expires_in']   = strval(time() + 3600);
         }
 
         $resultData['data']['user_data'] = $data;
@@ -468,6 +467,10 @@ class UsersService
 
     }
 
+    /**
+     * 关注列表
+     * @return array
+     */
     public function FollowList()
     {
         $user_id = Auth::id();
@@ -546,7 +549,7 @@ class UsersService
         return $data;
     }
 
-    
+
     /**
      * 用户自己上传列表
      */
