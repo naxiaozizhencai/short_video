@@ -32,6 +32,9 @@ class VideoRepositories
                     case 'video_title':
                         $query->where('video_list.video_title', 'like', '%'.$search.'%');
                         break;
+                        case 'user_id':
+                        $query->where('video_list.user_id', 'like', '%'.$search.'%');
+                        break;
                     case 'is_recommend':
                         $query->where('video_list.is_recommend', '=', $search);
                         break;
@@ -134,9 +137,6 @@ class VideoRepositories
     }
 
 
-
-
-
     /**
      * 获取喜欢的视频列表
      * @param $user_id
@@ -161,9 +161,5 @@ class VideoRepositories
             ->orderBy('add_time', 'desc')->paginate($page_size)->toarray();
     }
 
-    public function GetSearchVideoList()
-    {
-
-    }
 
 }

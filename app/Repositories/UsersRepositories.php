@@ -32,6 +32,7 @@ class UsersRepositories
      */
     public function getUserInfoById($uid)
     {
+
        return  $users = DB::table('users')->
        leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->
        select(['users.*','users_detail.*'])->where(['users.id'=>$uid])->first();
