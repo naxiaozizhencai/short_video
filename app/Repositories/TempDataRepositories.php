@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 class TempDataRepositories
 {
     protected $table_name = 'temp_data';
+
     public function GetValue($user_id, $key)
     {
         return DB::selectOne("select * from temp_data where user_id = ? AND temp_key = ?", [$user_id, $key]);

@@ -36,9 +36,9 @@ class VideoController extends Controller
         return response()->json($data);
     }
 
-    public function IncrPlayNum(Request $request)
+    public function PlayVideo(Request $request)
     {
-        $data = $this->videoService->IncrPlayNum($request);
+        $data = $this->videoService->PlayVideo($request);
         return response()->json($data);
     }
     /**

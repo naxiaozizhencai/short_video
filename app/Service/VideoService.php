@@ -76,16 +76,20 @@ class VideoService
      * @param $request
      * @return array
      */
-    public function IncrPlayNum($request)
+    public function PlayVideo($request)
     {
         $video_id = $request->input('video_id');
-
+        $user_id = Auth::id();
         $video_data = $this->videoRepositories->getVideoById($video_id);
 
         if(empty($video_data)){
             return ['code'=>-1, 'msg'=>'視頻數據不存在'];
         }
-
+        $temp_data = [];
+        $temp_data['user_id] = $user_id';
+        $temp_data['temp_key'] = 'play_video_times';
+        $temp_data_value = $temp_data;
+        $temp_data_value['add_time'] = $temp_data;
         $this->videoRepositories->IncrVideoNum($video_id, 'play_num', 1);
         return ['code'=>200, 'msg'=>'操作成功'];
     }
