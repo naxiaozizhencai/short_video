@@ -116,6 +116,7 @@ class UsersService
         $data['user_id'] = $userData->id;
         $data['uuid'] = $userData->uuid;
         $data['vip_level'] = $userData->vip_level;
+        $data['phone'] = $userData->phone;
         $data['is_phone_login'] = $userData->is_phone_login;
         $data['vip_expired_time'] = $userData->vip_expired_time;
         $data['viewed_times'] = 0;
