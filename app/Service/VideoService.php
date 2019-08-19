@@ -257,7 +257,7 @@ class VideoService
         $this->favoriteRepositories->UpdateFavoriteVideo($find_data, $update_data);
         $this->videoRepositories->IncrVideoNum($video_id, 'favorite_num');
 
-        $data = ['code'=>200, 'msg'=>'关注成功'];
+        $data = ['code'=>200, 'msg'=>'喜歡成功'];
         return $data;
     }
 
@@ -288,7 +288,7 @@ class VideoService
         $this->favoriteRepositories->DeleteFavoriteVideo($user_id, $video_id);
         $this->videoRepositories->DecrVideoNum($video_id, 'favorite_num');
 
-        $data = ['code'=>200, 'msg'=>'操作成功'];
+        $data = ['code'=>200, 'msg'=>'取消成功'];
         return $data;
 
     }

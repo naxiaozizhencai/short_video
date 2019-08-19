@@ -17,7 +17,7 @@ class SettokenMiddleware
     {
         if(!$request->input('token')){
             $request->offsetSet('token', $request->header('token'));
-          
+
         }
 
         return $next($request);
