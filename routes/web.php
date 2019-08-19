@@ -19,7 +19,7 @@ $router->post('login', 'LoginController@Login');
 
 $router->post('user/postLogin', 'AuthController@postLogin');
 
-$router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($router){
+$router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], function() use ($router){
 
     $router->post('loginorreg', 'LoginController@PhoneLoginOrRegister');//登录或者注册
     $router->post('phonelogin', 'LoginController@PhoneLogin');//手机登录

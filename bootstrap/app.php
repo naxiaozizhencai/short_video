@@ -69,6 +69,7 @@ $app->singleton(
  ]);
 
  $app->routeMiddleware([
+     'settoken' =>App\Http\Middleware\SettokenMiddleware::class,
      'auth' => App\Http\Middleware\Authenticate::class,
  ]);
 
