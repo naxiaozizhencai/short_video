@@ -57,6 +57,10 @@ $router->group(['prefix'=>'api', 'middleware'=>'jwt.auth'], function() use ($rou
 
     $router->get('invitationrank', 'HotspotController@InvitationRank');//分享排行
     $router->get('supportrank', 'HotspotController@SupportRank');//支持排行
+
+
+    $router->post('order', 'OrderController@CreateOrder');//生成订单
+	$router->post('orderlist', 'OrderController@PayDetails');//充值记录
 });
 
 
