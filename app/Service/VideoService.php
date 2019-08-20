@@ -300,6 +300,7 @@ class VideoService
      */
     public function AddDiscuss($request)
     {
+        
         $user_id = Auth::id();
         $video_id = $request->input('video_id', 0);//视频id
         $content = $request->input('content', '');
@@ -332,6 +333,7 @@ class VideoService
         $msg_data['message'] = $user_data->username . '评论了你的视频';
         $msg_data['send_id'] = $user_id;
         $msg_data['receive_id'] = $video_row->user_id;
+        $this->messageRepositories->InsertMessage($msg_data);
 
         if(!empty($parent_id)) {
 
@@ -345,10 +347,10 @@ class VideoService
             $msg_data['message'] = $user_data->username . '回复了你的评论';
             $msg_data['send_id'] = $user_id;
             $msg_data['receive_id'] = $parent_discuss_data->from_uid;
+            $this->messageRepositories->InsertMessage($msg_data);
 
         }
 
-        $this->messageRepositories->InsertMessage($msg_data);
         return $data = ['code'=>200, 'msg'=>'评论成功'];
     }
 
