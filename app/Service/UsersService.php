@@ -553,9 +553,10 @@ class UsersService
     /**
      * 获取用户详情
      */
-    public function UserInfo()
+    public function UserInfo($request)
     {
         $user_id = Auth::id();
+        $user_id = $request->input('user_id', $user_id);
         $user_data = $this->UsersRepositories->getUserInfoById($user_id);
 
         if(empty($user_data)){

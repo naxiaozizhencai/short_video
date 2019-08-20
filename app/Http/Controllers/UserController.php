@@ -23,7 +23,7 @@ class UserController extends BaseController
      */
     public function UserInfo(Request $request)
     {
-        $data = $this->usersService->UserInfo();
+        $data = $this->usersService->UserInfo($request);
         return response()->json($data);
 
     }
