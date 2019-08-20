@@ -16,7 +16,15 @@ class MessageController extends Controller
     /**
      * 聊天发送消息
      */
-    public function ChatSendMessage()
+    public function SendChatMessage(Request $request)
+    {
+        $data = $this->messageService->SendChatMessage($request);
+        return response()->json($data);
+    }
+
+
+
+    public function GetChatMessageList()
     {
 
     }
@@ -28,12 +36,6 @@ class MessageController extends Controller
     {
 
     }
-
-    public function GetChatMessageList()
-    {
-
-    }
-
 
     /**
      * 讨论消息列表

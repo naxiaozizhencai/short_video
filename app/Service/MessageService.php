@@ -14,6 +14,27 @@ class MessageService
     }
 
     /**
+     *发送聊天信息
+     * @param $request
+     */
+    public function SendChatMessage($request)
+    {
+        $room_id = $request->input('room_id');
+        $receive_id = $request->input('receive_id');
+        $message = $request->input('message');
+        $user_id = Auth::id();
+        $message_data['message_type'] = MessageRepositories::MESSAGE_TYPE_CHAT;
+        $message_data['message'] = $message;
+        $message_data['send_id'] = $user_id;
+        $message_data['receive_id'] = $receive_id;
+        $message_data['send_time'] = time();
+        $message_data['add_time'] = date('Y-m-d H:i:s');
+        $this->messageRepositories->InsertMessage($message_data);
+
+        return ['code'>200, 'msg'=>'发送成功'];
+
+    }
+    /**
      * 获取关注列表信息
      */
     public function GetMessageData($request)
@@ -44,7 +65,7 @@ class MessageService
             if($value->message_type == MessageRepositories::MESSAGE_TYPE_FOLLOW) {
                 $temp_data['user_info']['is_follow'] = 1;
             }
-            
+
             $temp_data['message_info']['message_id'] = $value->message_id;
             $temp_data['message_info']['message_type'] = $value->message_type;
             $temp_data['message_info']['message'] = $value->message;

@@ -48,6 +48,6 @@ class MessageRepositories
                         break;
                 }
             }
-        })->orderBy('send_time', 'desc')->paginate(15,['video_message.*', 'users.*', 'users_detail.*'])->toarray();
+        })->whereIn('video_message.message_type', [self::MESSAGE_TYPE_SUPPORT, self::MESSAGE_TYPE_DISCUSS, self::MESSAGE_TYPE_FOLLOW])->orderBy('send_time', 'desc')->paginate(15,['video_message.*', 'users.*', 'users_detail.*'])->toarray();
     }
 }
