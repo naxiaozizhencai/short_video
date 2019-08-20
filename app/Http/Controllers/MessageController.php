@@ -1,9 +1,7 @@
 <?php
 namespace App\Http\Controllers;
-
-
 use App\Service\MessageService;
-use http\Env\Response;
+use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
@@ -38,31 +36,14 @@ class MessageController extends Controller
 
 
     /**
-     * 点赞消息列表
-     */
-    public function SupportMessageList()
-    {
-
-    }
-
-    /**
      * 讨论消息列表
      */
-    public function DiscussMessageList()
+    public function MessageList(Request $request)
     {
-
-    }
-
-    /**
-     * 关注消息列表
-     */
-    public function FollowMessageList()
-    {
-
-        $data = $this->messageService->GetFollowMessageData();
-
+        $data = $this->messageService->GetMessageData($request);
         return response()->json($data);
     }
+
 
     /**
      * 公告消息列表

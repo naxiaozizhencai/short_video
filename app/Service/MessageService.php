@@ -16,11 +16,16 @@ class MessageService
     /**
      * 获取关注列表信息
      */
-    public function GetFollowMessageData()
+    public function GetMessageData($request)
     {
+        $message_type = $request->input('message_type');
+
+        if(!empty($message_type)){
+            $data['message_type'] = $message_type;
+        }
+
         $user_id = Auth::id();
         $data['receive_id'] = $user_id;
-        $data['message_type'] = MessageRepositories::MESSAGE_TYPE_FOLLOW;
         $message_data = $this->messageRepositories->GetMyMessages($data);
 
         if(empty($message_data['data'])) {
@@ -35,10 +40,14 @@ class MessageService
             $temp_data['user_info']['vip_level'] = $value->vip_level;
             $temp_data['user_info']['avatar'] = $value->avatar;
             $temp_data['user_info']['sex'] = $value->sex;
-            $temp_data['user_info']['is_follow'] = 1;
+
+            if($value->message_type == MessageRepositories::MESSAGE_TYPE_FOLLOW) {
+                $temp_data['user_info']['is_follow'] = 1;
+            }
 
 
             $temp_data['message_info']['message_id'] = $value->message_id;
+            $temp_data['message_info']['message_type'] = $value->message_type;
             $temp_data['message_info']['message'] = $value->message;
             $temp_data['message_info']['send_time'] = $value->send_time;
             $data['data']['messages'][] = $temp_data;
