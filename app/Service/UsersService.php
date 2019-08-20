@@ -1,5 +1,6 @@
 <?php
 namespace App\Service;
+use App\Repositories\MessageRepositories;
 use App\Repositories\PopularListRepositories;
 use App\Repositories\TempDataRepositories;
 use App\Repositories\UsersDetailRepositories;
@@ -17,10 +18,13 @@ class UsersService
     protected $fansRepositories;
     protected $tempDataRepositories;
     protected $videoRepositories;
+    protected $messageRepositories;
 
     public function __construct(UsersRepositories $UsersRepositories, UsersDetailRepositories $usersDetailRepositories,
                                 PopularListRepositories $popularListRepositories,UsersFansRepositories $fansRepositories,
-                                TempDataRepositories $tempDataRepositories, VideoRepositories $videoRepositories)
+                                TempDataRepositories $tempDataRepositories, VideoRepositories $videoRepositories,
+                                 MessageRepositories $messageRepositories
+    )
     {
         $this->UsersRepositories = $UsersRepositories;
         $this->UsersDetailRepositories = $usersDetailRepositories;
@@ -28,6 +32,7 @@ class UsersService
         $this->fansRepositories = $fansRepositories;
         $this->tempDataRepositories = $tempDataRepositories;
         $this->videoRepositories = $videoRepositories;
+        $this->messageRepositories = $messageRepositories;
     }
 
     /**
@@ -430,6 +435,8 @@ class UsersService
         }
 
         $fans_data = $this->UsersRepositories->getUserInfoById($fans_id);
+        $user_data = $this->UsersRepositories->getUserInfoById($uid);
+
 
         if(empty($fans_data)) {
             return ['code'=>-1, 'msg'=>'参数错误'];
@@ -447,6 +454,16 @@ class UsersService
 
         $this->fansRepositories->InsertFans($fans_data);
         $this->UsersRepositories->IncrUsersDetailNum($fans_id, 'follow_num');
+
+        $msg_data = [];
+        $msg_data['message_type'] = MessageRepositories::MESSAGE_TYPE_FOLLOW;
+        $msg_data['message'] = $user_data->username . '关注了你';
+        $msg_data['send_id'] = $uid;
+        $msg_data['receive_id'] = $fans_id;
+        $msg_data['send_time'] = time();
+        $msg_data['add_time'] = date('Y-m-d H:i:s');
+        $this->messageRepositories->InsertMessage($msg_data);
+
         return ['code'=>200, 'msg'=>'关注成功'];
 
     }

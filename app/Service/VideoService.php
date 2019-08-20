@@ -3,6 +3,7 @@ namespace App\Service;
 use App\Repositories\DiscussReportRepositories;
 use App\Repositories\DiscussRepositories;
 use App\Repositories\FavoriteRepositories;
+use App\Repositories\MessageRepositories;
 use App\Repositories\ReplyRepositories;
 use App\Repositories\TempDataRepositories;
 use App\Repositories\UsersRepositories;
@@ -20,10 +21,13 @@ class VideoService
     protected $discussRepositories;
     protected $usersRepositories;
     protected $discussReportRepositories;
+    protected $messageRepositories;
+
     public function __construct(VideoRepositories $videoRepositories,
                                 TempDataRepositories $tempDataRepositories,
                                 FavoriteRepositories $favoriteRepositories, DiscussRepositories $discussRepositories,
-                                UsersRepositories $usersRepositories, DiscussReportRepositories $discussReportRepositories
+                                UsersRepositories $usersRepositories, DiscussReportRepositories $discussReportRepositories,
+                                MessageRepositories $messageRepositories
 )
     {
         $this->videoRepositories = $videoRepositories;
@@ -32,6 +36,7 @@ class VideoService
         $this->discussRepositories = $discussRepositories;
         $this->usersRepositories = $usersRepositories;
         $this->discussReportRepositories = $discussReportRepositories;
+        $this->messageRepositories = $messageRepositories;
     }
 
     /**
@@ -226,6 +231,8 @@ class VideoService
 
         $video_row = $this->videoRepositories->getVideoById($video_id);
 
+        $user_data = $this->usersRepositories->getUserInfoById($user_id);
+
         if(empty($video_row)){
             return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
         }
@@ -243,6 +250,14 @@ class VideoService
         $this->favoriteRepositories->UpdateFavoriteVideo($find_data, $update_data);
         $this->videoRepositories->IncrVideoNum($video_id, 'favorite_num');
 
+        $msg_data = [];
+        $msg_data['message_type'] = MessageRepositories::MESSAGE_TYPE_SUPPORT;
+        $msg_data['message'] = $user_data->username . '点赞了了你的视频';
+        $msg_data['send_id'] = $user_id;
+        $msg_data['receive_id'] = $video_row->user_id;
+        $msg_data['send_time'] = time();
+        $msg_data['add_time'] = date('Y-m-d H:i:s');
+        $this->messageRepositories->InsertMessage($msg_data);
         $data = ['code'=>200, 'msg'=>'喜歡成功'];
         return $data;
     }
@@ -285,11 +300,12 @@ class VideoService
      */
     public function AddDiscuss($request)
     {
+        $user_id = Auth::id();
         $video_id = $request->input('video_id', 0);//视频id
         $content = $request->input('content', '');
         $parent_id = $request->input('parent_id', 0);
-
         $video_row = $this->videoRepositories->getVideoById($video_id);
+        $user_data = $this->usersRepositories->getUserInfoById($user_id);
 
         if(empty($video_row)){
             return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
@@ -302,12 +318,37 @@ class VideoService
         $discuss_data['parent_id'] = $parent_id;
         $discuss_data['video_id'] = $video_id;
         $discuss_data['content'] = $content;
-        $discuss_data['from_uid'] = Auth::id();
+        $discuss_data['from_uid'] = $user_id;
         $discuss_data['favorite_number'] = 0;
         $discuss_data['discuss_time'] = time();
         $discuss_data['add_time'] = date("y-m-d H:i:s");
+
         $this->discussRepositories->InsertDiscuss($discuss_data);
 
+        $msg_data = [];
+        $msg_data['send_time'] = time();
+        $msg_data['add_time'] = date('Y-m-d H:i:s');
+        $msg_data['message_type'] = MessageRepositories::MESSAGE_TYPE_DISCUSS;
+        $msg_data['message'] = $user_data->username . '评论了你的视频';
+        $msg_data['send_id'] = $user_id;
+        $msg_data['receive_id'] = $video_row->user_id;
+
+        if(!empty($parent_id)) {
+
+            $parent_discuss_data = $this->discussRepositories->getDiscussById($parent_id);
+
+            if(empty($parent_discuss_data)){
+                return $data = ['code'=>-1, 'msg'=>'操作失败'];
+            }
+
+            $msg_data['message_type'] = MessageRepositories::MESSAGE_TYPE_DISCUSS;
+            $msg_data['message'] = $user_data->username . '回复了你的评论';
+            $msg_data['send_id'] = $user_id;
+            $msg_data['receive_id'] = $parent_discuss_data->from_uid;
+
+        }
+
+        $this->messageRepositories->InsertMessage($msg_data);
         return $data = ['code'=>200, 'msg'=>'评论成功'];
     }
 
