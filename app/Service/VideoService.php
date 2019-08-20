@@ -60,6 +60,7 @@ class VideoService
             $video_data['video_label'] = $value->video_label;
             $video_data['favorite_number'] = $value->favorite_num;
             $video_data['reply_number'] = $value->reply_num;
+            $video_data['is_follow'] = 0;
             $data['data']['video_data'][] = $video_data;
 
         }
@@ -151,16 +152,9 @@ class VideoService
      */
     public function FollowViewVideo()
     {
+
         $uid = Auth::id();
-        $page = app('request')->input('page', 0);
-
-        $temp_data = $this->tempDataRepositories->GetValue($uid, 'follow_view_max_id');
-
-        if(!empty($temp_data) && empty($page)){
-            $page = $temp_data->temp_value;
-        }
-
-        $result = $this->videoRepositories->GetFollowVideoData($uid, $page);
+        $result = $this->videoRepositories->GetFollowVideoData($uid);
 
         if(empty($result)){
             return ['code'=>-1, 'msg'=>'关注还未上传视频'];
@@ -180,18 +174,10 @@ class VideoService
             $video_data['video_label'] = $value->video_label;
             $video_data['favorite_number'] = $value->favorite_num;
             $video_data['reply_number'] = $value->reply_num;
+            $video_data['is_follow'] = 1;
+            $data['data']['video_data'][] = $video_data;
         }
-
-
-        if(!empty($temp_data)){
-            if($temp_data->temp_value >= $result['total']){
-                $this->tempDataRepositories->ClearValue($uid, 'follow_view_max_id');
-            }
-        }
-
-        $this->tempDataRepositories->UpdateValue($uid, 'follow_view_max_id');
         $data['code'] = 200;
-        $data['data']['video_data'][] = $video_data;
         unset($result['data']);
         $data['data']['page'] = $result;
 
@@ -297,8 +283,12 @@ class VideoService
      * @param $video_id
      * @param $content
      */
-    public function AddDiscuss($video_id, $content)
+    public function AddDiscuss($request)
     {
+        $video_id = $request->input('video_id', 0);//视频id
+        $content = $request->input('content', '');
+        $parent_id = $request->input('parent_id', 0);
+
         $video_row = $this->videoRepositories->getVideoById($video_id);
 
         if(empty($video_row)){
@@ -308,7 +298,7 @@ class VideoService
         if(empty($content)){
             return $data = ['code'=>-1, 'msg'=>'評論内容不能爲空'];
         }
-        $parent_id = app('request')->input('parent_id', 0);
+
         $discuss_data['parent_id'] = $parent_id;
         $discuss_data['video_id'] = $video_id;
         $discuss_data['content'] = $content;

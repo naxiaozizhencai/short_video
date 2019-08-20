@@ -16,11 +16,6 @@ class UserController extends BaseController
         $this->usersService = $usersService;
     }
 
-    public function Index()
-    {
-
-    }
-
     /**
      * 查看用户信息
      * @param Request $request

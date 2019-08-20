@@ -83,11 +83,12 @@ class VideoRepositories
      * @param $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function GetFollowVideoData($uid, $page)
+    public function GetFollowVideoData($uid)
     {
+
         return DB::table("users_fans")->leftjoin('video_list', 'users_fans.fans_id', '=', 'video_list.user_id')
             ->where('users_fans.user_id', '=', $uid)->where('video_list.is_check', '=', 1)->orderby('video_list.add_time', 'desc')
-            ->paginate(1, ['video_list.*',],'page', $page)->toarray();
+            ->paginate(6, ['video_list.*'])->toarray();
     }
 
 

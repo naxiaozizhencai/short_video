@@ -89,9 +89,8 @@ class VideoController extends Controller
      */
     public function AddDiscuss(Request $request)
     {
-        $video_id = $request->input('video_id', 0);//视频id
-        $content = $request->input('content', '');
-        $data = $this->videoService->AddDiscuss($video_id, $content);
+
+        $data = $this->videoService->AddDiscuss($request);
         return response()->json($data);
     }
 
