@@ -44,8 +44,7 @@ class MessageService
             if($value->message_type == MessageRepositories::MESSAGE_TYPE_FOLLOW) {
                 $temp_data['user_info']['is_follow'] = 1;
             }
-
-
+            
             $temp_data['message_info']['message_id'] = $value->message_id;
             $temp_data['message_info']['message_type'] = $value->message_type;
             $temp_data['message_info']['message'] = $value->message;
