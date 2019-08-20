@@ -1,17 +1,18 @@
 <?php
-
 namespace App\Http\Controllers;
+
+
+use App\Service\MessageService;
+use http\Env\Response;
 
 class MessageController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
 
+    protected $messageService;
+
+    public function __construct(MessageService $msgService)
+    {
+        $this->messageService = $msgService;
     }
 
     /**
@@ -58,6 +59,9 @@ class MessageController extends Controller
     public function FollowMessageList()
     {
 
+        $data = $this->messageService->GetFollowMessageData();
+
+        return response()->json($data);
     }
 
     /**

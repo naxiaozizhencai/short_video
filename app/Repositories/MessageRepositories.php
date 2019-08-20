@@ -23,4 +23,31 @@ class MessageRepositories
     {
         return DB::table($this->table_name)->insertGetId($data);
     }
+
+    /**
+     * 获取消息
+     * @param $data
+     */
+    public function GetMyMessages($data)
+    {
+        $query =  DB::table($this->table_name);
+
+        return $query ->leftJoin('users', 'video_message.receive_id', '=', 'users.id')->
+            leftJoin('users_detail', 'users_detail.user_id', '=', 'users.id')->
+            where(function ($query) use ($data){
+            foreach($data as $key=>$search){
+                switch ($key){
+                    case 'message_type':
+                        $query->where('video_message.message_type', '=', $search);
+                        break;
+                    case 'receive_id':
+                        $query->where('video_message.receive_id', '=', $search);
+                        break;
+                    case 'send_id':
+                        $query->where('video_message.send_id', '=', $search);
+                        break;
+                }
+            }
+        })->orderBy('send_time', 'desc')->paginate(15,['video_message.*', 'users.*', 'users_detail.*'])->toarray();
+    }
 }
