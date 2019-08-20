@@ -300,7 +300,7 @@ class VideoService
      */
     public function AddDiscuss($request)
     {
-        
+
         $user_id = Auth::id();
         $video_id = $request->input('video_id', 0);//视频id
         $content = $request->input('content', '');
@@ -490,6 +490,11 @@ class VideoService
         return $data;
 
     }
+
+    /**
+     *上传文件
+     * @return array
+     */
     public function Upload()
     {
         $file = app('request')->file('file');
