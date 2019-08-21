@@ -18,6 +18,10 @@ class VideoRepositories
         return DB::table($this->table_name)->insertGetId($data);
     }
 
+    public function getVideoById($video_id)
+    {
+        return DB::table($this->table_name)->find($video_id);
+    }
     /**
      * 获取视频数据
      * @param $search_arr
