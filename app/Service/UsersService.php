@@ -557,9 +557,10 @@ class UsersService
     /**
      * 获取用户详情
      */
-    public function UserInfo()
+    public function UserInfo($request)
     {
         $user_id = Auth::id();
+        $user_id = $request->input('user_id', $user_id);
         $user_data = $this->UsersRepositories->getUserInfoById($user_id);
 
         if(empty($user_data)){
@@ -578,6 +579,7 @@ class UsersService
         $user_info['fans_num'] = $user_data->fans_num;
         $user_info['follow_num'] = $user_data->follow_num;
         $user_info['support_num'] = $user_data->support_num;
+        $user_info['is_follow'] = 1;
         $data = [];
         $data['code'] = 200;
         $data['data'] = ['user_info'=>$user_info];

@@ -50,7 +50,7 @@ $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], functio
     $router->post('userinfo', 'UserController@UserInfo');//用户详情
     $router->post('updateuserinfo', 'UserController@UpdateUsersInfo');//更新用户想抢
     $router->get('favorvideolist', 'UserController@UserFavoriteList');//喜欢视频列表
-    $router->get('uservideolist', 'UserController@UserVideoList');//用户上传列表
+    $router->post('uservideolist', 'UserController@UserVideoList');//用户上传列表
 //    $router->get('uservideolist', 'UserController@UserVideoList');
     $router->get('share', 'UserController@UserShare');//用户分享
 
