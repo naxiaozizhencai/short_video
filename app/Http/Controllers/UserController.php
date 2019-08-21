@@ -28,38 +28,6 @@ class UserController extends BaseController
 
     }
 
-    public function LookUserDetail(Request $request)
-    {
-
-        $data = [];
-        $data['code'] = 200;
-        $data['data'] = [
-            'user_info'=>[
-                'user_id'=>'',
-                'uuid'=>'',
-                'user_name'=>'',
-                'sign'=>'',
-                'sex'=>'',
-                'city'=>'',
-                'fans_num'=>'',
-                'follow_num'=>'',
-                'support_num'=>'',
-                'is_follow'=>'',
-            ],
-            'video_list'=>[
-                'id'=>'',
-                'user_id'=>'',
-                'video_image'=>'',
-                'favorite_number'=>'',
-            ],
-
-
-        ];
-
-        return response()->json($data);
-
-    }
-
     /**
      * 作品列表
      * @param Request $request

@@ -336,6 +336,23 @@ class UsersService
         $temp_data['add_time'] = date("Y-m-d H:i:s");
 
         $this->tempDataRepositories->UpateOrInsertTempData($find_data, $temp_data);
+
+        $appkey = '65b0765d70c9bd44';//你的appkey
+        $mobile = '13122859371';//手机号 超过1024请用POST
+        $content = '你的注册码是'.$code.'【鲨鹰供应】';//utf8
+        $url = "https://api.jisuapi.com/sms/send?appkey=$appkey&mobile=$mobile&content=$content";
+        $result = curlOpen($url, ['ssl'=>true]);
+        $jsonarr = json_decode($result, true);
+        exit(var_dump($jsonarr));
+        if($jsonarr['status'] != 0)
+        {
+            echo $jsonarr['msg'];
+            exit();
+        }
+        $result = $jsonarr['result'];
+        echo $result['count'].' '.$result['accountid'].'<br>';
+
+
         return ['code'=>200, 'msg'=>'发送成功'];
     }
 
