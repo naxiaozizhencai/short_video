@@ -384,39 +384,39 @@ class UsersService
     /**
      * 填写推广吗
      */
-    public function AddPopularNum()
+    public function AddPopularNum($request)
     {
-        $popular_num = app('request')->input('popular_num');
+        $popular_num =$request->input('popular_num');
         $return_data = [];
-
+        $user_id = Auth::id();
         if(empty($popular_num)){
             return ['code'=>-1, 'msg'=>'推广码不存在'];
         }
-
-        $user_data = $this->UsersRepositories->GetUserInfoByCondition($popular_num);
+        $users_condition['popular_num'] = $popular_num;
+        $user_data = $this->UsersRepositories->GetUserInfoByCondition($users_condition);
 
         if(empty($user_data)){
             return ['code'=>-1, 'msg'=>'推广码不存在'];
         }
 
-        $condition_data['user_id'] = Auth::id();
+        $condition_data['user_id'] = $user_id;
         $popular_data = $this->popularListRepositories->GetUserPopularData($condition_data);
 
         if(!empty($popular_data)){
-            return ['code'=>-1, 'msg'=>'你已经推广过不能再次推广！'];
+            return ['code'=>-1, 'msg'=>'你已经填写过推广码！'];
         }
 
         $popular_data = [];
-        $popular_data['user_id'] = Auth::id();
+        $popular_data['user_id'] = $user_id;
         $popular_data['popular_num'] = $user_data->popular_num;
         $popular_data['popular_uid'] = $user_data->id;
         $popular_data['add_time'] = date("Y-m-d H:i:s");
         $this->popularListRepositories->InsertPopularData($popular_data);
         //增加会员时间
-        $this->UsersRepositories->UpdateVipTime(Auth::id(), 86400);
+        $this->UsersRepositories->UpdateVipTime($user_data->id, 86400 * 3);
         $this->UsersRepositories->IncrUsersDetailNum($user_data->id, 'invitation_num');
         $return_data['code'] = 200;
-        $return_data['msg'] = '添加成功';
+        $return_data['msg'] = '操作成功';
         return $return_data;
     }
 

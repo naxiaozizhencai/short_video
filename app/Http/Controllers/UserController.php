@@ -134,9 +134,9 @@ class UserController extends BaseController
     /**
      * 填写推广码
      */
-    public function AddPopularizeNum()
+    public function AddPopularizeNum(Request $request)
     {
-        $data = $this->usersService->AddPopularNum();
+        $data = $this->usersService->AddPopularNum($request);
         return response()->json($data);
     }
 

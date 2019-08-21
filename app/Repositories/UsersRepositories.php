@@ -41,8 +41,7 @@ class UsersRepositories
 
     public function GetUsersList($search_arr)
     {
-        $query = DB::table('users')->
-        leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->select(['users.*','users_detail.*']);
+        $query = DB::table('users')->leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->select(['users.*','users_detail.*']);
 
         return  $query->where(function ($query) use ($search_arr){
             foreach($search_arr as $key=>$search){
@@ -55,6 +54,12 @@ class UsersRepositories
         })->paginate()->toarray();
     }
 
+    /**
+     * 更新用户的vip过期时间
+     * @param $uid
+     * @param $amount
+     * @return int
+     */
     public function UpdateVipTime($uid, $amount)
     {
         $user_data = $this->getUserInfoById($uid);
@@ -73,11 +78,27 @@ class UsersRepositories
      * @param $condition
      * @return \Illuminate\Support\Collection
      */
-    public function GetUserInfoByCondition($popular_num)
+    public function GetUserInfoByCondition($search_arr)
     {
-        return $users = DB::table('users')->
-        leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->
-        select(['users.*','users_detail.*'])->where(['users_detail.popular_num'=>$popular_num])->first();
+
+        $query = DB::table('users')->leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->select(['users.*','users_detail.*']);
+
+        return $query->where(function ($query) use ($search_arr){
+            foreach($search_arr as $key=>$search){
+                switch ($key){
+                    case 'username':
+                        $query->where('username', 'like', '%'.$search.'%');
+                        break;
+                        case 'popular_num':
+                        $query->where('users_detail.popular_num', '=', $search);
+                        break;
+                        case 'uuid':
+                        $query->where('users.uuid', '=', $search);
+                        break;
+                }
+            }
+        })->first();
+
     }
 
     public function GetUserInfoByPhone($phone)
