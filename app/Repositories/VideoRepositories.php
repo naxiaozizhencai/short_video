@@ -92,29 +92,7 @@ class VideoRepositories
     }
 
 
-    /**
-     * 获取视频目前最大的id
-     * @return int
-     */
-    public function GetMaxVideoId()
-    {
-        $result = DB::selectOne('select MAX(id) as max_id from video_list');
-        if(empty($result)){
-            return 0;
-        }
 
-        return $result->max_id;
-    }
-
-    public function getVideoById($video_id)
-    {
-        $video_row = DB::table($this->table_name)->find($video_id);
-        if(empty($video_row)){
-            return false;
-        }
-
-        return $video_row;
-    }
     /**
      * 更新喜欢数量
      * @param $video_id
@@ -149,18 +127,6 @@ class VideoRepositories
         where('video_favorite_list.user_id', '=', $user_id)->orderby('video_favorite_list.add_time', 'desc')->paginate($page_size)->toarray();
     }
 
-
-
-    /**
-     * 获取我的作品列表
-     * @param $user_id
-     * @return mixed
-     */
-    public function GetUsersVideoList($user_id, $page_size = 6)
-    {
-        return DB::table('video_list')->where(['is_check'=>1, 'user_id'=>$user_id])
-            ->orderBy('add_time', 'desc')->paginate($page_size)->toarray();
-    }
 
 
 }

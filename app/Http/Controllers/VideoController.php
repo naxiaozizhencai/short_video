@@ -14,18 +14,6 @@ class VideoController extends Controller
     }
 
     /**
-     * 观看视频
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-/*    public function ViewVideo(Request $request)
-    {
-        $data = $this->videoService->RandViewVideo();
-        return response()->json($data);
-
-    }*/
-
-    /**
      * 返回視頻列表
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse

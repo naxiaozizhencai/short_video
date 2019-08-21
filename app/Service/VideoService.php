@@ -8,7 +8,6 @@ use App\Repositories\ReplyRepositories;
 use App\Repositories\TempDataRepositories;
 use App\Repositories\UsersRepositories;
 use App\Repositories\VideoRepositories;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class VideoService
@@ -96,6 +95,7 @@ class VideoService
         $this->videoRepositories->IncrVideoNum($video_id, 'play_num', 1);
         return ['code'=>200, 'msg'=>'操作成功'];
     }
+
     /**
      *随机返回一个
      * @return array
