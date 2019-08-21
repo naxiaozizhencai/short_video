@@ -33,7 +33,7 @@ class VideoRepositories
                         $query->where('video_list.video_title', 'like', '%'.$search.'%');
                         break;
                         case 'user_id':
-                        $query->where('video_list.user_id', 'like', '%'.$search.'%');
+                        $query->where('video_list.user_id', '=', $search);
                         break;
                     case 'is_recommend':
                         $query->where('video_list.is_recommend', '=', $search);

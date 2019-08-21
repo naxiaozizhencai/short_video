@@ -259,14 +259,12 @@ class UsersService
         $sex = $request->input('sex', '');
         $birthday = $request->input('birthday', '');
         $city = $request->input('city', '');
-        $avatar = $request->file('avatar', '');
+        $avatar = $request->input('avatar', '');
         $update_data = [];
 
-        if ($avatar->isValid()) {
-            $dir = env("UPLOAD_DIR");
-            $avatar_name = time().rand(0, 1000).'.'.$avatar->guessExtension();
-            $avatar->move($dir, $avatar_name);
-            $update_data['avatar'] = $avatar_name;
+
+        if(!empty($avatar)){
+            $update_data['avatar'] = $avatar;
         }
 
         if(!empty($sign)){
@@ -292,8 +290,9 @@ class UsersService
         if(empty($update_data)){
             return ['code'=>-1, 'msg'=>'数据不能为空'];
         }
+
         $this->UsersRepositories->UpdateUsersInfo($user_id, $update_data);
-        return ['code'=>200, 'msg'=>'修改成功'];
+        return ['code'=>200, 'msg'=>'更新成功'];
     }
     /**
      * 登出
@@ -596,7 +595,8 @@ class UsersService
         $my_user_id = Auth::id();
         $user_id = $request->input('user_id', $my_user_id);
         $video_list = $this->videoRepositories->GetVideoData(['user_id'=>$user_id]);
-        if(empty($result['data'])){
+
+        if(empty($video_list['data'])){
             return ['code'=>200, 'data'=>[]];
         }
 
@@ -615,8 +615,8 @@ class UsersService
             $data['data']['video_data'][] = $video_data;
         }
         $data['code'] = 200;
-        unset($result['data']);
-        $data['data']['page'] = $result;
+        unset($video_list['data']);
+        $data['data']['page'] = $video_list;
 
        return $data;
     }
