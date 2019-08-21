@@ -248,7 +248,7 @@ class UsersService
         $this->UsersRepositories->UpdateUserById($user_info->id, $update_data);
 
         $data['code'] = 200;
-        $data['msg'] = '登录成功';
+        $data['data']['user_info']['user_id'] = $user_info->id;
         return $data;
     }
 
