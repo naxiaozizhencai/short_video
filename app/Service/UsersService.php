@@ -586,6 +586,7 @@ class UsersService
         $user_info = [];
         $user_info['id'] = $user_data->id;
         $user_info['username'] = $user_data->username;
+        $user_info['avatar'] = $user_data->avatar;
         $user_info['vip_level'] = $user_data->vip_level;
         $user_info['vip_expired_time'] = $user_data->vip_expired_time;
         $user_info['is_phone_login'] = $user_data->is_phone_login;
@@ -595,6 +596,8 @@ class UsersService
         $user_info['fans_num'] = $user_data->fans_num;
         $user_info['follow_num'] = $user_data->follow_num;
         $user_info['support_num'] = $user_data->support_num;
+        $user_info['upload_num'] = $user_data->upload_num;
+        $user_info['favorite_num'] = $user_data->favorite_num;
         $user_info['is_follow'] = 1;
         $data = [];
         $data['code'] = 200;

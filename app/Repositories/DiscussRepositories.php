@@ -46,7 +46,7 @@ class DiscussRepositories
      */
     public function getDiscussList($video_id)
     {
-
+        
         return DB::table($this->table_name)->
         where([['video_id' ,'=',$video_id], ['parent_id' ,'=',0]])->orderBy('discuss_time', 'desc')->paginate(5)->toarray();
 
