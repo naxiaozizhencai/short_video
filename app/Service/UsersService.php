@@ -709,9 +709,31 @@ class UsersService
 
     }
 
+    /**
+     * 推广记录
+     * @return array
+     */
     public function ShareList()
     {
-        return [];
+        $user_id = Auth::id();
+        $condition['popular_uid'] = $user_id;
+        $popolar_result = $this->popularListRepositories->GetUserPopolarList($condition);
+
+        if(empty($popolar_result['data'])){
+            return ['code'=>200, 'data'=>[]];
+        }
+
+        $data = ['code'=>200, 'data'=>[]];
+        foreach ($popolar_result['data'] as $key=>$value){
+            $temp['popular_num'] = $value->popular_num;
+            $temp['phone'] = $value->phone;
+            $temp['is_register'] = $value->is_register;
+            $data['data']['share_data'][] = $temp;
+        }
+
+        unset($popolar_result['data']);
+        $data['data']['page'] = $popolar_result;
+        return $data;
     }
 
 

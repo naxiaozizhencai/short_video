@@ -53,6 +53,7 @@ $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], functio
     $router->post('uservideolist', 'UserController@UserVideoList');//用户上传列表
 //    $router->get('uservideolist', 'UserController@UserVideoList');
     $router->get('share', 'UserController@UserShare');//用户分享
+    $router->get('sharelist', 'UserController@ShareList');//用户分享
 
     $router->post('searchusers', 'SearchController@SearchUsers');//用户搜索
 
