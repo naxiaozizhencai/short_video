@@ -2,27 +2,67 @@
 namespace App\Service;
 
 use App\Repositories\MessageRepositories;
+use App\Repositories\UsersRepositories;
 use Illuminate\Support\Facades\Auth;
 
 class MessageService
 {
     protected $messageRepositories;
+    protected $usersRepositories;
 
-    public function __construct(MessageRepositories $messageRepositories)
+    public function __construct(MessageRepositories $messageRepositories, UsersRepositories $usersRepositories)
     {
         $this->messageRepositories = $messageRepositories;
+        $this->usersRepositories = $usersRepositories;
     }
 
+    /**
+     * @param $sender_info
+     * @param $receiver_info
+     * @return string
+     */
+    public function MakeRoomId($sender_info, $receiver_info)
+    {
+
+        if($sender_info->id > $receiver_info->id){
+            $room_id = md5($sender_info->uuid . $receiver_info->uuid);
+        }else{
+            $room_id = md5($receiver_info->uuid . $sender_info->uuid);
+        }
+
+        return $room_id;
+    }
     /**
      *发送聊天信息
      * @param $request
      */
     public function SendChatMessage($request)
     {
-        $room_id = $request->input('room_id');
+
         $receive_id = $request->input('receive_id');
         $message = $request->input('message');
         $user_id = Auth::id();
+
+        if(empty($message) || empty($receive_id)){
+            return ['code'>-1, 'msg'=>'参数不能为空'];
+        }
+
+        $sender_user_data = $this->usersRepositories->getUserInfoById($user_id);
+
+        if(empty($sender_user_data)){
+            return ['code'>-1, 'msg'=>'用户不存在'];
+        }
+
+        $receiver_user_data = $this->usersRepositories->getUserInfoById($receive_id);
+
+        if(empty($receiver_user_data)){
+            return ['code'>-1, 'msg'=>'用户不存在'];
+        }
+
+        $room_id = $this->MakeRoomId($sender_user_data, $receiver_user_data);
+
+
+        $message_data['room_id'] = $room_id;
         $message_data['message_type'] = MessageRepositories::MESSAGE_TYPE_CHAT;
         $message_data['message'] = $message;
         $message_data['send_id'] = $user_id;
@@ -30,8 +70,9 @@ class MessageService
         $message_data['send_time'] = time();
         $message_data['add_time'] = date('Y-m-d H:i:s');
         $this->messageRepositories->InsertMessage($message_data);
+        $data = ['code'=>200, 'msg'=>'发送成功'];
 
-        return ['code'>200, 'msg'=>'发送成功'];
+        return $data;
 
     }
     /**

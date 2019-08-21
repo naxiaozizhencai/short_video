@@ -62,7 +62,7 @@ $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], functio
 
 
     $router->get('messagelist', 'MessageController@MessageList');//message 关注消息列表
-    $router->get('sendchat', 'MessageController@SendChatMessage');//message 关注消息列表
+    $router->post('sendchat', 'MessageController@SendChatMessage');//message 关注消息列表
     $router->get('getchatmsg', 'MessageController@GetChatMessageList');//message 关注消息列表
 
     $router->get('notice', 'MessageController@NoticeMessageList');//message公告
