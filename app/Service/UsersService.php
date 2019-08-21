@@ -428,6 +428,9 @@ class UsersService
         //增加会员时间
         $this->UsersRepositories->UpdateVipTime($user_data->id, 86400 * 3);
         $this->UsersRepositories->IncrUsersDetailNum($user_data->id, 'invitation_num');
+        $user_detail = [];
+        $user_detail['orther_popular_num'] = $popular_num;
+        $this->UsersRepositories->UpdateUsersInfo($user_id, $user_detail);
         $return_data['code'] = 200;
         $return_data['msg'] = '操作成功';
         return $return_data;
