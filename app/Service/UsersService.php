@@ -216,6 +216,7 @@ class UsersService
         $data['phone'] = $phone;
         $data['password'] = md5($password);
         $data['is_phone_login'] = 1;
+        $data['is_register'] = 1;
         $this->UsersRepositories->UpdateUserById($user_id, $data);
         return ['code'=>200, 'msg'=>'注册成功'];
     }
