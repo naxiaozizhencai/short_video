@@ -78,7 +78,7 @@ class MessageService
 
     public function GetNoticeMessageData()
     {
-        return ['code'=>200, 'data'=>['notice_message'=>'laravel-admin 是一个用于为Laravel提供后台界面的构建器，仅仅通过数行代码，就可以帮助我们构建CRUD后台。
+        return ['code'=>200, 'data'=>['id'=>1, 'title'=>'我靠前端真的吊','notice_time'=>date('Y-m-d H:i:s'),'notice_message'=>'laravel-admin 是一个用于为Laravel提供后台界面的构建器，仅仅通过数行代码，就可以帮助我们构建CRUD后台。
 能够快速生成数据表格和表单,不需要在界面上花太多时间,只需要专注入业务逻辑,大大减轻了UI的工作量。
 
 第一步：安装laravel
