@@ -599,6 +599,10 @@ class UsersService
         $user_info['upload_num'] = $user_data->upload_num;
         $user_info['favorite_num'] = $user_data->favorite_num;
         $user_info['is_follow'] = 1;
+        $user_info['viewed_times'] = empty($play_video_times_data) ? 0 : $play_video_times_data->temp_value;
+        $total_viewed_times_data = $this->tempDataRepositories->GetValue($user_data->id, 'total_viewed_times');
+        $user_info['total_viewed_times'] = empty($total_viewed_times_data) ? 10 :$total_viewed_times_data->temp_value;
+
         $data = [];
         $data['code'] = 200;
         $data['data'] = ['user_info'=>$user_info];
