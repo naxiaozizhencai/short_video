@@ -636,14 +636,19 @@ class UsersService
 
         $data = ['code'=>200];
         foreach($video_list['data'] as $key=>$value){
-            $temp_data = [];
-            $temp_data['video_id'] = $value;
-            $temp_data['user_id'] = $value->user_id;
-            $temp_data['video_id'] = $value->id;
-            $temp_data['favorite_num'] = $value->favorite_num;
-            $temp_data['video_title'] = $value->video_title;
-            $temp_data['video_image'] = $value->video_image;
-            $data['data']['video_list'][] = $temp_data;
+            $user_data = $this->UsersRepositories->getUserInfoById($value->user_id);
+            $video_data['video_id'] = $value->video_id;
+            $video_data['video_user_avatar'] = $user_data->avatar;
+            $video_data['video_user_id'] = $value->user_id;
+            $video_data['video_vip_level'] = $user_data->vip_level;
+            $video_data['video_username'] = $user_data->username;
+            $video_data['video_title'] = $value->video_title;
+            $video_data['video_image'] = $value->video_image;
+            $video_data['video_url'] = $value->video_url;
+            $video_data['video_label'] = $value->video_label;
+            $video_data['favorite_number'] = $value->favorite_num;
+            $video_data['reply_number'] = $value->reply_num;
+            $data['data']['video_data'][] = $video_data;
         }
         unset($video_list['data']);
         $data['data']['page'] = $video_list;
