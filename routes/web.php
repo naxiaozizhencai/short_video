@@ -45,8 +45,8 @@ $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], functio
     $router->post('addpopularnum', 'UserController@AddPopularizeNum');//填写推广码
     $router->post('dofollow', 'UserController@DoFollow');//关注用户
     $router->post('cancelfollow', 'UserController@CancelFollow');//取消关注
-    $router->post('followlist', 'UserController@FollowList');//关注列表
-    $router->post('fanslist', 'UserController@FansList');//粉丝列表
+    $router->get('followlist', 'UserController@FollowList');//关注列表
+    $router->get('fanslist', 'UserController@FansList');//粉丝列表
     $router->post('userinfo', 'UserController@UserInfo');//用户详情
     $router->post('updateuserinfo', 'UserController@UpdateUsersInfo');//更新用户想抢
     $router->get('favorvideolist', 'UserController@UserFavoriteList');//喜欢视频列表

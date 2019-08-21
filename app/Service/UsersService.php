@@ -505,7 +505,7 @@ class UsersService
     public function FollowList()
     {
         $user_id = Auth::id();
-        $follow_data = $this->fansRepositories->GetUsersFans($user_id);
+        $follow_data = $this->fansRepositories->GetUsersFollowList($user_id);
 
         if(empty($follow_data['data'])){
             return ['code'=>200, 'data'=>[]];
@@ -525,11 +525,15 @@ class UsersService
         return $data;
     }
 
+    /**
+     * 粉丝列表
+     * @return array
+     */
     public function FansList()
     {
 
         $user_id = Auth::id();
-        $follow_data = $this->fansRepositories->GetUsersFlowFans($user_id);
+        $follow_data = $this->fansRepositories->GetUsersFansList($user_id);
 
         if(empty($follow_data['data'])){
             return ['code'=>200, 'data'=>[]];
@@ -541,7 +545,7 @@ class UsersService
             $temp_data['vip_level'] = $value->vip_level;
             $temp_data['username'] = $value->username;
             $temp_data['avatar'] = $value->avatar;
-            $data['data']['follow_data'][] = $temp_data;
+            $data['data']['fans_data'][] = $temp_data;
         }
 
         unset($follow_data['data']);
