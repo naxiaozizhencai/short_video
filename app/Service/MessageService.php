@@ -2,27 +2,67 @@
 namespace App\Service;
 
 use App\Repositories\MessageRepositories;
+use App\Repositories\UsersRepositories;
 use Illuminate\Support\Facades\Auth;
 
 class MessageService
 {
     protected $messageRepositories;
+    protected $usersRepositories;
 
-    public function __construct(MessageRepositories $messageRepositories)
+    public function __construct(MessageRepositories $messageRepositories, UsersRepositories $usersRepositories)
     {
         $this->messageRepositories = $messageRepositories;
+        $this->usersRepositories = $usersRepositories;
     }
 
+    /**
+     * @param $sender_info
+     * @param $receiver_info
+     * @return string
+     */
+    public function MakeRoomId($sender_info, $receiver_info)
+    {
+
+        if($sender_info->id > $receiver_info->id){
+            $room_id = md5($sender_info->uuid . $receiver_info->uuid);
+        }else{
+            $room_id = md5($receiver_info->uuid . $sender_info->uuid);
+        }
+
+        return $room_id;
+    }
     /**
      *发送聊天信息
      * @param $request
      */
     public function SendChatMessage($request)
     {
-        $room_id = $request->input('room_id');
+
         $receive_id = $request->input('receive_id');
         $message = $request->input('message');
         $user_id = Auth::id();
+
+        if(empty($message) || empty($receive_id)){
+            return ['code'>-1, 'msg'=>'参数不能为空'];
+        }
+
+        $sender_user_data = $this->usersRepositories->getUserInfoById($user_id);
+
+        if(empty($sender_user_data)){
+            return ['code'>-1, 'msg'=>'用户不存在'];
+        }
+
+        $receiver_user_data = $this->usersRepositories->getUserInfoById($receive_id);
+
+        if(empty($receiver_user_data)){
+            return ['code'>-1, 'msg'=>'用户不存在'];
+        }
+
+        $room_id = $this->MakeRoomId($sender_user_data, $receiver_user_data);
+
+
+        $message_data['room_id'] = $room_id;
         $message_data['message_type'] = MessageRepositories::MESSAGE_TYPE_CHAT;
         $message_data['message'] = $message;
         $message_data['send_id'] = $user_id;
@@ -30,9 +70,41 @@ class MessageService
         $message_data['send_time'] = time();
         $message_data['add_time'] = date('Y-m-d H:i:s');
         $this->messageRepositories->InsertMessage($message_data);
+        $data = ['code'=>200, 'msg'=>'发送成功'];
 
-        return ['code'>200, 'msg'=>'发送成功'];
+        return $data;
 
+    }
+
+    public function GetNoticeMessageData()
+    {
+        return ['code'=>200, 'data'=>['id'=>1, 'title'=>'我靠前端真的吊','notice_time'=>date('Y-m-d H:i:s'),'notice_message'=>'laravel-admin 是一个用于为Laravel提供后台界面的构建器，仅仅通过数行代码，就可以帮助我们构建CRUD后台。
+能够快速生成数据表格和表单,不需要在界面上花太多时间,只需要专注入业务逻辑,大大减轻了UI的工作量。
+
+第一步：安装laravel
+使用composer安装或中文官网下载一键安装包,官网网址:http://laravelacademy.org/resources-download
+composer安装使用命令如下：
+composer create-project --prefer-dist laravel/laravel yourproject
+
+第二步：安装laravel-admin及相关配置
+a.使用composer安装,命令如下：
+composer require encore/laravel-admin "1.4.*"
+
+b.添加相关服务
+在config/app.php文件中添加服务
+Encore\Admin\Providers\AdminServiceProvider::class;
+
+c.发布admin.php配置文件和相关assets
+php artisan vendor:publish --tag=laravel-admin
+
+d.生成配置文件admin.php,完成安装
+php artisan admin:install
+注意在运行该步骤命令之前,确保laravel中.env中数据库连接配置正确
+github参考网址:https://github.com/z-song/laravel-admin
+
+安装完成后,打开浏览器访问http://localhost/admin,输入用户名和密码登录
+用户名:admin 密码:admin
+登录后界面如下图所示']];
     }
     /**
      * 获取关注列表信息

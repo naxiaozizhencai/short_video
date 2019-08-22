@@ -50,9 +50,10 @@ class MessageController extends Controller
     /**
      * 公告消息列表
      */
-    public function NoticeMessageList()
+    public function NoticeMessage()
     {
-
+        $data = $this->messageService->GetNoticeMessageData();
+        return response()->json($data);
     }
 
 

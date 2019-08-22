@@ -216,6 +216,7 @@ class UsersService
         $data['phone'] = $phone;
         $data['password'] = md5($password);
         $data['is_phone_login'] = 1;
+        $data['is_register'] = 1;
         $this->UsersRepositories->UpdateUserById($user_id, $data);
         return ['code'=>200, 'msg'=>'注册成功'];
     }
@@ -247,7 +248,7 @@ class UsersService
         $this->UsersRepositories->UpdateUserById($user_info->id, $update_data);
 
         $data['code'] = 200;
-        $data['msg'] = '登录成功';
+        $data['data']['user_info']['user_id'] = $user_info->id;
         return $data;
     }
 
@@ -338,18 +339,19 @@ class UsersService
         $this->tempDataRepositories->UpateOrInsertTempData($find_data, $temp_data);
 
 
+
         $appkey = env('MESSAGE_APPKEY');//你的appkey
         $mobile = $phone;//手机号 超过1024请用POST
         $content = '你的注册码是'.$code.'【鲨鹰供应】';//utf8
         $url = "https://api.jisuapi.com/sms/send?appkey=$appkey&mobile=$mobile&content=$content";
-
+        
         $result = curlOpen($url, ['ssl'=>true]);
         $jsonarr = json_decode($result, true);
 
         if($jsonarr['status'] != 0)
         {
             return ['code'=>-1, 'msg'=>'发送失败'];
-            exit();
+
         }
 
         return ['code'=>200, 'msg'=>'发送成功'];
@@ -431,6 +433,9 @@ class UsersService
         //增加会员时间
         $this->UsersRepositories->UpdateVipTime($user_data->id, 86400 * 3);
         $this->UsersRepositories->IncrUsersDetailNum($user_data->id, 'invitation_num');
+        $user_detail = [];
+        $user_detail['orther_popular_num'] = $popular_num;
+        $this->UsersRepositories->UpdateUsersInfo($user_id, $user_detail);
         $return_data['code'] = 200;
         $return_data['msg'] = '操作成功';
         return $return_data;
@@ -585,6 +590,7 @@ class UsersService
         $user_info = [];
         $user_info['id'] = $user_data->id;
         $user_info['username'] = $user_data->username;
+        $user_info['avatar'] = $user_data->avatar;
         $user_info['vip_level'] = $user_data->vip_level;
         $user_info['vip_expired_time'] = $user_data->vip_expired_time;
         $user_info['is_phone_login'] = $user_data->is_phone_login;
@@ -594,7 +600,14 @@ class UsersService
         $user_info['fans_num'] = $user_data->fans_num;
         $user_info['follow_num'] = $user_data->follow_num;
         $user_info['support_num'] = $user_data->support_num;
+        $user_info['upload_num'] = $user_data->upload_num;
+        $user_info['favorite_num'] = $user_data->favorite_num;
+        $user_info['orther_popular_num'] = $user_data->orther_popular_num;
         $user_info['is_follow'] = 1;
+        $user_info['viewed_times'] = empty($play_video_times_data) ? 0 : $play_video_times_data->temp_value;
+        $total_viewed_times_data = $this->tempDataRepositories->GetValue($user_data->id, 'total_viewed_times');
+        $user_info['total_viewed_times'] = empty($total_viewed_times_data) ? 10 :$total_viewed_times_data->temp_value;
+
         $data = [];
         $data['code'] = 200;
         $data['data'] = ['user_info'=>$user_info];
