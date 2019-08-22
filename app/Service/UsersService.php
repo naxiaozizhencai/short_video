@@ -350,6 +350,7 @@ class UsersService
 
         if($jsonarr['status'] != 0)
         {
+            print_r($jsonarr);
             return ['code'=>-1, 'msg'=>'发送失败'];
 
         }
