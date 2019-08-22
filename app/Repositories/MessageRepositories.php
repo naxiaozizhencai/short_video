@@ -25,6 +25,18 @@ class MessageRepositories
     }
 
     /**
+     * 获取聊天记录
+     * @param $data
+     * @return mixed
+     */
+    public function GetChatMessageList($data)
+    {
+
+        return DB::table($this->table_name)->where($data)
+            ->paginate(15)->toarray();
+
+    }
+    /**
      * @param $data
      * @return mixed
      */
@@ -59,7 +71,7 @@ class MessageRepositories
     {
 
         return DB::table($this->table_name)->
-        where('message_type', '=', self::MESSAGE_TYPE_CHAT, 'and')->Where([['send_id', '=', $user_id, 'or'], ['receive_id', '=', $user_id, 'or']])
+        where('message_type', '=', self::MESSAGE_TYPE_CHAT, 'and')->where([['send_id', '=', $user_id, 'or'], ['receive_id', '=', $user_id, 'or']])
             ->groupBy('room_id')->paginate(15, ['room_id', 'message_type', 'message', 'send_id', 'receive_id', 'send_time'])->toarray();
     }
 }

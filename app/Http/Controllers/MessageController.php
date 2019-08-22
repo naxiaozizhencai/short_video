@@ -23,18 +23,22 @@ class MessageController extends Controller
     }
 
 
-
-    public function GetChatMessageList()
-    {
-
-    }
-
     /**
      * 聊天列表
      */
     public function ChatList()
     {
         $data = $this->messageService->GetChatList();
+        return response()->json($data);
+    }
+
+    /**
+     * 聊天信息详情
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function ChatMessageList(Request $request)
+    {
+        $data = $this->messageService->ChatMessageList($request);
         return response()->json($data);
     }
 

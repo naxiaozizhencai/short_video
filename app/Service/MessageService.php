@@ -153,6 +153,58 @@ github参考网址:https://github.com/z-song/laravel-admin
     }
 
     /**
+     * 返回聊天记录
+     * @param $request
+     * @return array
+     */
+    public function ChatMessageList($request)
+    {
+        $room_id = $request->input('room_id');
+        $message_id = $request->input('message_id', 0);
+        $condition = [];
+        $condition[] = ['room_id', '=', $room_id];
+        $condition[] = ['message_type', '=', MessageRepositories::MESSAGE_TYPE_CHAT];
+        $condition[] = ['message_id', '>', $message_id];
+        $message_data = $this->messageRepositories->GetChatMessageList($condition);
+
+        if(empty($message_data['data'])){
+            return ['code'=>200, 'data'=>[]];
+        }
+        $data = ['code'=>200, 'data'=>[]];
+        foreach ($message_data['data'] as $key=>$value){
+            $temp_msg = [];
+            $temp_msg['message_id'] = $value->message_id;
+            $temp_msg['message'] = $value->message;
+            $temp_msg['room_id'] = $value->room_id;
+            $temp_msg['send_id'] = $value->send_id;
+            $temp_msg['receive_id'] = $value->receive_id;
+            $temp_msg['send_time'] = $value->send_time;
+            $data['data']['chat_message'][] = $temp_msg;
+            if($key == 0){
+                $send_user_data = $this->usersRepositories->getUserInfoById($value->send_id);
+
+                $temp_user_data['user_id'] =  $send_user_data->id;
+                $temp_user_data['username'] =  $send_user_data->username;
+                $temp_user_data['vip_level'] =  $send_user_data->vip_level;
+                $temp_user_data['avatar'] =  $send_user_data->avatar;
+                $data['data']['user_info'][]= $temp_user_data;
+
+                $receive_user_data = $this->usersRepositories->getUserInfoById($value->receive_id);
+
+                $temp_user_data['user_id'] =  $receive_user_data->id;
+                $temp_user_data['username'] =  $receive_user_data->username;
+                $temp_user_data['vip_level'] =  $receive_user_data->vip_level;
+                $temp_user_data['avatar'] =  $receive_user_data->avatar;
+                $data['data']['user_info'][]= $temp_user_data;
+
+            }
+        }
+
+        unset($message_data['data']);
+        $data['data']['page'] = $message_data;
+        return $data;
+    }
+    /**
      * 获取和谁聊天列表
      */
     public function GetChatList()
@@ -179,7 +231,8 @@ github参考网址:https://github.com/z-song/laravel-admin
             $data['data']['chat_list'][$key]['user_info'] = $user_info;
             $data['data']['chat_list'][$key]['chat_info'] = $chat_info;
         }
-
+        unset($chat_list['data']);
+        $data['data']['page'] = $chat_list;
         return $data;
 
     }
