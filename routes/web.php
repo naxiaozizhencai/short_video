@@ -58,7 +58,7 @@ $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], functio
     $router->post('searchusers', 'SearchController@SearchUsers');//用户搜索
 
     $router->get('invitationrank', 'HotspotController@InvitationRank');//分享排行
-    $router->get('supportrank', 'HotspotController@SupportRank');//支持排行
+    $router->get('uploadrank', 'HotspotController@UploadRank');//支持排行
 
 
     $router->post('messagelist', 'MessageController@MessageList');//message 消息列表
