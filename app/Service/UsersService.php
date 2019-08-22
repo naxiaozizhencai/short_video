@@ -344,7 +344,7 @@ class UsersService
         $mobile = $phone;//手机号 超过1024请用POST
         $content = '你的注册码是'.$code.'【鲨鹰供应】';//utf8
         $url = "https://api.jisuapi.com/sms/send?appkey=$appkey&mobile=$mobile&content=$content";
-        
+
         $result = curlOpen($url, ['ssl'=>true]);
         $jsonarr = json_decode($result, true);
 
