@@ -31,7 +31,7 @@ class OrderService
     public function SaveOrder($user_id,$request)
     {
         $data =  ['code'=>-1, 'errMsg'=>'订单创建失败'];
-        $order_type = $request['order_type'];
+        $order_type = 1;//vip充值
         $product_id = $request['product_id'];
         $product = $this->GetProduct($request['product_id']);
         $order_price = $product->product_price;
@@ -39,7 +39,8 @@ class OrderService
         $result = $this->orderRepositories->InsertUserOrder($user_id,$order_type,$product_id,$order_price,$pay_type);
 
         if(!empty($result)){
-            return $data =['code'=>200, 'errMsg'=>'订单创建成功'];
+            $url = $_SERVER['HTTP_HOST'].$result;
+            return $data =['code'=>200, 'errMsg'=>'订单创建成功','url'=>$url];
         }
         return $data;
     }
@@ -57,12 +58,12 @@ class OrderService
 
     public function GetProductList()
     {
-        $result = $this->orderRepositories->getProductData($user_id);
+        $result = $this->orderRepositories->getProductData();
 
         if(empty($result)){
             return $data = ['code'=>-1, 'errMsg'=>'数据不存在'];
         }
-        return $result;
+        return $data = ['code'=>200, 'data'=>$result];
     }
 
 

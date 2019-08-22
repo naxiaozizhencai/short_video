@@ -19,7 +19,7 @@ class OrderRepositories
      */
     public function getProductData($product_id)
     {
-        $product_data = DB::selectOne('select * from video_product where id = ? ', [$product_id]);
+        $product_data = DB::selectOne('select * from video_product where id =?',[$product_id]);
         if(empty($product_data)){
             return [];
         }
@@ -44,12 +44,28 @@ class OrderRepositories
                 'product_id'=>$product_id,
                 'order_price'=>$order_price,
                 'pay_type'=>$pay_type,
-                'create_time'=>time(),
+                'create_time'=>date('Y-m-d H:i:s'),
             ]
         );
             // 流程操作顺利则commit
             DB::commit();
-            return $userId;
+
+
+            //加载fastpay支付插件
+            if (!function_exists('get_openid')) {
+                require $_SERVER['DOCUMENT_ROOT'].'/fastpay/Fast_Cofig.php';
+            }
+
+            $paydata=array();
+            $paydata['uid']=$user_id;//支付用户id
+            $paydata['order_no']=$order_sn;//订单号
+            $paydata['total_fee']=$order_price;//金额
+            $paydata['param']="";//其他参数
+            $paydata['me_back_url']="";//支付成功后跳转
+            $paydata['notify_url']="http://www.baidu.com";//支付成功后异步回调
+            $geturl=fastpay_order($paydata);//获取支付链接
+
+            return $geturl;
         } catch (ModelNotFoundException $e) {
             // 抛出异常则rollBack
             DB::rollBack();
@@ -66,15 +82,6 @@ class OrderRepositories
 
         return $order_data;
     }
-    
-    public function getProductData($user_id)
-    {
-        $product_data = DB::select('select * from video_product');
-        if(empty($product_data)){
-            return [];
-        }
 
-        return $product_data;
-    }
 
 }

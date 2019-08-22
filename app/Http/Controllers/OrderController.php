@@ -15,7 +15,7 @@ class OrderController extends Controller
     }
 
     //充值产品列表
-    public function ProductList($value='')
+    public function ProductList()
     {
         $data = $this->orderService->GetProductList();
         return response()->json($data);
@@ -29,7 +29,6 @@ class OrderController extends Controller
     public function CreateOrder(Request $request)
     {
         $user_id = Auth::user()->id;
-        
         $data = $this->orderService->SaveOrder($user_id,$request);
         return response()->json($data);
 
