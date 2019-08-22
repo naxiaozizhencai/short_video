@@ -44,19 +44,19 @@ class MessageService
         $user_id = Auth::id();
 
         if(empty($message) || empty($receive_id)){
-            return ['code'>-1, 'msg'=>'参数不能为空'];
+            return ['code'=>-1, 'msg'=>'参数不能为空'];
         }
 
         $sender_user_data = $this->usersRepositories->getUserInfoById($user_id);
 
         if(empty($sender_user_data)){
-            return ['code'>-1, 'msg'=>'用户不存在'];
+            return ['code'=>-1, 'msg'=>'用户不存在'];
         }
 
         $receiver_user_data = $this->usersRepositories->getUserInfoById($receive_id);
 
         if(empty($receiver_user_data)){
-            return ['code'>-1, 'msg'=>'用户不存在'];
+            return ['code'=>-1, 'msg'=>'用户不存在'];
         }
 
         $room_id = $this->MakeRoomId($sender_user_data, $receiver_user_data);
@@ -147,6 +147,38 @@ github参考网址:https://github.com/z-song/laravel-admin
 
         unset($message_data['data']);
         $data['data']['page'] = $message_data;
+
+        return $data;
+
+    }
+
+    /**
+     * 获取和谁聊天列表
+     */
+    public function GetChatList()
+    {
+        $user_id = Auth::id();
+        $chat_list = $this->messageRepositories->GetChatList($user_id);
+
+        if(empty($chat_list['data'])){
+            return ['code'=>200, 'data'=>[]];
+        }
+        $data = ['code'=>200];
+        foreach ($chat_list['data'] as $key=>$value){
+            $chat_user_id = ($value->send_id == $user_id) ? $value->receive_id : $value->send_id;
+            $user_data = $this->usersRepositories->getUserInfoById($chat_user_id);
+
+            $user_info['user_id'] = $user_data->id;
+            $user_info['username'] = $user_data->username;
+            $user_info['avatar'] = $user_data->avatar;
+            $user_info['vip_level'] = $user_data->vip_level;
+            $user_info['vip_expired_time'] = $user_data->vip_expired_time;
+            $chat_info['room_id'] = $value->room_id;
+            $chat_info['message'] = $value->message;
+            $chat_info['send_time'] = $value->send_time;
+            $data['data']['chat_list'][$key]['user_info'] = $user_info;
+            $data['data']['chat_list'][$key]['chat_info'] = $chat_info;
+        }
 
         return $data;
 

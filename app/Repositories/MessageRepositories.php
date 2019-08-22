@@ -25,8 +25,8 @@ class MessageRepositories
     }
 
     /**
-     * 获取消息
      * @param $data
+     * @return mixed
      */
     public function GetMyMessages($data)
     {
@@ -49,5 +49,17 @@ class MessageRepositories
                 }
             }
         })->whereIn('video_message.message_type', [self::MESSAGE_TYPE_SUPPORT, self::MESSAGE_TYPE_DISCUSS, self::MESSAGE_TYPE_FOLLOW])->orderBy('send_time', 'desc')->paginate(15,['video_message.*', 'users.*', 'users_detail.*'])->toarray();
+    }
+
+    /**
+     * @param $user_id
+     * @return mixed
+     */
+    public function GetChatList($user_id)
+    {
+
+        return DB::table($this->table_name)->
+        where('message_type', '=', self::MESSAGE_TYPE_CHAT, 'and')->Where([['send_id', '=', $user_id, 'or'], ['receive_id', '=', $user_id, 'or']])
+            ->groupBy('room_id')->paginate(15, ['room_id', 'message_type', 'message', 'send_id', 'receive_id', 'send_time'])->toarray();
     }
 }

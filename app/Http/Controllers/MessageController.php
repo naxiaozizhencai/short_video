@@ -34,7 +34,8 @@ class MessageController extends Controller
      */
     public function ChatList()
     {
-
+        $data = $this->messageService->GetChatList();
+        return response()->json($data);
     }
 
     /**
