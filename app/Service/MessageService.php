@@ -192,6 +192,71 @@ github参考网址:https://github.com/z-song/laravel-admin
 
             if($key == 0){
                 $send_user_data = $this->usersRepositories->getUserInfoById($value->send_id);
+                $temp_user_data['user_id'] =  $send_user_data->id;
+                $temp_user_data['username'] =  $send_user_data->username;
+                $temp_user_data['vip_level'] =  $send_user_data->vip_level;
+                $temp_user_data['avatar'] =  $send_user_data->avatar;
+                $data['data']['user_info'][]= $temp_user_data;
+
+                $receive_user_data = $this->usersRepositories->getUserInfoById($value->receive_id);
+
+                $temp_user_data['user_id'] =  $receive_user_data->id;
+                $temp_user_data['username'] =  $receive_user_data->username;
+                $temp_user_data['vip_level'] =  $receive_user_data->vip_level;
+                $temp_user_data['avatar'] =  $receive_user_data->avatar;
+                $data['data']['user_info'][]= $temp_user_data;
+                $min_message_id = $value->message_id;
+                $data['data']['min_message_id'] = $min_message_id;
+            }
+        }
+
+        $attributes = ['user_id'=>$user_id, 'temp_key'=>$room_id];
+        $temp_value = ['user_id'=>$user_id, 'temp_key'=>$room_id, 'temp_value'=>$max_message_id];
+        $this->tempDataRepositories->UpateOrInsertTempData($attributes, $temp_value);
+        unset($message_data['data']);
+        $data['data']['page'] = $message_data;
+        return $data;
+    }
+
+    /**
+     * 返回聊天记录
+     * @param $request
+     * @return array
+     */
+    public function ChatHistoryMessageList($request)
+    {
+        $room_id = $request->input('room_id');
+        $user_id = Auth::id();
+        $condition = [];
+        $temp_data = $this->tempDataRepositories->GetValue($user_id, $room_id);
+        $min_message_id = empty($temp_data) ? 0 : $temp_data->temp_value;
+        $min_message_id = $request->input('min_message_id', $min_message_id);
+
+        $condition[] = ['room_id', '=', $room_id];
+        $condition[] = ['message_type', '=', MessageRepositories::MESSAGE_TYPE_CHAT];
+        $condition[] = ['message_id', '<', $min_message_id];
+        $message_data = $this->messageRepositories->GetHisttoryChatMessageList($condition);
+
+        if(empty($message_data['data'])){
+            return ['code'=>200, 'data'=>[]];
+        }
+
+        $data = ['code'=>200, 'data'=>[]];
+        $max_message_id = 0;
+        foreach ($message_data['data'] as $key=>$value){
+
+            $temp_msg = [];
+            $max_message_id = $value->message_id;
+            $temp_msg['message_id'] = $value->message_id;
+            $temp_msg['message'] = $value->message;
+            $temp_msg['room_id'] = $value->room_id;
+            $temp_msg['send_id'] = $value->send_id;
+            $temp_msg['receive_id'] = $value->receive_id;
+            $temp_msg['send_time'] = $value->send_time;
+            $data['data']['chat_message'][] = $temp_msg;
+
+            if($key == 0){
+                $send_user_data = $this->usersRepositories->getUserInfoById($value->send_id);
 
                 $temp_user_data['user_id'] =  $send_user_data->id;
                 $temp_user_data['username'] =  $send_user_data->username;
@@ -206,6 +271,7 @@ github参考网址:https://github.com/z-song/laravel-admin
                 $temp_user_data['vip_level'] =  $receive_user_data->vip_level;
                 $temp_user_data['avatar'] =  $receive_user_data->avatar;
                 $data['data']['user_info'][]= $temp_user_data;
+                $data['data']['min_message_id'] =  $value->message_id;
             }
         }
 
