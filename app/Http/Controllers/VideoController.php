@@ -24,6 +24,11 @@ class VideoController extends Controller
         return response()->json($data);
     }
 
+    /**
+     * 播放视频
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function PlayVideo(Request $request)
     {
         $data = $this->videoService->PlayVideo($request);

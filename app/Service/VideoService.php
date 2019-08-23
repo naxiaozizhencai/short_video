@@ -273,6 +273,7 @@ class VideoService
         $msg_data['add_time'] = date('Y-m-d H:i:s');
         $this->messageRepositories->InsertMessage($msg_data);
         $data = ['code'=>200, 'msg'=>'喜歡成功'];
+        $this->usersRepositories->IncrUsersDetailNum($video_row->user_id, 'support_num', 1);
         return $data;
     }
 
@@ -302,7 +303,7 @@ class VideoService
         $update_data['add_time'] = date("Y-m-d H:i:s");
         $this->favoriteRepositories->DeleteFavoriteVideo($user_id, $video_id);
         $this->videoRepositories->DecrVideoNum($video_id, 'favorite_num');
-
+        $this->usersRepositories->DecrUsersDetailNum($video_row->user_id, 'support_num', 1);
         $data = ['code'=>200, 'msg'=>'取消成功'];
         return $data;
 
