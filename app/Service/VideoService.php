@@ -4,6 +4,7 @@ use App\Repositories\DiscussReportRepositories;
 use App\Repositories\DiscussRepositories;
 use App\Repositories\FavoriteRepositories;
 use App\Repositories\MessageRepositories;
+use App\Repositories\PlayVideoHistoryRepositories;
 use App\Repositories\ReplyRepositories;
 use App\Repositories\TempDataRepositories;
 use App\Repositories\UsersRepositories;
@@ -21,12 +22,13 @@ class VideoService
     protected $usersRepositories;
     protected $discussReportRepositories;
     protected $messageRepositories;
+    protected $playVideoHistoryRepositories;
 
     public function __construct(VideoRepositories $videoRepositories,
                                 TempDataRepositories $tempDataRepositories,
                                 FavoriteRepositories $favoriteRepositories, DiscussRepositories $discussRepositories,
                                 UsersRepositories $usersRepositories, DiscussReportRepositories $discussReportRepositories,
-                                MessageRepositories $messageRepositories
+                                MessageRepositories $messageRepositories, PlayVideoHistoryRepositories $playVideoHistoryRepositories
 )
     {
         $this->videoRepositories = $videoRepositories;
@@ -36,6 +38,7 @@ class VideoService
         $this->usersRepositories = $usersRepositories;
         $this->discussReportRepositories = $discussReportRepositories;
         $this->messageRepositories = $messageRepositories;
+        $this->playVideoHistoryRepositories = $playVideoHistoryRepositories;
     }
 
     /**
@@ -90,10 +93,19 @@ class VideoService
         if(empty($video_data)){
             return ['code'=>-1, 'msg'=>'視頻數據不存在'];
         }
-        $play_video_times = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
 
-        $update_temp_data['temp_value'] = (empty($play_video_times)) ? 1 : $play_video_times->temp_value;
-        $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES, $update_temp_data);
+
+        if(!$result = $this->playVideoHistoryRepositories->ExistHistory($user_id, $video_id)){
+
+            $play_video_times = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
+            $update_temp_data['temp_value'] = (empty($play_video_times)) ? 1 : $play_video_times->temp_value + 1;
+            $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES, $update_temp_data);
+            $history_data['user_id'] = $user_id;
+            $history_data['video_id'] = $video_id;
+            $history_data['add_time'] = date("Y-m-d H:i:s");
+            $this->playVideoHistoryRepositories->InsertPlayVideoHistory($history_data);
+        }
+
         $this->videoRepositories->IncrVideoNum($video_id, 'play_num', 1);
         return ['code'=>200, 'msg'=>'操作成功'];
     }
