@@ -43,4 +43,10 @@ class HotspotController extends Controller
 
     }
 
+    public function SupportRank()
+    {
+        $data =$this->hotspotService->SupportRankData();
+        return response()->json($data);
+    }
+
 }

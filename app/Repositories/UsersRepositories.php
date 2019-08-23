@@ -154,19 +154,13 @@ class UsersRepositories
     }
 
     /**
-     * 获取上传排行
+     * 获取邀请排行
      */
-    public function UploadRankData()
+    public function GetSupportRankData()
     {
-
-    }
-
-    /**
-     * 获取点赞排行
-     */
-    public function SupportRankData()
-    {
-
+        return DB::table('users')->
+        leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->
+        select(['users.*','users_detail.*'])->orderBy('support_num', 'desc')->limit(50)->get();
     }
 
 
