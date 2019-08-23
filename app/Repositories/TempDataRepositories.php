@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\DB;
 
 class TempDataRepositories
 {
+    const PLAY_VIDEO_TIMES = 'play_video_times';
+    const TOTAL_VIEWED_TIMES = 'total_viewed_times';
+
     protected $table_name = 'temp_data';
 
     public function GetValue($user_id, $key)
@@ -15,6 +18,20 @@ class TempDataRepositories
     public function ClearValue($user_id, $key)
     {
         return DB::update('update temp_data set temp_value = ?  where user_id=? AND temp_key = ? ', [0, $user_id, $key]);
+    }
+
+    /**
+     * 更新临时数据
+     * @param $user_id
+     * @param $key
+     * @param $value
+     * @return int
+     */
+    public function UpdateTempValue($user_id, $key, $value)
+    {
+        $data['user_id'] = $user_id;
+        $data['temp_key'] = $key;
+        return DB::table($this->table_name)->where($data)->update($value);
     }
 
     /**

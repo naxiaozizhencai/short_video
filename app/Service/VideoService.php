@@ -90,8 +90,10 @@ class VideoService
         if(empty($video_data)){
             return ['code'=>-1, 'msg'=>'視頻數據不存在'];
         }
-        
-        $this->tempDataRepositories->UpateOrInsertTempData();
+        $play_video_times = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
+
+        $update_temp_data['temp_value'] = (empty($play_video_times)) ? 1 : $play_video_times->temp_value;
+        $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES, $update_temp_data);
         $this->videoRepositories->IncrVideoNum($video_id, 'play_num', 1);
         return ['code'=>200, 'msg'=>'操作成功'];
     }

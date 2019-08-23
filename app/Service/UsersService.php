@@ -580,8 +580,8 @@ class UsersService
      */
     public function UserInfo($request)
     {
-        $user_id = Auth::id();
-        $user_id = $request->input('user_id', $user_id);
+        $my_user_id = Auth::id();
+        $user_id = $request->input('user_id', $my_user_id);
         $user_data = $this->UsersRepositories->getUserInfoById($user_id);
 
         if(empty($user_data)){
@@ -604,9 +604,11 @@ class UsersService
         $user_info['upload_num'] = $user_data->upload_num;
         $user_info['favorite_num'] = $user_data->favorite_num;
         $user_info['orther_popular_num'] = $user_data->orther_popular_num;
-        $user_info['is_follow'] = 1;
+        $follows_ids = $this->fansRepositories->GetUsersFollowData($my_user_id);
+        $user_info['is_follow'] = isset($follows_ids[$user_id]) ? 1 : 0;
+        $play_video_times_data = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
         $user_info['viewed_times'] = empty($play_video_times_data) ? 0 : $play_video_times_data->temp_value;
-        $total_viewed_times_data = $this->tempDataRepositories->GetValue($user_data->id, 'total_viewed_times');
+        $total_viewed_times_data = $this->tempDataRepositories->GetValue($user_data->id, TempDataRepositories::TOTAL_VIEWED_TIMES);
         $user_info['total_viewed_times'] = empty($total_viewed_times_data) ? 10 :$total_viewed_times_data->temp_value;
 
         $data = [];
@@ -765,6 +767,5 @@ class UsersService
         $data['data']['page'] = $popolar_result;
         return $data;
     }
-
-
+    
 }
