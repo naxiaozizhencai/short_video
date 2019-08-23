@@ -469,12 +469,13 @@ class UsersService
             return ['code'=>-1, 'msg'=>'已经关注'];
         }
         $fans_data  = [];
-        $fans_data['user_id'] = Auth::id();
+        $fans_data['user_id'] = $uid;
         $fans_data['fans_id'] = $fans_id;
         $fans_data['add_time'] = date('Y-m-d H:i:s');
 
         $this->fansRepositories->InsertFans($fans_data);
-        $this->UsersRepositories->IncrUsersDetailNum($fans_id, 'follow_num');
+        $this->UsersRepositories->IncrUsersDetailNum($uid, 'follow_num');
+        $this->UsersRepositories->IncrUsersDetailNum($fans_id, 'fans_num');
 
         $msg_data = [];
         $msg_data['message_type'] = MessageRepositories::MESSAGE_TYPE_FOLLOW;
@@ -513,6 +514,7 @@ class UsersService
         }
 
         $this->fansRepositories->DeleteFans($uid, $fans_id);
+        $this->UsersRepositories->DecrUsersDetailNum($uid, 'follow_num');
         $this->UsersRepositories->DecrUsersDetailNum($fans_id, 'follow_num');
 
         return ['code'=>200, 'msg'=>'取消成功'];
