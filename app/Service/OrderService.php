@@ -58,7 +58,7 @@ class OrderService
 
     public function GetProductList()
     {
-        $result = $this->orderRepositories->getProductData();
+        $result = $this->orderRepositories->getProductList();
 
         if(empty($result)){
             return $data = ['code'=>-1, 'errMsg'=>'数据不存在'];

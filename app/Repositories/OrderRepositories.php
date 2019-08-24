@@ -12,6 +12,21 @@ class OrderRepositories
         $this->tempDataRepositories = $tempDataRepositories;
     }
 
+        /**
+     *
+     * @param $view_max_id
+     * @return array
+     */
+    public function getProductList()
+    {
+        $product_data = DB::selectOne('select * from video_product');
+        if(empty($product_data)){
+            return [];
+        }
+
+        return $product_data;
+    }
+
     /**
      *
      * @param $view_max_id

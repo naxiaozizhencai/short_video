@@ -67,7 +67,7 @@ class VideoRepositories
         }
         $query->leftjoin('users', 'video_list.user_id', '=', 'users.id')->leftjoin('users_detail', 'users.id', '=', 'users_detail.user_id');
 
-        return $query->paginate(6, ['video_list.id as video_id', 'video_list.*', 'users.*', 'users_detail.*'])->toarray();
+        return $query->paginate(1, ['video_list.id as video_id', 'video_list.*', 'users.*', 'users_detail.*'])->toarray();
     }
     /**
      * @param $uid
@@ -92,7 +92,7 @@ class VideoRepositories
 
         return DB::table("users_fans")->leftjoin('video_list', 'users_fans.fans_id', '=', 'video_list.user_id')
             ->where('users_fans.user_id', '=', $uid)->where('video_list.is_check', '=', 1)->orderby('video_list.add_time', 'desc')
-            ->paginate(6, ['video_list.*'])->toarray();
+            ->paginate(1, ['video_list.*'])->toarray();
     }
 
 
@@ -125,7 +125,7 @@ class VideoRepositories
      * @param $user_id
      * @return mixed
      */
-    public function GetFavoriteVideoList($user_id, $page_size = 6)
+    public function GetFavoriteVideoList($user_id, $page_size = 1)
     {
         return DB::table('video_favorite_list')->leftjoin('video_list', 'video_favorite_list.video_id', '=', 'video_list.id')->
         where('video_favorite_list.user_id', '=', $user_id)->orderby('video_favorite_list.add_time', 'desc')->paginate($page_size)->toarray();
