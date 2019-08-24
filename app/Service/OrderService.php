@@ -40,7 +40,7 @@ class OrderService
 
         if(!empty($result)){
             $url = $_SERVER['HTTP_HOST'].$result;
-            return $data =['code'=>200, 'errMsg'=>'订单创建成功','url'=>$url];
+            return $data =['code'=>200, 'msg'=>'订单创建成功','url'=>$url];
         }
         return $data;
     }
