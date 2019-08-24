@@ -88,7 +88,7 @@ class OrderRepositories
         }
     }
 
-    public function getOrderData()
+    public function getOrderData($user_id)
     {
         $order_data = DB::select('select user_order.*, video_product.* from user_order left JOIN video_product ON user_order.product_id=video_product.id WHERE user_order.user_id = ? ', [$user_id]);
         if(empty($order_data)){
