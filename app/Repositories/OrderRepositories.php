@@ -19,7 +19,7 @@ class OrderRepositories
      */
     public function getProductList()
     {
-        $product_data = DB::selectOne('select * from video_product');
+        $product_data = DB::select('select * from video_product');
         if(empty($product_data)){
             return [];
         }
