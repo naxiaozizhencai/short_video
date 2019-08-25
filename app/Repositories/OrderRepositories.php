@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 
 class OrderRepositories
 {
+    
 
     protected $tempDataRepositories;
     public function __construct(TempDataRepositories $tempDataRepositories)
