@@ -77,7 +77,7 @@ class OrderRepositories
             $paydata['total_fee']=$order_price;//金额
             $paydata['param']="";//其他参数
             $paydata['me_back_url']="";//支付成功后跳转
-            $paydata['notify_url']="http://www.baidu.com";//支付成功后异步回调
+            $paydata['notify_url']=$_SERVER['HTTP_HOST']."/notify";//支付成功后异步回调
             $geturl=fastpay_order($paydata);//获取支付链接
 
             return $geturl;
@@ -98,5 +98,19 @@ class OrderRepositories
         return $order_data;
     }
 
+    public function getOrderBySn($order_sn)
+    {
+        $order_data = DB::selectOne('select user_order.*, video_product.* from user_order left JOIN video_product ON user_order.product_id=video_product.id WHERE user_order.order_sn = ? ', [$order_sn]);
+        if(empty($order_data)){
+            return [];
+        }
+
+        return $order_data;
+    }
+
+    public function updateOrderBySn($order_sn)
+    {
+         return DB::table('user_order')->where('order_sn', '=', $order_sn)->update(['order_status'=>$1]);
+    }
 
 }
