@@ -43,4 +43,16 @@ class FavoriteDiscussRepositories
         return DB::table(self::$table_name)->updateOrInsert($data);
     }
 
+
+    /**
+     * @param $user_id
+     * @param $video_id
+     * @return \Illuminate\Support\Collection
+     */
+    public function GetUsersFavoriteDiscussData($user_id, $video_id)
+    {
+        return DB::table(self::$table_name)->where(['user_id'=>$user_id, 'video_id'=>$video_id])->pluck('user_id', 'discuss_id');
+    }
+
+
 }

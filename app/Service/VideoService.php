@@ -465,6 +465,7 @@ class VideoService
     public function getDiscussList($video_id)
     {
         $video_row = $this->videoRepositories->getVideoById($video_id);
+        $user_id = Auth::id();
         if(empty($video_row)){
             return $data = ['code'=>-1, 'msg'=>'视频数据不存在'];
         }
@@ -472,6 +473,10 @@ class VideoService
         $discuss_list = $this->discussRepositories->getDiscussList($video_id);
 
         $data = ['code'=>200, 'data'=>[]];
+
+        //是否喜欢这条评论
+
+        $favorite_discuss_data = $this->favoriteDiscussRepositories->GetUsersFavoriteDiscussData($user_id, $video_id);
 
         if(!empty($discuss_list['data'])){
             foreach($discuss_list['data'] as $key=>$value){
@@ -490,9 +495,11 @@ class VideoService
                 $temp_data['user_info']['sex'] = $user_data->sex;
                 $temp_data['user_info']['city'] = $user_data->city;
                 $temp_data['discuss_info']['discuss_id'] = $value->id;
+                $temp_data['discuss_info']['is_favorite'] = isset($favorite_discuss_data[$value->id]) ? 1 : 0;
                 $temp_data['discuss_info']['discuss_time'] = $value->discuss_time;
                 $temp_data['discuss_info']['content'] = $value->content;
                 $temp_data['discuss_info']['favorite_number'] = $value->favorite_number;
+
                 $temp_data['reply_info'] = [];
 
                 if(!empty($sub_list)){
@@ -514,6 +521,7 @@ class VideoService
                         $sub_temp_data['discuss_info']['discuss_time'] = $sub_value->discuss_time;
                         $sub_temp_data['discuss_info']['content'] = $sub_value->content;
                         $sub_temp_data['discuss_info']['favorite_number'] = $sub_value->favorite_number;
+                        $sub_temp_data['discuss_info']['is_favorite'] = isset($favorite_discuss_data[$sub_value->id]) ? 1 : 0;
                         $temp_data['reply_info'][] = $sub_temp_data;
                     }
                 }
