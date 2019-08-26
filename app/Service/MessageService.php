@@ -146,6 +146,9 @@ github参考网址:https://github.com/z-song/laravel-admin
             $temp_data['message_info']['message_type'] = $value->message_type;
             $temp_data['message_info']['message'] = $value->message;
             $temp_data['message_info']['send_time'] = $value->send_time;
+            
+            $temp_data['message_info']['video_id'] = 1;
+            $temp_data['message_info']['video_image'] = 'http://39.100.242.186:8090/upload/1566218077800.png';
             $data['data']['messages'][] = $temp_data;
         }
 
