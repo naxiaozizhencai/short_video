@@ -11,7 +11,6 @@ class LoginController extends BaseController
     public function __construct(UsersService $UsersService)
     {
         $this->UsersService = $UsersService;
-//        $this->middleware('jwt.auth', ['except' => ['login']]);
     }
 
     /**
@@ -55,7 +54,9 @@ class LoginController extends BaseController
         $data = $this->UsersService->PhoneRegister($request);
         return response()->json($data);
     }
+
     /**
+     * 手机登录
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -65,18 +66,32 @@ class LoginController extends BaseController
         return response()->json($data);
     }
 
+    /**
+     * 发送验证码
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function SendCode(Request $request)
     {
         $data = $this->UsersService->SendCode($request);
         return response()->json($data);
     }
 
+    /**
+     * 注销
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function Logout()
     {
         $data = $this->UsersService->Logout();
         return response()->json($data);
     }
 
+    /**
+     * 忘记密码
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function ForgetPassword(Request $request)
     {
         $data = $this->UsersService->ForgetPassword($request);
