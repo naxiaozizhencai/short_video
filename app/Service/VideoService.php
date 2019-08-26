@@ -487,6 +487,7 @@ class VideoService
                 if(empty($user_data)){
                     continue;
                 }
+
                 $temp_data = [];
                 $temp_data['user_info']['user_id'] = $user_data->id;
                 $temp_data['user_info']['username'] = $user_data->username;
@@ -495,10 +496,10 @@ class VideoService
                 $temp_data['user_info']['sex'] = $user_data->sex;
                 $temp_data['user_info']['city'] = $user_data->city;
                 $temp_data['discuss_info']['discuss_id'] = $value->id;
-                $temp_data['discuss_info']['is_favorite'] = isset($favorite_discuss_data[$value->id]) ? 1 : 0;
                 $temp_data['discuss_info']['discuss_time'] = $value->discuss_time;
                 $temp_data['discuss_info']['content'] = $value->content;
                 $temp_data['discuss_info']['favorite_number'] = $value->favorite_number;
+                $temp_data['discuss_info']['is_favorite'] = isset($favorite_discuss_data[$value->id]) ? 1 : 0;
 
                 $temp_data['reply_info'] = [];
 
@@ -525,8 +526,6 @@ class VideoService
                         $temp_data['reply_info'][] = $sub_temp_data;
                     }
                 }
-
-
                 $data['data']['discuss_list'][] = $temp_data;
 
             }
