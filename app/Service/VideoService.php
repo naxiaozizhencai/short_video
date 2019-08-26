@@ -8,6 +8,7 @@ use App\Repositories\MessageRepositories;
 use App\Repositories\PlayVideoHistoryRepositories;
 use App\Repositories\ReplyRepositories;
 use App\Repositories\TempDataRepositories;
+use App\Repositories\UsersFansRepositories;
 use App\Repositories\UsersRepositories;
 use App\Repositories\VideoRepositories;
 use Illuminate\Support\Facades\Auth;
@@ -25,13 +26,14 @@ class VideoService
     protected $messageRepositories;
     protected $playVideoHistoryRepositories;
     protected $favoriteDiscussRepositories;
+    protected $fansRepositories;
 
     public function __construct(VideoRepositories $videoRepositories,
                                 TempDataRepositories $tempDataRepositories,
                                 FavoriteRepositories $favoriteRepositories, DiscussRepositories $discussRepositories,
                                 UsersRepositories $usersRepositories, DiscussReportRepositories $discussReportRepositories,
                                 MessageRepositories $messageRepositories, PlayVideoHistoryRepositories $playVideoHistoryRepositories,
-                                FavoriteDiscussRepositories $favoriteDiscussRepositories
+                                FavoriteDiscussRepositories $favoriteDiscussRepositories,UsersFansRepositories $fansRepositories
 )
     {
         $this->videoRepositories = $videoRepositories;
@@ -43,6 +45,7 @@ class VideoService
         $this->messageRepositories = $messageRepositories;
         $this->playVideoHistoryRepositories = $playVideoHistoryRepositories;
         $this->favoriteDiscussRepositories = $favoriteDiscussRepositories;
+        $this->fansRepositories = $fansRepositories;
     }
 
 
@@ -110,11 +113,14 @@ class VideoService
      */
     public function ViewVideo($request)
     {
+        $user_id = Auth::id();
+        $follows_ids = $this->fansRepositories->GetUsersFollowData($user_id);
         $result = $this->videoRepositories->GetVideoData($request->toarray());
 
         if(empty($result['data'])){
             return ['code'=>200, 'data'=>[]];
         }
+
 
         foreach($result['data'] as $key=>$value){
 
@@ -127,9 +133,12 @@ class VideoService
             $video_data['video_image'] = $value->video_image;
             $video_data['video_url'] = $value->video_url;
             $video_data['video_label'] = $value->video_label;
-            $video_data['favorite_number'] = $value->favorite_num;
+            $video_data['favorite_number'] = $value->video_favorite_num;
             $video_data['reply_number'] = $value->reply_num;
             $video_data['is_follow'] = 0;
+
+            $user_info['is_follow'] = isset($follows_ids[$user_id]) ? 1 : 0;
+
             $data['data']['video_data'][] = $video_data;
 
         }
