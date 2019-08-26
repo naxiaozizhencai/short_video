@@ -128,8 +128,7 @@ class UsersService
         $data['viewed_times'] = empty($play_video_times_data) ? 0 : $play_video_times_data->temp_value;
         $total_viewed_times_data = $this->tempDataRepositories->GetValue($userData->id, 'total_viewed_times');
         $data['total_viewed_times'] = empty($total_viewed_times_data) ? 10 :$total_viewed_times_data->temp_value;
-        $data['viewed_times'] = 0;
-
+        $data['viewed_times'] = 10;
         $user_info = $this->UsersRepositories->GetAuthUserData($uuid);
         $token_data = [];
         if (!$token = Auth::login($user_info, true)) {
