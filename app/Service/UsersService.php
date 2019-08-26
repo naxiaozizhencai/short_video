@@ -295,6 +295,7 @@ class UsersService
         $this->UsersRepositories->UpdateUsersInfo($user_id, $update_data);
         return ['code'=>200, 'msg'=>'更新成功'];
     }
+
     /**
      * 登出
      * @return array
@@ -515,7 +516,7 @@ class UsersService
 
         $this->fansRepositories->DeleteFans($uid, $fans_id);
         $this->UsersRepositories->DecrUsersDetailNum($uid, 'follow_num');
-        $this->UsersRepositories->DecrUsersDetailNum($fans_id, 'follow_num');
+        $this->UsersRepositories->DecrUsersDetailNum($fans_id, 'fans_num');
 
         return ['code'=>200, 'msg'=>'取消成功'];
 

@@ -386,6 +386,7 @@ class VideoService
             return $data = ['code'=>-1, 'msg'=>'評論不存在'];
         }
 
+
         $this->discussRepositories->IncrDiscussfavorById($discuss_id);
         return $data = ['code'=>200, 'msg'=>'操作成功'];
     }
@@ -561,9 +562,5 @@ class VideoService
 
     }
 
-    public function SearchVideoList($request)
-    {
-
-    }
 
 }
