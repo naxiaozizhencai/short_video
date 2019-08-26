@@ -297,7 +297,11 @@ github参考网址:https://github.com/z-song/laravel-admin
         $data = ['code'=>200];
         foreach ($chat_list['data'] as $key=>$value){
             $chat_user_id = ($value->send_id == $user_id) ? $value->receive_id : $value->send_id;
+
             $user_data = $this->usersRepositories->getUserInfoById($chat_user_id);
+            if(empty($user_data)) {
+                continue;
+            }
 
             $user_info['user_id'] = $user_data->id;
             $user_info['username'] = $user_data->username;
