@@ -13,6 +13,7 @@ class VideoController extends Controller
         $this->videoService = $videoService;
     }
 
+
     /**
      * 返回視頻列表
      * @param Request $request
@@ -24,18 +25,45 @@ class VideoController extends Controller
         return response()->json($data);
     }
 
+    /**
+     * 查看视频详情
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function ViewVideoDetail(Request $request)
+    {
+        $data = $this->videoService->VideoVideoDetail($request);
+        return response()->json($data);
+    }
+
+
+    /**
+     * 播放视频
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function PlayVideo(Request $request)
     {
         $data = $this->videoService->PlayVideo($request);
+        return response()->json($data);
+    }
+
+    /**
+     * 推荐视频列表
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function RecommendViewVideo(Request $request)
+    {
+        $data = $this->videoService->RecommendViewVideo($request);
         return response()->json($data);
     }
     /**
      * 观看关注视频
      * @return \Illuminate\Http\JsonResponse
      */
-    public function FollowViewVideo()
+    public function FollowViewVideo(Request $request)
     {
-        $data = $this->videoService->FollowViewVideo();
+        $data = $this->videoService->FollowViewVideo($request);
         return response()->json($data);
     }
 
@@ -120,6 +148,10 @@ class VideoController extends Controller
         return response()->json($data);
     }
 
+    /**
+     * 上传文件
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function Upload()
     {
         $data = $this->videoService->Upload();

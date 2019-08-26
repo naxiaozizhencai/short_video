@@ -43,6 +43,16 @@ class MessageController extends Controller
     }
 
     /**
+     * 聊天信息详情
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function ChatHistoryMessageList(Request $request)
+    {
+        $data = $this->messageService->ChatHistoryMessageList($request);
+        return response()->json($data);
+    }
+
+    /**
      * 讨论消息列表
      */
     public function MessageList(Request $request)

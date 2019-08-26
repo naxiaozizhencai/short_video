@@ -19,15 +19,7 @@ class SearchController extends Controller
         $this->usersService = $usersService;
         $this->videoService = $videoService;
     }
-
-    /**
-     * 视频搜索
-     */
-    public function SearchVideo()
-    {
-
-    }
-
+    
 
     /**
      * 搜索用户

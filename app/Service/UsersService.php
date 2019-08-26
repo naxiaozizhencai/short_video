@@ -295,6 +295,7 @@ class UsersService
         $this->UsersRepositories->UpdateUsersInfo($user_id, $update_data);
         return ['code'=>200, 'msg'=>'更新成功'];
     }
+
     /**
      * 登出
      * @return array
@@ -469,12 +470,13 @@ class UsersService
             return ['code'=>-1, 'msg'=>'已经关注'];
         }
         $fans_data  = [];
-        $fans_data['user_id'] = Auth::id();
+        $fans_data['user_id'] = $uid;
         $fans_data['fans_id'] = $fans_id;
         $fans_data['add_time'] = date('Y-m-d H:i:s');
 
         $this->fansRepositories->InsertFans($fans_data);
-        $this->UsersRepositories->IncrUsersDetailNum($fans_id, 'follow_num');
+        $this->UsersRepositories->IncrUsersDetailNum($uid, 'follow_num');
+        $this->UsersRepositories->IncrUsersDetailNum($fans_id, 'fans_num');
 
         $msg_data = [];
         $msg_data['message_type'] = MessageRepositories::MESSAGE_TYPE_FOLLOW;
@@ -513,7 +515,8 @@ class UsersService
         }
 
         $this->fansRepositories->DeleteFans($uid, $fans_id);
-        $this->UsersRepositories->DecrUsersDetailNum($fans_id, 'follow_num');
+        $this->UsersRepositories->DecrUsersDetailNum($uid, 'follow_num');
+        $this->UsersRepositories->DecrUsersDetailNum($fans_id, 'fans_num');
 
         return ['code'=>200, 'msg'=>'取消成功'];
 
@@ -580,8 +583,8 @@ class UsersService
      */
     public function UserInfo($request)
     {
-        $user_id = Auth::id();
-        $user_id = $request->input('user_id', $user_id);
+        $my_user_id = Auth::id();
+        $user_id = $request->input('user_id', $my_user_id);
         $user_data = $this->UsersRepositories->getUserInfoById($user_id);
 
         if(empty($user_data)){
@@ -604,9 +607,11 @@ class UsersService
         $user_info['upload_num'] = $user_data->upload_num;
         $user_info['favorite_num'] = $user_data->favorite_num;
         $user_info['orther_popular_num'] = $user_data->orther_popular_num;
-        $user_info['is_follow'] = 1;
+        $follows_ids = $this->fansRepositories->GetUsersFollowData($my_user_id);
+        $user_info['is_follow'] = isset($follows_ids[$user_id]) ? 1 : 0;
+        $play_video_times_data = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
         $user_info['viewed_times'] = empty($play_video_times_data) ? 0 : $play_video_times_data->temp_value;
-        $total_viewed_times_data = $this->tempDataRepositories->GetValue($user_data->id, 'total_viewed_times');
+        $total_viewed_times_data = $this->tempDataRepositories->GetValue($user_data->id, TempDataRepositories::TOTAL_VIEWED_TIMES);
         $user_info['total_viewed_times'] = empty($total_viewed_times_data) ? 10 :$total_viewed_times_data->temp_value;
 
         $data = [];
@@ -733,7 +738,7 @@ class UsersService
 
         $share_data['popular_num'] = $user_data->popular_num;
         $share_data['share_url'] = ' https://aff.91porn005.me/aff/' . $user_data->popular_num;
-        $share_data['qrcode'] = $request->getHttpHost(). '/qrcode/' . $user_data->popular_num . '.png';
+        $share_data['qrcode'] = $request->getHttpHost(). ':8090/qrcode/' . $user_data->popular_num . '.png';
         $data['data']['share_data'] = $share_data;
         return $data;
 
@@ -765,6 +770,5 @@ class UsersService
         $data['data']['page'] = $popolar_result;
         return $data;
     }
-
 
 }

@@ -36,6 +36,19 @@ class MessageRepositories
             ->paginate(15)->toarray();
 
     }
+
+    /**
+     * 获取聊天记录
+     * @param $data
+     * @return mixed
+     */
+    public function GetHisttoryChatMessageList($data)
+    {
+
+        return DB::table($this->table_name)->where($data)->orderBy('message_id', 'desc')
+            ->paginate(15)->toarray();
+
+    }
     /**
      * @param $data
      * @return mixed

@@ -139,7 +139,7 @@ class UsersRepositories
     public function GetInvitationRankData()
     {
         return DB::table('users')->
-        leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->
+        leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->where('users_detail.invitation_num', '>', 0)->
         select(['users.*','users_detail.*'])->orderBy('invitation_num', 'desc')->limit(50)->get();
     }
 
@@ -149,24 +149,18 @@ class UsersRepositories
     public function GetUploadRankData()
     {
         return DB::table('users')->
+        leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->where('users_detail.upload_num', '>', 0)->
+        select(['users.*','users_detail.*'])->orderBy('upload_num', 'desc')->limit(50)->get();
+    }
+
+    /**
+     * 获取邀请排行
+     */
+    public function GetSupportRankData()
+    {
+        return DB::table('users')->
         leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->
-        select(['users.*','users_detail.*'])->orderBy('invitation_num', 'desc')->limit(50)->get();
-    }
-
-    /**
-     * 获取上传排行
-     */
-    public function UploadRankData()
-    {
-
-    }
-
-    /**
-     * 获取点赞排行
-     */
-    public function SupportRankData()
-    {
-
+        select(['users.*','users_detail.*'])->orderBy('support_num', 'desc')->limit(50)->get();
     }
 
 
