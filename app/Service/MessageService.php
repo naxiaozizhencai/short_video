@@ -253,7 +253,7 @@ github参考网址:https://github.com/z-song/laravel-admin
             $temp_msg['send_id'] = $value->send_id;
             $temp_msg['receive_id'] = $value->receive_id;
             $temp_msg['send_time'] = $value->send_time;
-            $data['data']['chat_message'][$length - $key] = $temp_msg;
+            $data['data']['chat_message'][intval($length - $key)] = $temp_msg;
 
             if($key == 0){
                 $send_user_data = $this->usersRepositories->getUserInfoById($value->send_id);
