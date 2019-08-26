@@ -42,6 +42,9 @@ class VideoRepositories
                     case 'is_recommend':
                         $query->where('video_list.is_recommend', '=', $search);
                         break;
+                    case 'video_id':
+                        $query->where('video_list.id', '=', $search);
+                        break;
                 }
             }
         })->where('is_check', '=', 1);

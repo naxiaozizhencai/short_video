@@ -31,6 +31,7 @@ $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], functio
 
     //视频列表
     $router->get('video', 'VideoController@ViewVideo');//获取视频列表
+    $router->get('videodetail', 'VideoController@ViewVideoDetail');//获取视频列表
     $router->post('playvideo', 'VideoController@PlayVideo');//增加視頻播放次數
     $router->get('followvideo', 'VideoController@FollowViewVideo');//获取关注视频列表
     $router->post('favorite', 'VideoController@DoFavorite');//喜爱这个视频
@@ -38,7 +39,7 @@ $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], functio
     $router->get('discusslist', 'VideoController@DiscussList');//评论列表
     $router->post('adddiscuss', 'VideoController@AddDiscuss');//增加评论
     $router->post('favordiscuss', 'VideoController@FavorDiscuss');//喜爱这条评论
-    $router->post('cancelfavordiscuss', 'VideoController@CancelFavorDiscuss');//喜爱这条评论
+    $router->post('cancelfavordiscuss', 'VideoController@CancelFavorDiscuss');//取消喜爱这条评论
     $router->post('reportdiscuss', 'VideoController@ReportDiscuss');//举报这条评论
     $router->post('uploadvideo', 'VideoController@UploadVideo');//上传视频
     $router->post('upload', 'VideoController@Upload');//上传视频

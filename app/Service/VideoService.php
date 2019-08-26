@@ -45,6 +45,64 @@ class VideoService
         $this->favoriteDiscussRepositories = $favoriteDiscussRepositories;
     }
 
+
+    /**
+     *
+     * @param $request
+     * @return array
+     */
+    public function VideoVideoDetail($request)
+    {
+        $video_id = $request->input('video_id');
+        $user_id = Auth::id();
+
+        if(empty($video_id)) {
+            return ['code'=>-1, 'msg'=>'参数不能为空！'];
+        }
+
+        $condtion_data['video_id'] = $video_id;
+        $video_detail_data = $this->videoRepositories->GetVideoData($condtion_data);
+
+        if(empty($video_detail_data['data'])) {
+            return ['code'=>-1, 'msg'=>'视频数据为空！'];
+        }
+
+        $data = ['code'=>200];
+        foreach($video_detail_data['data'] as $key=>$value){
+            $video_data['video_id'] = $value->video_id;
+            $video_data['video_user_avatar'] = $value->avatar;
+            $video_data['video_user_id'] = $value->user_id;
+            $video_data['video_vip_level'] = $value->vip_level;
+            $video_data['video_username'] = $value->username;
+            $video_data['video_title'] = $value->video_title;
+            $video_data['video_image'] = $value->video_image;
+            $video_data['video_url'] = $value->video_url;
+            $video_data['video_label'] = $value->video_label;
+            $video_data['favorite_number'] = $value->favorite_num;
+            $video_data['reply_number'] = $value->reply_num;
+            $video_data['is_follow'] = 0;
+            $data['data']['video_data'] = $video_data;
+        }
+
+        if(!$result = $this->playVideoHistoryRepositories->ExistHistory($user_id, $video_id)){
+
+            $play_video_times = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
+            $update_temp_data['temp_value'] = (empty($play_video_times)) ? 1 : $play_video_times->temp_value + 1;
+            $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES, $update_temp_data);
+            $history_data['user_id'] = $user_id;
+            $history_data['video_id'] = $video_id;
+            $history_data['add_time'] = date("Y-m-d H:i:s");
+            $this->playVideoHistoryRepositories->InsertPlayVideoHistory($history_data);
+        }
+
+        $this->videoRepositories->IncrVideoNum($video_id, 'play_num', 1);
+
+
+
+        return $data;
+    }
+
+
     /**
      * 观看视频
      * @param $request

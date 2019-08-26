@@ -13,6 +13,7 @@ class VideoController extends Controller
         $this->videoService = $videoService;
     }
 
+
     /**
      * 返回視頻列表
      * @param Request $request
@@ -23,6 +24,18 @@ class VideoController extends Controller
         $data = $this->videoService->ViewVideo($request);
         return response()->json($data);
     }
+
+    /**
+     * 查看系统详情
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function ViewVideoDetail(Request $request)
+    {
+        $data = $this->videoService->VideoVideoDetail($request);
+        return response()->json($data);
+    }
+
 
     /**
      * 播放视频
