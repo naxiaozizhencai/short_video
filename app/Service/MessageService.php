@@ -274,7 +274,7 @@ github参考网址:https://github.com/z-song/laravel-admin
                 $data['data']['min_message_id'] =  $value->message_id;
             }
         }
-
+        $data['data']['chat_message'] = array_values($data['data']['chat_message']);
 /*        $attributes = ['user_id'=>$user_id, 'temp_key'=>$room_id];
         $temp_value = ['user_id'=>$user_id, 'temp_key'=>$room_id, 'temp_value'=>$max_message_id];
         $this->tempDataRepositories->UpateOrInsertTempData($attributes, $temp_value);*/
