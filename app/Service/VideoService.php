@@ -2,6 +2,7 @@
 namespace App\Service;
 use App\Repositories\DiscussReportRepositories;
 use App\Repositories\DiscussRepositories;
+use App\Repositories\FavoriteDiscussRepositories;
 use App\Repositories\FavoriteRepositories;
 use App\Repositories\MessageRepositories;
 use App\Repositories\PlayVideoHistoryRepositories;
@@ -23,12 +24,14 @@ class VideoService
     protected $discussReportRepositories;
     protected $messageRepositories;
     protected $playVideoHistoryRepositories;
+    protected $favoriteDiscussRepositories;
 
     public function __construct(VideoRepositories $videoRepositories,
                                 TempDataRepositories $tempDataRepositories,
                                 FavoriteRepositories $favoriteRepositories, DiscussRepositories $discussRepositories,
                                 UsersRepositories $usersRepositories, DiscussReportRepositories $discussReportRepositories,
-                                MessageRepositories $messageRepositories, PlayVideoHistoryRepositories $playVideoHistoryRepositories
+                                MessageRepositories $messageRepositories, PlayVideoHistoryRepositories $playVideoHistoryRepositories,
+                                FavoriteDiscussRepositories $favoriteDiscussRepositories
 )
     {
         $this->videoRepositories = $videoRepositories;
@@ -39,6 +42,7 @@ class VideoService
         $this->discussReportRepositories = $discussReportRepositories;
         $this->messageRepositories = $messageRepositories;
         $this->playVideoHistoryRepositories = $playVideoHistoryRepositories;
+        $this->favoriteDiscussRepositories = $favoriteDiscussRepositories;
     }
 
     /**
@@ -374,8 +378,9 @@ class VideoService
      */
     public function DoFavorDiscuss()
     {
-        $discuss_id = app('request')->input('discuss_id');
 
+        $discuss_id = app('request')->input('discuss_id');
+        $user_id = Auth::id();
         if(empty($discuss_id)) {
             return $data = ['code'=>-1, 'msg'=>'參數錯誤'];
         }
@@ -386,7 +391,18 @@ class VideoService
             return $data = ['code'=>-1, 'msg'=>'評論不存在'];
         }
 
+        $favorite_discuss = $this->favoriteDiscussRepositories->FindFavoriteDiscussData($user_id, $discuss_id);
 
+        if(!empty($favorite_discuss)){
+            return $data = ['code'=>-1, 'msg'=>'已经喜欢这条评论'];
+        }
+
+        $favorite_discuss = [];
+        $favorite_discuss['video_id'] = $discuss_data->video_id;
+        $favorite_discuss['discuss_id'] = $discuss_id;
+        $favorite_discuss['user_id'] = $user_id;
+        $favorite_discuss['add_time'] = date('Y-m-d H:i:s');
+        $this->favoriteDiscussRepositories->InsertVideoDiscussFavorite($favorite_discuss);
         $this->discussRepositories->IncrDiscussfavorById($discuss_id);
         return $data = ['code'=>200, 'msg'=>'操作成功'];
     }
@@ -397,7 +413,7 @@ class VideoService
     public function CancelFavorDiscuss()
     {
         $discuss_id = app('request')->input('discuss_id');
-
+        $user_id = Auth::id();
         if(empty($discuss_id)) {
             return $data = ['code'=>-1, 'msg'=>'參數錯誤'];
         }
@@ -408,7 +424,15 @@ class VideoService
             return $data = ['code'=>-1, 'msg'=>'評論不存在'];
         }
 
+        $favorite_discuss = $this->favoriteDiscussRepositories->FindFavoriteDiscussData($user_id, $discuss_id);
+
+        if(empty($favorite_discuss)){
+            return $data = ['code'=>-1, 'msg'=>'已经取消喜欢这条评论'];
+        }
+
+        $this->favoriteDiscussRepositories->DeleteFavoriteVideoDiscuss($user_id, $discuss_id);
         $this->discussRepositories->DecrDiscussfavorById($discuss_id);
+
         return $data = ['code'=>200, 'msg'=>'操作成功'];
     }
 

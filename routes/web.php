@@ -38,6 +38,7 @@ $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], functio
     $router->get('discusslist', 'VideoController@DiscussList');//评论列表
     $router->post('adddiscuss', 'VideoController@AddDiscuss');//增加评论
     $router->post('favordiscuss', 'VideoController@FavorDiscuss');//喜爱这条评论
+    $router->post('cancelfavordiscuss', 'VideoController@CancelFavorDiscuss');//喜爱这条评论
     $router->post('reportdiscuss', 'VideoController@ReportDiscuss');//举报这条评论
     $router->post('uploadvideo', 'VideoController@UploadVideo');//上传视频
     $router->post('upload', 'VideoController@Upload');//上传视频
