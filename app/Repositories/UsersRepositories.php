@@ -139,7 +139,7 @@ class UsersRepositories
     public function GetInvitationRankData()
     {
         return DB::table('users')->
-        leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->
+        leftJoin('users_detail', 'users.id', '=', 'users_detail.user_id')->where('users.detail', '>', 0)->
         select(['users.*','users_detail.*'])->orderBy('invitation_num', 'desc')->limit(50)->get();
     }
 
