@@ -43,4 +43,9 @@ class HotspotController extends Controller
 
     }
 
+    public function FansRank()
+    {
+
+    }
+
 }

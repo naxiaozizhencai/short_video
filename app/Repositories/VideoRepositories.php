@@ -51,7 +51,7 @@ class VideoRepositories
         }
 
         if(!empty($search_arr['favorite_num'])){
-            $query->orderby('video_list.favorite_num', $search_arr['add_time']);
+            $query->orderby('video_list.favorite_num', $search_arr['favorite_num']);
         }
 
         if(!empty($search_arr['favorite_num'])){
