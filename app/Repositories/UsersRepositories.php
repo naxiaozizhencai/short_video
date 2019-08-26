@@ -165,9 +165,8 @@ class UsersRepositories
 
 
     /**
-     * 初始化用户
-     * @param $uuid
-     * @return bool
+     * @param $user_data
+     * @return int
      */
     public function InsertUser($user_data)
     {
