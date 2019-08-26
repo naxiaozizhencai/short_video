@@ -738,7 +738,7 @@ class UsersService
 
         $share_data['popular_num'] = $user_data->popular_num;
         $share_data['share_url'] = ' https://aff.91porn005.me/aff/' . $user_data->popular_num;
-        $share_data['qrcode'] = $request->getHttpHost(). '/qrcode/' . $user_data->popular_num . '.png';
+        $share_data['qrcode'] = $request->getHttpHost(). ':8090/qrcode/' . $user_data->popular_num . '.png';
         $data['data']['share_data'] = $share_data;
         return $data;
 
