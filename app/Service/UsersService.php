@@ -243,13 +243,38 @@ class UsersService
             return ['code'=>-1, 'msg'=>'密码错误'];
         }
 
-        $user_info = $this->UsersRepositories->GetAuthUserData($user_data->uuid);
         $update_data['is_phone_login'] = 1;
-        $this->UsersRepositories->UpdateUserById($user_info->id, $update_data);
+        $this->UsersRepositories->UpdateUserById($user_data->id, $update_data);
 
-        $data['code'] = 200;
-        $data['data']['user_info']['user_id'] = $user_info->id;
-        return $data;
+        $resultData = ['code'=>200, 'data'=>[]];
+        $data['user_id'] = $user_data->id;
+        $data['uuid'] = $user_data->uuid;
+        $data['vip_level'] = $user_data->vip_level;
+        $data['phone'] = $user_data->phone;
+        $data['is_phone_login'] = $user_data->is_phone_login;
+        $data['vip_expired_time'] = $user_data->vip_expired_time;
+        $play_video_times_data = $this->tempDataRepositories->GetValue($user_data->id, TempDataRepositories::PLAY_VIDEO_TIMES);
+        $data['viewed_times'] = empty($play_video_times_data) ? 0 : $play_video_times_data->temp_value;
+        $total_viewed_times_data = $this->tempDataRepositories->GetValue($user_data->id, TempDataRepositories::TOTAL_VIEWED_TIMES);
+        $data['total_viewed_times'] = empty($total_viewed_times_data) ? 10 :$total_viewed_times_data->temp_value;
+        $data['viewed_times'] = 10;
+        $data['play_video_second'] = 15;
+        $user_info = $this->UsersRepositories->getUserInfoById($user_data->id);
+        $token_data = [];
+        if (!$token = Auth::login($user_info, true)) {
+            $resultData['code']     = -1;
+            $resultData['msg'] = '系统错误，无法生成令牌';
+        } else {
+            $token_data['user_id']      = intval($user_info->id);
+            $token_data['access_token'] = $token;
+            $token_data['expires_in']   = strval(time() + 3600);
+        }
+
+        $resultData['data']['user_data'] = $data;
+        $resultData['data']['token_data'] = $token_data;
+
+        $resultData['data']['user_info']['user_id'] = $user_info->id;
+        return $resultData;
     }
 
     public function UpdateUsersInfo($request)
@@ -290,6 +315,11 @@ class UsersService
 
         if(empty($update_data)){
             return ['code'=>-1, 'msg'=>'数据不能为空'];
+        }
+        if(!empty($username)) {
+
+            $this->UsersRepositories->UpdateUserById($user_id, ['username'=>$update_data['username']]);
+            unset($update_data['username']);
         }
 
         $this->UsersRepositories->UpdateUsersInfo($user_id, $update_data);
@@ -647,6 +677,7 @@ class UsersService
             $video_data['video_label'] = $value->video_label;
             $video_data['favorite_number'] = $value->favorite_num;
             $video_data['reply_number'] = $value->reply_num;
+            $video_data['is_follow'] = 0;
             $data['data']['video_data'][] = $video_data;
         }
         $data['code'] = 200;
@@ -683,6 +714,8 @@ class UsersService
             $video_data['video_label'] = $value->video_label;
             $video_data['favorite_number'] = $value->favorite_num;
             $video_data['reply_number'] = $value->reply_num;
+            $video_data['is_follow'] = 0;
+
             $data['data']['video_data'][] = $video_data;
         }
         unset($video_list['data']);
