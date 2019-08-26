@@ -26,7 +26,7 @@ class VideoController extends Controller
     }
 
     /**
-     * 查看系统详情
+     * 查看视频详情
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -45,6 +45,16 @@ class VideoController extends Controller
     public function PlayVideo(Request $request)
     {
         $data = $this->videoService->PlayVideo($request);
+        return response()->json($data);
+    }
+
+    /**
+     * 推荐视频列表
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function RecommendViewVideo(Request $request)
+    {
+        $data = $this->videoService->RecommendViewVideo($request);
         return response()->json($data);
     }
     /**

@@ -176,51 +176,61 @@ class VideoService
      *随机返回一个
      * @return array
      */
-    public function RandViewVideo()
+    public function RecommendViewVideo($request)
     {
-        $uid = Auth::id();
-        $page = app('request')->input('page', 0);
+        $user_id = Auth::id();
+        $temp_data = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::VIDEO_RECOMMEND_MAX_ID);
+        $search_arr = [];
+        $search_arr['is_recommend'] = 1;
 
-        $temp_data = $this->tempDataRepositories->GetValue($uid, 'view_max_id');
+        $is_back = $request->input('is_back');
 
-        if(!empty($temp_data) && empty($page)){
-            $page = $temp_data->temp_value;
+        if(!empty($is_back)) {
+            $search_arr['max_video_id'] = empty($temp_data) ? 0 : $temp_data->temp_value;
+            $search_arr['is_back'] = 1;
+        }else{
+            $search_arr['min_video_id'] = empty($temp_data) ? 0 : $temp_data->temp_value;
         }
 
-        $result = $this->videoRepositories->getViewVideoData($uid, $page);
+        $result = $this->videoRepositories->GetRecommendVideoData($search_arr);
 
-        if(empty($result)) {
-            return ['code'=>-1, 'msg'=>'还未上传视频'];
+        if(empty($result['data'])){
+            return ['code'=>200, 'data'=>[]];
         }
 
         $video_data = [];
-
         foreach($result['data'] as $key=>$value){
-            $user_data = $this->usersRepositories->getUserInfoById($value->user_id);
-            $video_data['video_id'] = $value->id;
-            $video_data['video_user_avatar'] = $user_data->avatar;
+            $video_data['video_id'] = $value->video_id;
+            $video_data['video_user_avatar'] = $value->avatar;
             $video_data['video_user_id'] = $value->user_id;
-            $video_data['video_vip_level'] = $user_data->vip_level;
-            $video_data['video_username'] = $user_data->username;
+            $video_data['video_vip_level'] = $value->vip_level;
+            $video_data['video_username'] = $value->username;
             $video_data['video_title'] = $value->video_title;
             $video_data['video_image'] = $value->video_image;
             $video_data['video_url'] = $value->video_url;
             $video_data['video_label'] = $value->video_label;
             $video_data['favorite_number'] = $value->favorite_num;
             $video_data['reply_number'] = $value->reply_num;
+            $video_data['is_follow'] = 0;
+            $data['data']['video_data'] = $video_data;
+            break;
         }
 
-        if(!empty($temp_data)){
-            if($temp_data->temp_value >= $result['total']){
-                $this->tempDataRepositories->ClearValue($uid, 'view_max_id');
-            }
-        }
-
-        $this->tempDataRepositories->UpdateValue($uid, 'view_max_id');
         $data['code'] = 200;
-        $data['data']['video_data'] = $video_data;
-        unset($result['data']);
-        $data['data']['page'] = $result;
+        if(!$result = $this->playVideoHistoryRepositories->ExistHistory($user_id, $video_data['video_id'])){
+
+            $play_video_times = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
+            $update_temp_data['temp_value'] = (empty($play_video_times)) ? 1 : $play_video_times->temp_value + 1;
+            $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES, $update_temp_data);
+            $history_data['user_id'] = $user_id;
+            $history_data['video_id'] = $video_data['video_id'];
+            $history_data['add_time'] = date("Y-m-d H:i:s");
+            $this->playVideoHistoryRepositories->InsertPlayVideoHistory($history_data);
+        }
+
+        $this->videoRepositories->IncrVideoNum($video_data['video_id'], 'play_num', 1);
+
+        $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::VIDEO_RECOMMEND_MAX_ID, ['temp_value'=>$video_data['video_id']]);
 
         return $data;
     }
@@ -234,8 +244,8 @@ class VideoService
     public function FollowViewVideo()
     {
 
-        $uid = Auth::id();
-        $result = $this->videoRepositories->GetFollowVideoData($uid);
+        $user_id = Auth::id();
+        $result = $this->videoRepositories->GetFollowVideoData($user_id);
 
         if(empty($result)){
             return ['code'=>-1, 'msg'=>'关注还未上传视频'];
@@ -243,6 +253,7 @@ class VideoService
 
         $video_data = [];
         foreach($result['data'] as $key=>$value){
+
             $user_data = $this->usersRepositories->getUserInfoById($value->user_id);
             $video_data['video_id'] = $value->id;
             $video_data['video_user_avatar'] = $user_data->avatar;
@@ -258,6 +269,7 @@ class VideoService
             $video_data['is_follow'] = 1;
             $data['data']['video_data'][] = $video_data;
         }
+
         $data['code'] = 200;
         unset($result['data']);
         $data['data']['page'] = $result;
@@ -265,33 +277,6 @@ class VideoService
         return $data;
     }
 
-    /**
-     * 格式化视频数据
-     * @param $result
-     * @return mixed
-     */
-    public function formatVideoData($result)
-    {
-        $video_data = [];
-        foreach($result['data'] as $key=>$value){
-            $video_data['video_id'] = $value->id;
-            $video_data['video_user_avatar'] = $value->avatar;
-            $video_data['video_user_id'] = $value->user_id;
-            $video_data['video_vip_level'] = $value->vip_level;
-            $video_data['video_username'] = $value->username;
-            $video_data['video_title'] = $value->video_title;
-            $video_data['video_image'] = $value->video_image;
-            $video_data['video_url'] = $value->video_url;
-            $video_data['video_label'] = $value->video_label;
-            $video_data['favorite_number'] = $value->favorite_num;
-            $video_data['reply_number'] = $value->reply_num;
-        }
-
-        $data['video_data'][] = $video_data;
-        unset($result['data']);
-        $data['page'] = $result;
-        return $data;
-    }
 
     /**
      * 点击爱心

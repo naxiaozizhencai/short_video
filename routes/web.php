@@ -34,6 +34,7 @@ $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], functio
     $router->get('videodetail', 'VideoController@ViewVideoDetail');//获取视频列表
     $router->post('playvideo', 'VideoController@PlayVideo');//增加視頻播放次數
     $router->get('followvideo', 'VideoController@FollowViewVideo');//获取关注视频列表
+    $router->get('recomvideo', 'VideoController@RecommendViewVideo');//获取关注视频列表
     $router->post('favorite', 'VideoController@DoFavorite');//喜爱这个视频
     $router->post('cancelfavorite', 'VideoController@CancelFavorite');//取消喜欢
     $router->get('discusslist', 'VideoController@DiscussList');//评论列表

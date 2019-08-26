@@ -8,6 +8,8 @@ class VideoRepositories
 
     protected $table_name = 'video_list';
     protected $tempDataRepositories;
+    const VIDEO_TYPE_RECOMMEND = 1;//浏览推荐类型
+    const VIDEO_TYPE_FOLLOW = 2;//浏览关注类型
     public function __construct(TempDataRepositories $tempDataRepositories)
     {
         $this->tempDataRepositories = $tempDataRepositories;
@@ -21,6 +23,46 @@ class VideoRepositories
     public function getVideoById($video_id)
     {
         return DB::table($this->table_name)->find($video_id);
+    }
+
+    /**
+     * 获取推荐视频
+     * @param $search_arr
+     * @return mixed
+     */
+    public function GetRecommendVideoData($search_arr)
+    {
+        $query = DB::table('video_list');
+        $query->where(function ($query) use ($search_arr){
+            foreach($search_arr as $key=>$search){
+                switch ($key){
+
+                    case 'user_id':
+                        $query->where('video_list.user_id', '=', $search);
+                        break;
+                    case 'is_recommend':
+                        $query->where('video_list.is_recommend', '=', $search);
+                        break;
+                    case 'video_id':
+                        $query->where('video_list.id', '=', $search);
+                        break;
+                    case 'min_video_id':
+                        $query->where('video_list.id', '>', $search);
+                        break;
+                    case 'max_video_id':
+                        $query->where('video_list.id', '<', $search);
+                        break;
+                }
+            }
+        })->where('is_check', '=', 1);
+
+        if(!empty($search_arr['is_back'])){
+            $query->orderby('video_list.id', 'desc');
+        }
+
+        $query->leftjoin('users', 'video_list.user_id', '=', 'users.id')->leftjoin('users_detail', 'users.id', '=', 'users_detail.user_id');
+
+        return $query->paginate(6, ['video_list.id as video_id', 'video_list.*', 'users.*', 'users_detail.*'])->toarray();
     }
     /**
      * 获取视频数据
@@ -44,6 +86,12 @@ class VideoRepositories
                         break;
                     case 'video_id':
                         $query->where('video_list.id', '=', $search);
+                        break;
+                     case 'min_video_id':
+                        $query->where('video_list.id', '>', $search);
+                        break;
+                    case 'max_video_id':
+                        $query->where('video_list.id', '<', $search);
                         break;
                 }
             }
@@ -71,17 +119,6 @@ class VideoRepositories
         $query->leftjoin('users', 'video_list.user_id', '=', 'users.id')->leftjoin('users_detail', 'users.id', '=', 'users_detail.user_id');
 
         return $query->paginate(6, ['video_list.id as video_id', 'video_list.*', 'users.*', 'users_detail.*'])->toarray();
-    }
-    /**
-     * @param $uid
-     * @param $page
-     * @return mixed
-     */
-    public function getViewVideoData($uid, $page)
-    {
-        return DB::table('video_list')->where(['is_check'=>1])
-            ->orderBy('add_time', 'desc')->paginate(6, ['*'], 'page', $page)->toarray();
-
     }
 
     /**

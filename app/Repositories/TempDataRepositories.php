@@ -7,6 +7,7 @@ class TempDataRepositories
 {
     const PLAY_VIDEO_TIMES = 'play_video_times';
     const TOTAL_VIEWED_TIMES = 'total_viewed_times';
+    const VIDEO_RECOMMEND_MAX_ID = 'view_recommend_max_id';
 
     protected $table_name = 'temp_data';
 
