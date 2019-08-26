@@ -238,11 +238,13 @@ github参考网址:https://github.com/z-song/laravel-admin
 
         $condition[] = ['room_id', '=', $room_id];
         $condition[] = ['message_type', '=', MessageRepositories::MESSAGE_TYPE_CHAT];
+
         if(empty($min_message_id)) {
             $condition[] = ['message_id', '<=', $message_id];
         }else{
             $condition[] = ['message_id', '<', $min_message_id];
         }
+
         $message_data = $this->messageRepositories->GetHisttoryChatMessageList($condition);
 
         if(empty($message_data['data'])){
