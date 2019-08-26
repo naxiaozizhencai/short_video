@@ -61,9 +61,9 @@ class VideoController extends Controller
      * 观看关注视频
      * @return \Illuminate\Http\JsonResponse
      */
-    public function FollowViewVideo()
+    public function FollowViewVideo(Request $request)
     {
-        $data = $this->videoService->FollowViewVideo();
+        $data = $this->videoService->FollowViewVideo($request);
         return response()->json($data);
     }
 

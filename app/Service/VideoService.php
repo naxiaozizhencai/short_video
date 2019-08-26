@@ -241,9 +241,8 @@ class VideoService
      * @param $uid
      * @return array
      */
-    public function FollowViewVideo()
+    public function FollowViewVideo($request)
     {
-
         $user_id = Auth::id();
         $result = $this->videoRepositories->GetFollowVideoData($user_id);
 
