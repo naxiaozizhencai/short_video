@@ -243,18 +243,17 @@ github参考网址:https://github.com/z-song/laravel-admin
         }
 
         $data = ['code'=>200, 'data'=>[]];
-        $max_message_id = 0;
+        $length = count($message_data['data']) - 1;
         foreach ($message_data['data'] as $key=>$value){
 
             $temp_msg = [];
-            $max_message_id = $value->message_id;
             $temp_msg['message_id'] = $value->message_id;
             $temp_msg['message'] = $value->message;
             $temp_msg['room_id'] = $value->room_id;
             $temp_msg['send_id'] = $value->send_id;
             $temp_msg['receive_id'] = $value->receive_id;
             $temp_msg['send_time'] = $value->send_time;
-            $data['data']['chat_message'][] = $temp_msg;
+            $data['data']['chat_message'][$length - $key] = $temp_msg;
 
             if($key == 0){
                 $send_user_data = $this->usersRepositories->getUserInfoById($value->send_id);
