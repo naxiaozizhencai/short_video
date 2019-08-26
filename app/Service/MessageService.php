@@ -276,9 +276,9 @@ github参考网址:https://github.com/z-song/laravel-admin
             }
         }
 
-        $attributes = ['user_id'=>$user_id, 'temp_key'=>$room_id];
+/*        $attributes = ['user_id'=>$user_id, 'temp_key'=>$room_id];
         $temp_value = ['user_id'=>$user_id, 'temp_key'=>$room_id, 'temp_value'=>$max_message_id];
-        $this->tempDataRepositories->UpateOrInsertTempData($attributes, $temp_value);
+        $this->tempDataRepositories->UpateOrInsertTempData($attributes, $temp_value);*/
         unset($message_data['data']);
         $data['data']['page'] = $message_data;
         return $data;
