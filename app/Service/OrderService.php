@@ -59,6 +59,8 @@ class OrderService
 
     public function GetProductList()
     {
+        echo "aaaa";
+        exit;
         $result = $this->orderRepositories->getProductList();
 
         if(empty($result)){

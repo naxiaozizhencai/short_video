@@ -111,7 +111,7 @@ class OrderRepositories
 
     public function updateOrderBySn($order_sn)
     {
-         return DB::table('user_order')->where('order_sn', '=', $order_sn)->update(['order_status'=>$1]);
+         return DB::table('user_order')->where('order_sn', '=', $order_sn)->update(['order_status'=>1]);
     }
 
 }
