@@ -274,8 +274,8 @@ github参考网址:https://github.com/z-song/laravel-admin
                 $data['data']['min_message_id'] =  $value->message_id;
             }
         }
-        $last_ids = array_column($data['data']['chat_message'],'id');
-        $data['data']['chat_message'] =         array_multisort($data['data']['chat_message'],SORT_ASC,$last_ids);
+        $last_ids = array_column($data['data']['chat_message'],'message_id');
+        $data['data']['chat_message'] = array_multisort($data['data']['chat_message'],SORT_ASC,$last_ids);
         /*        $attributes = ['user_id'=>$user_id, 'temp_key'=>$room_id];
                 $temp_value = ['user_id'=>$user_id, 'temp_key'=>$room_id, 'temp_value'=>$max_message_id];
                 $this->tempDataRepositories->UpateOrInsertTempData($attributes, $temp_value);*/
