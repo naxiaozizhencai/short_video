@@ -732,7 +732,7 @@ class UsersService
         if(empty($video_list['data'])){
             return ['code'=>200, 'data'=>[]];
         }
-
+        $fans_ids = $this->fansRepositories->GetUsersFollowData($user_id);
         $data = ['code'=>200];
         foreach($video_list['data'] as $key=>$value){
             $user_data = $this->UsersRepositories->getUserInfoById($value->user_id);
@@ -747,10 +747,11 @@ class UsersService
             $video_data['video_label'] = $value->video_label;
             $video_data['favorite_number'] = $value->favorite_num;
             $video_data['reply_number'] = $value->reply_num;
-            $video_data['is_follow'] = 0;
+            $video_data['is_follow'] =  isset($fans_ids[$value->id]) ? 1 : 0;
 
             $data['data']['video_data'][] = $video_data;
         }
+
         unset($video_list['data']);
         $data['data']['page'] = $video_list;
         return $data;
