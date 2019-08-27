@@ -14,6 +14,7 @@ class NotifyController extends Controller
         $this->orderService = $orderService;
     }
 
+    
     public function Notify(){
 
         //加载fastpay支付插件
