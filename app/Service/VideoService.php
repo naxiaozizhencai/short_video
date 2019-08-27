@@ -31,6 +31,7 @@ class VideoService
     protected $fansRepositories;
     protected $videoLabelRepositories;
     protected $labelConfigRepositories;
+    protected $usersService;
 
 
     public function __construct(VideoRepositories $videoRepositories,
@@ -39,7 +40,8 @@ class VideoService
                                 UsersRepositories $usersRepositories, DiscussReportRepositories $discussReportRepositories,
                                 MessageRepositories $messageRepositories, PlayVideoHistoryRepositories $playVideoHistoryRepositories,
                                 FavoriteDiscussRepositories $favoriteDiscussRepositories,UsersFansRepositories $fansRepositories,
-                                VideoLabelRepositories $videoLabelRepositories,LabelConfigRepositories $labelConfigRepositories
+                                VideoLabelRepositories $videoLabelRepositories,LabelConfigRepositories $labelConfigRepositories,
+                                UsersService $usersService
 )
     {
         $this->videoRepositories = $videoRepositories;
@@ -54,6 +56,7 @@ class VideoService
         $this->fansRepositories = $fansRepositories;
         $this->videoLabelRepositories = $videoLabelRepositories;
         $this->labelConfigRepositories = $labelConfigRepositories;
+        $this->usersService = $usersService;
     }
 
 
@@ -185,7 +188,7 @@ class VideoService
         }
 
         $this->videoRepositories->IncrVideoNum($video_id, 'play_num', 1);
-        return ['code'=>200, 'msg'=>'操作成功'];
+        return $this->usersService->UserInfo($request);
     }
 
     /**

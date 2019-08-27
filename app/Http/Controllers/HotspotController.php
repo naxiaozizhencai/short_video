@@ -18,6 +18,12 @@ class HotspotController extends Controller
          $this->hotspotService = $hotspotService;
     }
 
+    public function HotIndex(Request $request)
+    {
+
+    }
+
+
     public function VideoRank(Request $request)
     {
         $data = $this->hotspotService->VideoRankData($request);
@@ -47,6 +53,15 @@ class HotspotController extends Controller
     {
         $data =$this->hotspotService->SupportRankData();
         return response()->json($data);
+    }
+
+    /**
+     * 标签视频列表
+     * @param Request $request
+     */
+    public function VideoLabelList(Request $request)
+    {
+
     }
 
 }
