@@ -634,7 +634,7 @@ class UsersService
         if(empty($user_data)){
             return ['code'=>-1, 'msg'=>'用户数据不存在'];
         }
-      
+
         $user_info = [];
         $user_info['id'] = $user_data->id;
         $user_info['username'] = $user_data->username;
