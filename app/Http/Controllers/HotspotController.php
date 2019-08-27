@@ -16,6 +16,7 @@ class HotspotController extends Controller
     public function __construct(HotspotService $hotspotService, VideoService $videoService)
     {
          $this->hotspotService = $hotspotService;
+         $this->videoService = $videoService;
     }
 
     public function HotIndex(Request $request)
@@ -61,7 +62,8 @@ class HotspotController extends Controller
      */
     public function VideoLabelList(Request $request)
     {
-
+        $data = $this->videoService->VideoLabelData($request);
+        return response()->json($data);
     }
 
 }
