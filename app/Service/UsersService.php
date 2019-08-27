@@ -499,6 +499,9 @@ class UsersService
             return ['code'=>-1, 'msg'=>'参数错误'];
         }
 
+        if($fans_id == $uid){
+            return ['code'=>-1, 'msg'=>'不能关注自己'];
+        }
 
         $is_fans = $this->fansRepositories->GetUserFansByUidFanId($uid, $fans_id);
         if(!empty($is_fans)){
@@ -541,12 +544,16 @@ class UsersService
         $fans_data = $this->UsersRepositories->getUserInfoById($fans_id);
 
         if(empty($fans_data)) {
-            return ['code'=>-1, 'msg'=>'参数错误'];
+            return ['code'=>-1, 'msg'=>'关注用户不存在'];
         }
 
         $is_fans = $this->fansRepositories->GetUserFansByUidFanId($uid, $fans_id);
         if(empty($is_fans)){
             return ['code'=>-1, 'msg'=>'已经取消'];
+        }
+
+        if($fans_id == $uid){
+            return ['code'=>-1, 'msg'=>'不能取消关注自己'];
         }
 
         $this->fansRepositories->DeleteFans($uid, $fans_id);
