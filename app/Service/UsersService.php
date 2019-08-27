@@ -19,11 +19,12 @@ class UsersService
     protected $tempDataRepositories;
     protected $videoRepositories;
     protected $messageRepositories;
+    protected $messageService;
 
     public function __construct(UsersRepositories $UsersRepositories, UsersDetailRepositories $usersDetailRepositories,
                                 PopularListRepositories $popularListRepositories,UsersFansRepositories $fansRepositories,
                                 TempDataRepositories $tempDataRepositories, VideoRepositories $videoRepositories,
-                                 MessageRepositories $messageRepositories
+                                 MessageRepositories $messageRepositories,MessageService $messageService
     )
     {
         $this->UsersRepositories = $UsersRepositories;
@@ -33,6 +34,7 @@ class UsersService
         $this->tempDataRepositories = $tempDataRepositories;
         $this->videoRepositories = $videoRepositories;
         $this->messageRepositories = $messageRepositories;
+        $this->messageService = $messageService;
     }
 
     /**
@@ -632,7 +634,7 @@ class UsersService
         if(empty($user_data)){
             return ['code'=>-1, 'msg'=>'用户数据不存在'];
         }
-
+      
         $user_info = [];
         $user_info['id'] = $user_data->id;
         $user_info['username'] = $user_data->username;
@@ -649,8 +651,16 @@ class UsersService
         $user_info['upload_num'] = $user_data->upload_num;
         $user_info['favorite_num'] = $user_data->favorite_num;
         $user_info['orther_popular_num'] = $user_data->orther_popular_num;
-        $follows_ids = $this->fansRepositories->GetUsersFollowData($my_user_id);
-        $user_info['is_follow'] = isset($follows_ids[$user_id]) ? 1 : 0;
+        $user_info['is_self'] = ($user_id == $my_user_id) ? 1 : 0;
+
+
+        if($user_id != $my_user_id){
+            $follows_ids = $this->fansRepositories->GetUsersFollowData($my_user_id);
+            $user_info['is_follow'] = isset($follows_ids[$user_id]) ? 1 : 0;
+            $my_user_data = $this->UsersRepositories->getUserInfoById($user_id);
+            $user_info['room_id'] = $this->messageService->MakeRoomId($user_data, $my_user_data);
+        }
+
         $play_video_times_data = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
         $user_info['viewed_times'] = empty($play_video_times_data) ? 0 : $play_video_times_data->temp_value;
         $total_viewed_times_data = $this->tempDataRepositories->GetValue($user_data->id, TempDataRepositories::TOTAL_VIEWED_TIMES);
