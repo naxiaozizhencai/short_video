@@ -32,7 +32,7 @@ class VideoController extends Controller
      */
     public function ViewVideoDetail(Request $request)
     {
-        $data = $this->videoService->VideoVideoDetail($request);
+        $data = $this->videoService->ViewVideoDetail($request);
         return response()->json($data);
     }
 
