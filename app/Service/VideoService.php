@@ -322,11 +322,13 @@ class VideoService
 
         $msg_data = [];
         $msg_data['message_type'] = MessageRepositories::MESSAGE_TYPE_SUPPORT;
-        $msg_data['message'] = $user_data->username . '点赞了了你的视频';
+        $msg_data['message'] = '点赞了了你的视频';
         $msg_data['send_id'] = $user_id;
         $msg_data['receive_id'] = $video_row->user_id;
         $msg_data['send_time'] = time();
+        $msg_data['message_extend'] = json_encode(['video_id'=>$video_row->id, 'video_image'=>$video_row->video_image]);
         $msg_data['add_time'] = date('Y-m-d H:i:s');
+
         $this->messageRepositories->InsertMessage($msg_data);
         $data = ['code'=>200, 'msg'=>'喜歡成功'];
         $this->usersRepositories->IncrUsersDetailNum($video_row->user_id, 'support_num', 1);
@@ -401,9 +403,11 @@ class VideoService
         $msg_data['send_time'] = time();
         $msg_data['add_time'] = date('Y-m-d H:i:s');
         $msg_data['message_type'] = MessageRepositories::MESSAGE_TYPE_DISCUSS;
-        $msg_data['message'] = $user_data->username . '评论了你的视频';
+        $msg_data['message'] = $content;
         $msg_data['send_id'] = $user_id;
         $msg_data['receive_id'] = $video_row->user_id;
+        $msg_data['message_extend'] = json_encode(['video_id'=>$video_row->id, 'video_image'=>$video_row->video_image]);
+
         $this->messageRepositories->InsertMessage($msg_data);
 
         if(!empty($parent_id)) {
@@ -415,7 +419,7 @@ class VideoService
             }
 
             $msg_data['message_type'] = MessageRepositories::MESSAGE_TYPE_DISCUSS;
-            $msg_data['message'] = $user_data->username . '回复了你的评论';
+            $msg_data['message'] = $content;
             $msg_data['send_id'] = $user_id;
             $msg_data['receive_id'] = $parent_discuss_data->from_uid;
             $this->messageRepositories->InsertMessage($msg_data);

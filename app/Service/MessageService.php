@@ -147,8 +147,14 @@ github参考网址:https://github.com/z-song/laravel-admin
             $temp_data['message_info']['message'] = $value->message;
             $temp_data['message_info']['send_time'] = $value->send_time;
 
-            $temp_data['message_info']['video_id'] = 1;
-            $temp_data['message_info']['video_image'] = 'http://39.100.242.186:8090/upload/1566218077800.png';
+            $msg_extend = json_decode($value->message_extend, true);
+            if(!empty($msg_extend)) {
+                $temp_data['message_info'] = array_merge($temp_data['message_info'], $msg_extend);
+            }else{
+                $temp_data['message_info']['video_id'] = '';
+                $temp_data['message_info']['video_image'] = '';
+            }
+
             $data['data']['messages'][] = $temp_data;
         }
 
