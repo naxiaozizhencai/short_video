@@ -83,6 +83,7 @@ class VideoService
 
         $data = ['code'=>200];
         foreach($video_detail_data['data'] as $key=>$value){
+
             $video_data['video_id'] = $value->video_id;
             $video_data['video_user_avatar'] = $value->avatar;
             $video_data['video_user_id'] = $value->user_id;

@@ -21,7 +21,21 @@ class HotspotController extends Controller
 
     public function HotIndex(Request $request)
     {
+        return [
+            'code'=>200,
+            'data'=>[
+                'today_hot'=>[
 
+                ],
+                'rank_hot'=>[
+
+                ],
+                'label_hot'=>[
+
+                ],
+
+            ],
+        ];
     }
 
 
@@ -57,8 +71,8 @@ class HotspotController extends Controller
     }
 
     /**
-     * 标签视频列表
      * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function VideoLabelList(Request $request)
     {
