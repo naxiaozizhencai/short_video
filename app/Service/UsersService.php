@@ -764,12 +764,20 @@ class UsersService
         $fans_ids = $this->fansRepositories->GetUsersFollowData($user_id);
         $data = ['code'=>200];
         foreach ($user_data['data'] as $key=>$value){
+            if($value->id == $user_id){
+                continue;
+            }
             $temp_data = [];
             $temp_data['user_id'] = $value->id;
             $temp_data['username'] = $value->username;
             $temp_data['avatar'] = $value->avatar;
             $temp_data['popular_num'] = $value->popular_num;
             $temp_data['is_follow'] = isset($fans_ids[$value->id]) ? 1 : 0;
+
+            if($this->fansRepositories->GetUserFansByUidFanId($value->id, $user_id)){
+                $temp_data['is_follow'] = 2;
+            }
+
             $data['data']['search_result'][] = $temp_data;
         }
         unset($user_data['data']);
