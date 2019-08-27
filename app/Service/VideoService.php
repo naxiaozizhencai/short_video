@@ -4,12 +4,14 @@ use App\Repositories\DiscussReportRepositories;
 use App\Repositories\DiscussRepositories;
 use App\Repositories\FavoriteDiscussRepositories;
 use App\Repositories\FavoriteRepositories;
+use App\Repositories\LabelConfigRepositories;
 use App\Repositories\MessageRepositories;
 use App\Repositories\PlayVideoHistoryRepositories;
 use App\Repositories\ReplyRepositories;
 use App\Repositories\TempDataRepositories;
 use App\Repositories\UsersFansRepositories;
 use App\Repositories\UsersRepositories;
+use App\Repositories\VideoLabelRepositories;
 use App\Repositories\VideoRepositories;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,13 +29,17 @@ class VideoService
     protected $playVideoHistoryRepositories;
     protected $favoriteDiscussRepositories;
     protected $fansRepositories;
+    protected $videoLabelRepositories;
+    protected $labelConfigRepositories;
+
 
     public function __construct(VideoRepositories $videoRepositories,
                                 TempDataRepositories $tempDataRepositories,
                                 FavoriteRepositories $favoriteRepositories, DiscussRepositories $discussRepositories,
                                 UsersRepositories $usersRepositories, DiscussReportRepositories $discussReportRepositories,
                                 MessageRepositories $messageRepositories, PlayVideoHistoryRepositories $playVideoHistoryRepositories,
-                                FavoriteDiscussRepositories $favoriteDiscussRepositories,UsersFansRepositories $fansRepositories
+                                FavoriteDiscussRepositories $favoriteDiscussRepositories,UsersFansRepositories $fansRepositories,
+                                VideoLabelRepositories $videoLabelRepositories,LabelConfigRepositories $labelConfigRepositories
 )
     {
         $this->videoRepositories = $videoRepositories;
@@ -46,6 +52,8 @@ class VideoService
         $this->playVideoHistoryRepositories = $playVideoHistoryRepositories;
         $this->favoriteDiscussRepositories = $favoriteDiscussRepositories;
         $this->fansRepositories = $fansRepositories;
+        $this->videoLabelRepositories = $videoLabelRepositories;
+        $this->labelConfigRepositories = $labelConfigRepositories;
     }
 
 
@@ -625,10 +633,10 @@ class VideoService
         $video_image = app('request')->input('video_image');
         $video = app('request')->input('video');
         $video_label = app('request')->input('video_label');
+        $label_arr = explode('#', $video_label);
 
         if(empty($video_image) || empty($video_label) || empty($video_label) || empty($video)){
             return ['code'=>-1, 'msg'=>'参数错误'];
-
         }
 
         $video_data = [];
@@ -639,7 +647,24 @@ class VideoService
         $video_data['video_url'] = $video;
         $video_data['video_label'] = $video_label;
         $video_data['add_time'] = date('Y-m-d H:i:s');
-        $this->videoRepositories->InsertVideo($video_data);
+        $video_id = $this->videoRepositories->InsertVideo($video_data);
+        if(!empty($label_arr)) {
+            foreach($label_arr as $key=>$value){
+
+                if(empty($value)){
+                    continue;
+                }
+                $video_label_data['video_id'] = $video_id;
+                $video_label_data['user_id'] = $user_id;
+                $label_config = $this->labelConfigRepositories->GetLabelConfigByName(['label_name'=>$value]);
+                $label_id = empty($label_config) ? 0 : $label_config->id;
+                $video_label_data['label_id'] = $label_id;
+                $video_label_data['label_name'] = $value;
+                $video_label_data['add_time'] = date("Y-m-d H:i:s");
+                $this->videoLabelRepositories->InsertVideoLabel($video_label_data);
+
+            }
+        }
         $this->usersRepositories->IncrUsersDetailNum($user_id, 'upload_num');
         return ['code'=>200, 'msg'=>'上传成功'];
 
