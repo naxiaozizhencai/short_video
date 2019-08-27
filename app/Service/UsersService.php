@@ -449,11 +449,16 @@ class UsersService
             return ['code'=>-1, 'msg'=>'推广码不存在'];
         }
 
-        $condition_data['user_id'] = $user_id;
-        $popular_data = $this->popularListRepositories->GetUserPopularData($condition_data);
 
-        if(!empty($popular_data)){
+        $condition_data['user_id'] = $user_id;
+        $exist_popular_data = $this->popularListRepositories->GetUserPopularData($condition_data);
+
+        if(!empty($exist_popular_data)){
             return ['code'=>-1, 'msg'=>'你已经填写过推广码！'];
+        }
+
+        if($user_id == $user_data->id) {
+            return ['code'=>-1, 'msg'=>'不能填写自己的推广码！'];
         }
 
         $popular_data = [];

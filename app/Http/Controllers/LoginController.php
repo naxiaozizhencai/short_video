@@ -35,15 +35,6 @@ class LoginController extends BaseController
 
     }
 
-    /**
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function PhoneLoginOrRegister(Request $request)
-    {
-        $data = $this->UsersService->PhoneLoginOrRegister($request);
-        return response()->json($data);
-    }
 
     /**
      * @param Request $request
