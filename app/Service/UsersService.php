@@ -261,8 +261,8 @@ class UsersService
         $data['total_viewed_times'] = empty($total_viewed_times_data) ? 10 :$total_viewed_times_data->temp_value;
         $data['viewed_times'] = 10;
         $data['play_video_second'] = 15;
-        $user_info = $this->UsersRepositories->getUserInfoById($user_data->id);
-        $token_data = [];
+        $user_info = $this->UsersRepositories->GetAuthUserData($user_data->uuid);
+
         if (!$token = Auth::login($user_info, true)) {
             $resultData['code']     = -1;
             $resultData['msg'] = '系统错误，无法生成令牌';
@@ -690,7 +690,7 @@ class UsersService
         $fans_ids = $this->fansRepositories->GetUsersFollowData($user_id);
 
         foreach($video_list['data'] as $key=>$value){
-            
+
             $video_data['video_id'] = $value->video_id;
             $video_data['video_user_avatar'] = $value->avatar;
             $video_data['video_user_id'] = $value->user_id;
@@ -720,6 +720,8 @@ class UsersService
 
     /**
      * 用户喜欢的列表
+     * @param $request
+     * @return array
      */
     public function UserFavoriteList($request)
     {

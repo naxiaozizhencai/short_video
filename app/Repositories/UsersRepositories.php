@@ -18,6 +18,21 @@ class UsersRepositories
         return $result;
     }
 
+    /**
+     * 获取用户信息
+     * @param $uuid
+     * @return mixed
+     */
+    public function GetUserDataByid($user_id)
+    {
+        $result  = DB::table($this->users_table_name)->find($user_id);
+        return $result;
+    }
+
+    /**
+     * @param $uuid
+     * @return mixed
+     */
     public function GetAuthUserData($uuid)
     {
         $user_model = new UserModel();
