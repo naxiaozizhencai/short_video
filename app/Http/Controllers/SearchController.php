@@ -19,7 +19,7 @@ class SearchController extends Controller
         $this->usersService = $usersService;
         $this->videoService = $videoService;
     }
-    
+
 
     /**
      * 搜索用户

@@ -19,11 +19,12 @@ class UsersService
     protected $tempDataRepositories;
     protected $videoRepositories;
     protected $messageRepositories;
+    protected $messageService;
 
     public function __construct(UsersRepositories $UsersRepositories, UsersDetailRepositories $usersDetailRepositories,
                                 PopularListRepositories $popularListRepositories,UsersFansRepositories $fansRepositories,
                                 TempDataRepositories $tempDataRepositories, VideoRepositories $videoRepositories,
-                                 MessageRepositories $messageRepositories
+                                 MessageRepositories $messageRepositories,MessageService $messageService
     )
     {
         $this->UsersRepositories = $UsersRepositories;
@@ -33,6 +34,7 @@ class UsersService
         $this->tempDataRepositories = $tempDataRepositories;
         $this->videoRepositories = $videoRepositories;
         $this->messageRepositories = $messageRepositories;
+        $this->messageService = $messageService;
     }
 
     /**
@@ -259,8 +261,8 @@ class UsersService
         $data['total_viewed_times'] = empty($total_viewed_times_data) ? 10 :$total_viewed_times_data->temp_value;
         $data['viewed_times'] = 10;
         $data['play_video_second'] = 15;
-        $user_info = $this->UsersRepositories->getUserInfoById($user_data->id);
-        $token_data = [];
+        $user_info = $this->UsersRepositories->GetAuthUserData($user_data->uuid);
+
         if (!$token = Auth::login($user_info, true)) {
             $resultData['code']     = -1;
             $resultData['msg'] = '系统错误，无法生成令牌';
@@ -449,11 +451,16 @@ class UsersService
             return ['code'=>-1, 'msg'=>'推广码不存在'];
         }
 
-        $condition_data['user_id'] = $user_id;
-        $popular_data = $this->popularListRepositories->GetUserPopularData($condition_data);
 
-        if(!empty($popular_data)){
+        $condition_data['user_id'] = $user_id;
+        $exist_popular_data = $this->popularListRepositories->GetUserPopularData($condition_data);
+
+        if(!empty($exist_popular_data)){
             return ['code'=>-1, 'msg'=>'你已经填写过推广码！'];
+        }
+
+        if($user_id == $user_data->id) {
+            return ['code'=>-1, 'msg'=>'不能填写自己的推广码！'];
         }
 
         $popular_data = [];
@@ -494,6 +501,9 @@ class UsersService
             return ['code'=>-1, 'msg'=>'参数错误'];
         }
 
+        if($fans_id == $uid){
+            return ['code'=>-1, 'msg'=>'不能关注自己'];
+        }
 
         $is_fans = $this->fansRepositories->GetUserFansByUidFanId($uid, $fans_id);
         if(!empty($is_fans)){
@@ -536,12 +546,16 @@ class UsersService
         $fans_data = $this->UsersRepositories->getUserInfoById($fans_id);
 
         if(empty($fans_data)) {
-            return ['code'=>-1, 'msg'=>'参数错误'];
+            return ['code'=>-1, 'msg'=>'关注用户不存在'];
         }
 
         $is_fans = $this->fansRepositories->GetUserFansByUidFanId($uid, $fans_id);
         if(empty($is_fans)){
             return ['code'=>-1, 'msg'=>'已经取消'];
+        }
+
+        if($fans_id == $uid){
+            return ['code'=>-1, 'msg'=>'不能取消关注自己'];
         }
 
         $this->fansRepositories->DeleteFans($uid, $fans_id);
@@ -637,8 +651,16 @@ class UsersService
         $user_info['upload_num'] = $user_data->upload_num;
         $user_info['favorite_num'] = $user_data->favorite_num;
         $user_info['orther_popular_num'] = $user_data->orther_popular_num;
-        $follows_ids = $this->fansRepositories->GetUsersFollowData($my_user_id);
-        $user_info['is_follow'] = isset($follows_ids[$user_id]) ? 1 : 0;
+        $user_info['is_self'] = ($user_id == $my_user_id) ? 1 : 0;
+
+
+        if($user_id != $my_user_id){
+            $follows_ids = $this->fansRepositories->GetUsersFollowData($my_user_id);
+            $user_info['is_follow'] = isset($follows_ids[$user_id]) ? 1 : 0;
+            $my_user_data = $this->UsersRepositories->getUserInfoById($user_id);
+            $user_info['room_id'] = $this->messageService->MakeRoomId($user_data, $my_user_data);
+        }
+
         $play_video_times_data = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
         $user_info['viewed_times'] = empty($play_video_times_data) ? 0 : $play_video_times_data->temp_value;
         $total_viewed_times_data = $this->tempDataRepositories->GetValue($user_data->id, TempDataRepositories::TOTAL_VIEWED_TIMES);
@@ -665,7 +687,10 @@ class UsersService
             return ['code'=>200, 'data'=>[]];
         }
 
+        $fans_ids = $this->fansRepositories->GetUsersFollowData($user_id);
+
         foreach($video_list['data'] as $key=>$value){
+
             $video_data['video_id'] = $value->video_id;
             $video_data['video_user_avatar'] = $value->avatar;
             $video_data['video_user_id'] = $value->user_id;
@@ -677,7 +702,13 @@ class UsersService
             $video_data['video_label'] = $value->video_label;
             $video_data['favorite_number'] = $value->favorite_num;
             $video_data['reply_number'] = $value->reply_num;
-            $video_data['is_follow'] = 0;
+
+            if($my_user_id == $user_id){
+                $video_data['is_follow'] = 1;
+            }else{
+                $video_data['is_follow'] = isset($fans_ids[$value->user_id]) ? 1 : 0;
+            }
+
             $data['data']['video_data'][] = $video_data;
         }
         $data['code'] = 200;
@@ -689,6 +720,8 @@ class UsersService
 
     /**
      * 用户喜欢的列表
+     * @param $request
+     * @return array
      */
     public function UserFavoriteList($request)
     {
@@ -699,7 +732,7 @@ class UsersService
         if(empty($video_list['data'])){
             return ['code'=>200, 'data'=>[]];
         }
-
+        $fans_ids = $this->fansRepositories->GetUsersFollowData($user_id);
         $data = ['code'=>200];
         foreach($video_list['data'] as $key=>$value){
             $user_data = $this->UsersRepositories->getUserInfoById($value->user_id);
@@ -714,10 +747,11 @@ class UsersService
             $video_data['video_label'] = $value->video_label;
             $video_data['favorite_number'] = $value->favorite_num;
             $video_data['reply_number'] = $value->reply_num;
-            $video_data['is_follow'] = 0;
+            $video_data['is_follow'] =  isset($fans_ids[$value->id]) ? 1 : 0;
 
             $data['data']['video_data'][] = $video_data;
         }
+
         unset($video_list['data']);
         $data['data']['page'] = $video_list;
         return $data;
@@ -742,12 +776,20 @@ class UsersService
         $fans_ids = $this->fansRepositories->GetUsersFollowData($user_id);
         $data = ['code'=>200];
         foreach ($user_data['data'] as $key=>$value){
+            if($value->id == $user_id){
+                continue;
+            }
             $temp_data = [];
             $temp_data['user_id'] = $value->id;
             $temp_data['username'] = $value->username;
             $temp_data['avatar'] = $value->avatar;
             $temp_data['popular_num'] = $value->popular_num;
             $temp_data['is_follow'] = isset($fans_ids[$value->id]) ? 1 : 0;
+
+            if($this->fansRepositories->GetUserFansByUidFanId($value->id, $user_id)){
+                $temp_data['is_follow'] = 2;
+            }
+
             $data['data']['search_result'][] = $temp_data;
         }
         unset($user_data['data']);
