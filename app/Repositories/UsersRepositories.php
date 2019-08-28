@@ -85,7 +85,7 @@ class UsersRepositories
             $vip_expired_time = time() + $amount;
         }
 
-        return DB::table($this->users_table_name)->where('id', '=', $uid)->update(['vip_expired_time'=>$vip_expired_time]);
+        return DB::table($this->users_table_name)->where('id', '=', $uid)->update(['vip_expired_time'=>$vip_expired_time,'vip_level'=>1]);
     }
 
     /**
