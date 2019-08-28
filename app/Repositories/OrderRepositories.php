@@ -101,7 +101,10 @@ class OrderRepositories
 
     public function getOrderBySn($order_sn)
     {
-        $order_data = DB::selectOne('select user_order.*, video_product.* from user_order left JOIN video_product ON user_order.product_id=video_product.id WHERE user_order.order_sn = '.$order_sn);
+//        $order_data = DB::selectOne('select user_order.*, video_product.* from user_order left JOIN video_product ON user_order.product_id=video_product.id WHERE user_order.order_sn = '.$order_sn);
+        $order_data  = DB::table('user_order')->
+        leftJoin('video_product', 'user_order.product_id', '=', 'video_product.id')->
+        select(['user_order.*','video_product.*'])->where(['user_order.order_sn'=>$order_sn])->first();
         if(empty($order_data)){
             return [];
         }
