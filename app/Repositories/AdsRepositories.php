@@ -9,7 +9,7 @@ class AdsRepositories
     protected $table_name = 'ads';
 
     /**
-     * 花去广告
+     * 获取广告
      * @param $data
      * @return \Illuminate\Database\Eloquent\Model|null|object|static
      */
