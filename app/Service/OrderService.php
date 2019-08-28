@@ -82,6 +82,7 @@ class OrderService
         $me_param      = $value['me_param'];//其他参数
         
         $order = $this->orderRepositories->getOrderBySn($order_no);
+        var_dump($order);exit;
         //更新订单状态
         $status = $this->orderRepositories->updateOrderBySn($order_no);
         //更新用户vip过期时间
