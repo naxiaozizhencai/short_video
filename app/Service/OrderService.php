@@ -1,13 +1,16 @@
 <?php
 namespace App\Service;
 use App\Repositories\OrderRepositories;
+use App\Repositories\UsersRepositories;
 
 class OrderService
 {
     protected $orderRepositories;
-    public function __construct(OrderRepositories $orderRepositories)
+    protected $usersRepositories;
+    public function __construct(OrderRepositories $orderRepositories,UsersRepositories $usersRepositories)
     {
         $this->orderRepositories = $orderRepositories;
+        $this->usersRepositories = $usersRepositories;
     }
 
     /**
@@ -85,7 +88,7 @@ class OrderService
         $amount = $order['free_day']*86400;
         $user = $this->usersRepositories->UpdateVipTime($uid,$amount);
         
-        return $data = ['code'=>200, 'data'=>$result];
+        return $data = ['code'=>200, 'data'=>$user];
     }
 
 
