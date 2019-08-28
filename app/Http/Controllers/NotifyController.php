@@ -6,7 +6,7 @@ use App\Service\OrderService;
 use Illuminate\Http\Request;
 // use Illuminate\Support\Facades\Auth;
 
-class NotifyController extends Controller
+class NotifyController 
 {
     protected $orderService;
     public function __construct(OrderService $orderService)
