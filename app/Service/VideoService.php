@@ -82,6 +82,7 @@ class VideoService
         if(empty($video_detail_data['data'])) {
             return ['code'=>-1, 'msg'=>'视频数据为空！'];
         }
+
         $follows_ids = $this->fansRepositories->GetUsersFollowData($user_id);
         $data = ['code'=>200];
         foreach($video_detail_data['data'] as $key=>$value){
@@ -98,6 +99,7 @@ class VideoService
             $video_data['favorite_number'] = $value->favorite_num;
             $video_data['reply_number'] = $value->reply_num;
             $video_data['is_follow'] = isset($follows_ids[$value->user_id]) ? 1 : 0;
+
             $favorite_data = $this->favoriteRepositories->FindFavoriteRow($user_id, $value->video_id);
 
             $video_data['is_favorite'] = empty($favorite_data) ? 0 : 1;
@@ -117,8 +119,6 @@ class VideoService
         }
 
         $this->videoRepositories->IncrVideoNum($video_id, 'play_num', 1);
-
-
 
         return $data;
     }
@@ -153,9 +153,7 @@ class VideoService
             $video_data['video_label'] = $value->video_label;
             $video_data['favorite_number'] = $value->video_favorite_num;
             $video_data['reply_number'] = $value->reply_num;
-
             $video_data['is_follow'] = isset($follows_ids[$user_id]) ? 1 : 0;
-
             $data['data']['video_data'][] = $video_data;
 
         }
@@ -397,6 +395,24 @@ class VideoService
         $this->favoriteRepositories->DeleteFavoriteVideo($user_id, $video_id);
         $this->videoRepositories->DecrVideoNum($video_id, 'favorite_num');
         $this->usersRepositories->DecrUsersDetailNum($video_row->user_id, 'favorite_num', 1);
+
+        $video_rank_condition = [];
+        $video_rank_condition['rank_video_id'] = $video_id;
+        $video_rank_condition['rank_type'] = VideoRankRepositories::DAY_RANK_TYPE;
+        $video_rank_condition['rank_group'] = date('Ymd');
+
+        $video_rank_info = $this->videoRankRepositories->GetVideoRankData($video_rank_condition);
+        $video_rank_data = [];
+        if(!empty($video_rank_info)){
+            $video_rank_data['rank_num'] = ($video_rank_info->rank_num - 1 < 0) ? 0 : $video_rank_info->rank_num - 1;
+        }else{
+            $video_rank_data = $video_rank_condition;
+            $video_rank_data['rank_num'] = 0;
+            $video_rank_data['add_time'] = date('Y-m-d H:i:s');
+        }
+
+        $this->videoRankRepositories->UpdateOrInsert($video_rank_condition, $video_rank_data);
+
         $data = ['code'=>200, 'msg'=>'取消成功'];
         return $data;
 
@@ -702,6 +718,11 @@ class VideoService
 
     }
 
+    /**
+     * 获取标签数据
+     * @param $request
+     * @return array
+     */
     public function VideoLabelData($request)
     {
         $label_name = $request->input('label_name');

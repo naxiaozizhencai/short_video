@@ -35,6 +35,7 @@ class HotspotService
        $data = ['code'=>200];
 
         foreach($rank_data['data'] as $key=>$value){
+
             $video_data['video_id'] = $value->video_id;
             $video_data['video_user_avatar'] = $value->avatar;
             $video_data['video_user_id'] = $value->user_id;
@@ -53,6 +54,7 @@ class HotspotService
         $data['data']['page'] = $rank_data;
         return $data;
    }
+
    public function InvitationRankData()
    {
 

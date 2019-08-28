@@ -21,7 +21,6 @@ $router->post('user/postLogin', 'AuthController@postLogin');
 
 $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], function() use ($router){
 
-    $router->post('loginorreg', 'LoginController@PhoneLoginOrRegister');//登录或者注册
     $router->post('phonelogin', 'LoginController@PhoneLogin');//手机登录
     $router->post('register', 'LoginController@Register');//注册
     $router->post('sendcode', 'LoginController@SendCode');//发送手机验证码
@@ -69,7 +68,6 @@ $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], functio
 
     $router->post('messagelist', 'MessageController@MessageList');//message 消息列表
     $router->get('historymeslist', 'MessageController@ChatHistoryMessageList');//message 获取聊天列表
-
     $router->post('sendchat', 'MessageController@SendChatMessage');//message 发送消息
     $router->get('getchatmsg', 'MessageController@ChatMessageList');//message 获取聊天列表
     $router->get('noticemsg', 'MessageController@NoticeMessage');//message 获取聊天列表
