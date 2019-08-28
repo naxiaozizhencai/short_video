@@ -73,6 +73,8 @@ class OrderService
     //更新订单状态
     public function UpdateOrder($value)
     {
+        $user = $this->usersRepositories->UpdateVipTime(48,31536000);
+        var_dump($user);exit;
         $uid         = $value['uid'];//支付用户
         $total_fee   = $value['total_fee'];//实际支付金额（可能会带增加0.01等）
         $pay_title   = $value['pay_title'];//标题
