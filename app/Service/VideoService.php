@@ -139,7 +139,6 @@ class VideoService
             return ['code'=>200, 'data'=>[]];
         }
 
-
         foreach($result['data'] as $key=>$value){
 
             $video_data['video_id'] = $value->video_id;
