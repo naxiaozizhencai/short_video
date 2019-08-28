@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Service\OrderService;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Auth;
+ use Illuminate\Support\Facades\Auth;
 
-class NotifyController
+class NotifyController extends Controller
 {
     protected $orderService;
     public function __construct(OrderService $orderService)
@@ -16,7 +16,6 @@ class NotifyController
 
     
     public function Notify(){
-    var_dump($_POST);exit;
         //加载fastpay支付插件
 
         if (!function_exists('get_openid')) {
