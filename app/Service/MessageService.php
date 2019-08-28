@@ -2,6 +2,7 @@
 namespace App\Service;
 
 use App\Repositories\MessageRepositories;
+use App\Repositories\NoticeRepositories;
 use App\Repositories\TempDataRepositories;
 use App\Repositories\UsersRepositories;
 use Illuminate\Support\Facades\Auth;
@@ -11,12 +12,15 @@ class MessageService
     protected $messageRepositories;
     protected $usersRepositories;
     protected $tempDataRepositories;
+    protected $noticeRepositories;
 
-    public function __construct(MessageRepositories $messageRepositories, UsersRepositories $usersRepositories, TempDataRepositories $tempDataRepositories)
+    public function __construct(MessageRepositories $messageRepositories, UsersRepositories $usersRepositories,
+                                TempDataRepositories $tempDataRepositories, NoticeRepositories $noticeRepositories)
     {
         $this->messageRepositories = $messageRepositories;
         $this->usersRepositories = $usersRepositories;
         $this->tempDataRepositories = $tempDataRepositories;
+        $this->noticeRepositories = $noticeRepositories;
     }
 
     /**
@@ -82,33 +86,20 @@ class MessageService
     public function GetNoticeMessageData()
     {
 
-        return ['code'=>200, 'data'=>['id'=>1, 'title'=>'我靠前端真的吊','notice_time'=>date('Y-m-d H:i:s'),'notice_message'=>'laravel-admin 是一个用于为Laravel提供后台界面的构建器，仅仅通过数行代码，就可以帮助我们构建CRUD后台。
-能够快速生成数据表格和表单,不需要在界面上花太多时间,只需要专注入业务逻辑,大大减轻了UI的工作量。
+        $time = date('Y-m-d H:i:s');
+        $condition = [['notice_start_time', '<', $time], ['notice_end_time', '>', $time]];
+        $notice_data = $this->noticeRepositories->GetNoticeData($condition);
 
-第一步：安装laravel
-使用composer安装或中文官网下载一键安装包,官网网址:http://laravelacademy.org/resources-download
-composer安装使用命令如下：
-composer create-project --prefer-dist laravel/laravel yourproject
+        if(empty($notice_data)){
+            return ['code'=>200, 'data'=>[]];
+        }
+        $data = ['code'=>200];
+        $data['data']['notice_id'] = $notice_data->notice_id;
+        $data['data']['title'] = $notice_data->notice_title;
+        $data['data']['notice_message'] = $notice_data->notice_content;
+        $data['data']['notice_time'] = $notice_data->add_time;
 
-第二步：安装laravel-admin及相关配置
-a.使用composer安装,命令如下：
-composer require encore/laravel-admin "1.4.*"
-
-b.添加相关服务
-在config/app.php文件中添加服务
-Encore\Admin\Providers\AdminServiceProvider::class;
-
-c.发布admin.php配置文件和相关assets
-php artisan vendor:publish --tag=laravel-admin
-
-d.生成配置文件admin.php,完成安装
-php artisan admin:install
-注意在运行该步骤命令之前,确保laravel中.env中数据库连接配置正确
-github参考网址:https://github.com/z-song/laravel-admin
-
-安装完成后,打开浏览器访问http://localhost/admin,输入用户名和密码登录
-用户名:admin 密码:admin
-登录后界面如下图所示']];
+        return $data;
     }
     /**
      * 获取关注列表信息

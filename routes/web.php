@@ -74,7 +74,7 @@ $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], functio
     $router->get('noticemsg', 'MessageController@NoticeMessage');//message 获取聊天列表
     $router->get('chatlist', 'MessageController@ChatList');//message 获取聊天列表
 
-    $router->get('notice', 'MessageController@NoticeMessageList');//message公告
+    $router->get('notice', 'MessageController@NoticeMessage');//message公告
 
 
     $router->post('order', 'OrderController@CreateOrder');//生成订单
