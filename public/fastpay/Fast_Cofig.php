@@ -10,7 +10,7 @@ define("PAY_VERSION_P", '2.10');//版本
 define("FAST_APPKEY", "19959_bee25ee7fa5d01e9d60674edb3b4fe23");//你的appkey
 define("SECRET_KEY", "22c07a95fba1c056762cdbaa964f7b90");//你的秘钥
 define('PAY_DESC', "xx平台给你汇款");//汇款备注
-define('PAY_RETURN_URL', "http://".$_SERVER['HTTP_HOST']);//支付后成功后返回的页面,
+define('PAY_RETURN_URL', "http://192.168.124.41:8080/#/vipPay");//支付后成功后返回的页面,
 define('PAY_NOTIFY_URL', "http://".$_SERVER['HTTP_HOST'].'/notify');//异步回调页面,不填写默认就是会员中心的---优先顺序-下单时候传入优先--->这里的回调----->会员中心的
 
 define('PAY_OPENID', 1);//是否开启代汇款接口,0,关闭,1,为开启,
