@@ -81,10 +81,11 @@ class OrderService
 //        $me_pri      = $value['me_pri'];//订单的金额,参与签名
 //        $me_param      = $value['me_param'];//其他参数
         
+
+        //更新订单状态
+        $status = $this->orderRepositories->updateOrderBySn('2019082834799');
         $order = $this->orderRepositories->getOrderBySn('2019082834799');
         var_dump($order);exit;
-        //更新订单状态
-        $status = $this->orderRepositories->updateOrderBySn($order_no);
         //更新用户vip过期时间
 //        $amount = $order['free_day']*86400;
         $user = $this->usersRepositories->UpdateVipTime(48,31536000);
