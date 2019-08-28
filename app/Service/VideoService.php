@@ -69,7 +69,6 @@ class VideoService
     {
         $video_id = $request->input('video_id');
         $user_id = Auth::id();
-        $follows_ids = $this->fansRepositories->GetUsersFollowData($user_id);
         if(empty($video_id)) {
             return ['code'=>-1, 'msg'=>'参数不能为空！'];
         }
@@ -80,7 +79,7 @@ class VideoService
         if(empty($video_detail_data['data'])) {
             return ['code'=>-1, 'msg'=>'视频数据为空！'];
         }
-
+        $follows_ids = $this->fansRepositories->GetUsersFollowData($user_id);
         $data = ['code'=>200];
         foreach($video_detail_data['data'] as $key=>$value){
 
@@ -96,6 +95,10 @@ class VideoService
             $video_data['favorite_number'] = $value->favorite_num;
             $video_data['reply_number'] = $value->reply_num;
             $video_data['is_follow'] = isset($follows_ids[$value->user_id]) ? 1 : 0;
+            $favorite_data = $this->favoriteRepositories->FindFavoriteRow($user_id, $value->video_id);
+
+            $video_data['is_favorite'] = empty($favorite_data) ? 0 : 1;
+
             $data['data']['video_data'] = $video_data;
         }
 
