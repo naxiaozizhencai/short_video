@@ -64,6 +64,7 @@ $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], functio
     $router->get('uploadrank', 'HotspotController@UploadRank');//支持排行
     $router->get('supportrank', 'HotspotController@SupportRank');//支持排行
     $router->get('videolabellist', 'HotspotController@VideoLabelList');//支持排行
+    $router->get('dayrank', 'HotspotController@VideoDayRank');//支持排行
 
 
     $router->post('messagelist', 'MessageController@MessageList');//message 消息列表

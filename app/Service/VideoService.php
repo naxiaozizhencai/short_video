@@ -12,6 +12,7 @@ use App\Repositories\TempDataRepositories;
 use App\Repositories\UsersFansRepositories;
 use App\Repositories\UsersRepositories;
 use App\Repositories\VideoLabelRepositories;
+use App\Repositories\VideoRankRepositories;
 use App\Repositories\VideoRepositories;
 use Illuminate\Support\Facades\Auth;
 
@@ -32,6 +33,7 @@ class VideoService
     protected $videoLabelRepositories;
     protected $labelConfigRepositories;
     protected $usersService;
+    protected $videoRankRepositories;
 
 
     public function __construct(VideoRepositories $videoRepositories,
@@ -41,7 +43,7 @@ class VideoService
                                 MessageRepositories $messageRepositories, PlayVideoHistoryRepositories $playVideoHistoryRepositories,
                                 FavoriteDiscussRepositories $favoriteDiscussRepositories,UsersFansRepositories $fansRepositories,
                                 VideoLabelRepositories $videoLabelRepositories,LabelConfigRepositories $labelConfigRepositories,
-                                UsersService $usersService
+                                UsersService $usersService,VideoRankRepositories $videoRankRepositories
 )
     {
         $this->videoRepositories = $videoRepositories;
@@ -57,6 +59,7 @@ class VideoService
         $this->videoLabelRepositories = $videoLabelRepositories;
         $this->labelConfigRepositories = $labelConfigRepositories;
         $this->usersService = $usersService;
+        $this->videoRankRepositories = $videoRankRepositories;
     }
 
 
@@ -347,6 +350,23 @@ class VideoService
         $this->messageRepositories->InsertMessage($msg_data);
         $data = ['code'=>200, 'msg'=>'喜歡成功'];
         $this->usersRepositories->IncrUsersDetailNum($video_row->user_id, 'favorite_num', 1);
+
+        $video_rank_condition = [];
+        $video_rank_condition['rank_video_id'] = $video_id;
+        $video_rank_condition['rank_type'] = VideoRankRepositories::DAY_RANK_TYPE;
+        $video_rank_condition['rank_group'] = date('Ymd');
+
+        $video_rank_info = $this->videoRankRepositories->GetVideoRankData($video_rank_condition);
+        $video_rank_data = [];
+        if(!empty($video_rank_info)){
+            $video_rank_data['rank_num'] = $video_rank_info->rank_num + 1;
+        }else{
+            $video_rank_data = $video_rank_condition;
+            $video_rank_data['rank_num'] = 1;
+            $video_rank_data['add_time'] = date('Y-m-d H:i:s');
+        }
+
+        $this->videoRankRepositories->UpdateOrInsert($video_rank_condition, $video_rank_data);
         return $data;
     }
 

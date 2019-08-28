@@ -1,9 +1,6 @@
 <?php
 namespace App\Service;
 use App\Repositories\AdsRepositories;
-use App\Repositories\UsersRepositories;
-use App\Repositories\VideoRepositories;
-use Illuminate\Support\Facades\DB;
 
 class AdsService
 {

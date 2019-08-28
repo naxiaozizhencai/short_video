@@ -38,6 +38,16 @@ class HotspotController extends Controller
         ];
     }
 
+    /**
+     * 今日热点
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function VideoDayRank(Request $request)
+    {
+        $data = $this->hotspotService->VideoDayRank($request);
+        return response()->json($data);
+    }
 
     public function VideoRank(Request $request)
     {
