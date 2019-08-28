@@ -73,22 +73,20 @@ class OrderService
     //更新订单状态
     public function UpdateOrder($value)
     {
-//        $uid         = $value['uid'];//支付用户
-//        $total_fee   = $value['total_fee'];//实际支付金额（可能会带增加0.01等）
-//        $pay_title   = $value['pay_title'];//标题
-//        $sign        = $value['sign'];//签名
-//        $order_no    = $value['order_no'];//订单号
-//        $me_pri      = $value['me_pri'];//订单的金额,参与签名
-//        $me_param      = $value['me_param'];//其他参数
+        $uid         = $value['uid'];//支付用户
+        $total_fee   = $value['total_fee'];//实际支付金额（可能会带增加0.01等）
+        $pay_title   = $value['pay_title'];//标题
+        $sign        = $value['sign'];//签名
+        $order_no    = $value['order_no'];//订单号
+        $me_pri      = $value['me_pri'];//订单的金额,参与签名
+        $me_param      = $value['me_param'];//其他参数
         
-
+        $order = $this->orderRepositories->getOrderBySn($order_no);
         //更新订单状态
-        $status = $this->orderRepositories->updateOrderBySn('2019082834799');
-        $order = $this->orderRepositories->getOrderBySn('2019082834799');
-        var_dump($order);exit;
+        $status = $this->orderRepositories->updateOrderBySn($order_no);
         //更新用户vip过期时间
-//        $amount = $order['free_day']*86400;
-        $user = $this->usersRepositories->UpdateVipTime(48,31536000);
+        $amount = $order->free_day * 86400;
+        $user = $this->usersRepositories->UpdateVipTime($uid,$amount);
         
         return $data = ['code'=>200, 'data'=>$user];
     }
