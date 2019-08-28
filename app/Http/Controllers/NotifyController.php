@@ -16,7 +16,7 @@ class NotifyController
 
     
     public function Notify(){
-
+    var_dump($_POST);exit;
         //加载fastpay支付插件
 
         if (!function_exists('get_openid')) {
