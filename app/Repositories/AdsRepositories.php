@@ -15,7 +15,7 @@ class AdsRepositories
      */
     public function GetAdsData($data)
     {
-        return DB::table($this->table_name)->where($data)->first();
+        return DB::table($this->table_name)->where($data)->orderBy('sort', 'desc')->get();
     }
 
 

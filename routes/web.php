@@ -80,6 +80,11 @@ $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], functio
     $router->post('order', 'OrderController@CreateOrder');//生成订单
 	$router->post('orderlist', 'OrderController@PayDetails');//充值记录
     $router->post('productlist', 'OrderController@ProductList');//商品列表
+
+
+    $router->get('adslist', 'AdsController@AdsList');//广告列表
+
+
     
 });
 
