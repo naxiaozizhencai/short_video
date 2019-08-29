@@ -44,7 +44,7 @@ class OrderService
 
         if(!empty($result)){
             $url = 'http://'.$_SERVER['HTTP_HOST'].$result;
-            $urls = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+            $urls = $_SERVER["HTTP_REFERER"];
             return $data =['code'=>200, 'msg'=>$urls,'url'=>$url];
         }
         return $data;
