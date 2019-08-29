@@ -621,10 +621,6 @@ class UsersService
         $user_info['avatar'] = $user_data->avatar;
         $user_info['vip_level'] = $user_data->vip_level;
         $user_info['vip_expired_time'] = $user_data->vip_expired_time;
-
-        $user_info['vip_level'] = 1;
-        $user_info['vip_expired_time'] = 1882703239;
-
         $user_info['is_phone_login'] = $user_data->is_phone_login;
         $user_info['sex'] = $user_data->sex;
         $user_info['sign'] = $user_data->sign;
