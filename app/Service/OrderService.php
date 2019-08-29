@@ -44,8 +44,7 @@ class OrderService
 
         if(!empty($result)){
             $url = 'http://'.$_SERVER['HTTP_HOST'].$result;
-            $urls = $_SERVER["HTTP_REFERER"];
-            return $data =['code'=>200, 'msg'=>$urls,'url'=>$url];
+            return $data =['code'=>200, 'msg'=>'订单创建成功','url'=>$url];
         }
         return $data;
     }
