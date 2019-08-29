@@ -21,21 +21,8 @@ class HotspotController extends Controller
 
     public function HotIndex(Request $request)
     {
-        return [
-            'code'=>200,
-            'data'=>[
-                'today_hot'=>[
-
-                ],
-                'rank_hot'=>[
-
-                ],
-                'label_hot'=>[
-
-                ],
-
-            ],
-        ];
+        $data = $this->hotspotService->HotIndex($request);
+        return response()->json($data);
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 namespace App\Service;
+use App\Repositories\LabelConfigRepositories;
 use App\Repositories\UsersRepositories;
 use App\Repositories\VideoRankRepositories;
 use App\Repositories\VideoRepositories;
@@ -10,13 +11,46 @@ class HotspotService
     protected $usersRepositories;
     protected $videoRepositories;
     protected $videoRankRepositories;
-   public function __construct(UsersRepositories $usersRepositories, VideoRepositories $videoRepositories, VideoRankRepositories $videoRankRepositories)
+    protected $labelConfigRepositories;
+   public function __construct(UsersRepositories $usersRepositories, VideoRepositories $videoRepositories,
+                               VideoRankRepositories $videoRankRepositories, LabelConfigRepositories $labelConfigRepositories)
    {
        $this->usersRepositories = $usersRepositories;
        $this->videoRepositories = $videoRepositories;
        $this->videoRankRepositories = $videoRankRepositories;
+       $this->labelConfigRepositories = $labelConfigRepositories;
    }
 
+   public function HotIndex($request)
+   {
+       $label_config = $this->labelConfigRepositories->GetAllLabelConfig();
+
+       if(empty($label_config)) {
+            return ['code'=>200, 'data'=>[]];
+       }
+
+        $data = ['code'=>200];
+        $label_data = [];
+
+       foreach($label_config as $key=>$value){
+
+           if(!isset(LabelConfigRepositories::$label_type[$key])) {
+                continue;
+            }
+            foreach($value as $_k=>$_v){
+                $label_data['name'] = $_v->label_name;
+                $label_data['image'] = $_v->label_image;
+                $label_data['url'] = $_v->label_url;
+                $label_data['type'] = $_v->type;
+                $data['data']['label_data'][LabelConfigRepositories::$label_type[$key]][] = $label_data;
+
+            }
+
+       }
+
+       return $data;
+
+   }
     /**
      * 今日热点
      * @param $request
@@ -122,7 +156,5 @@ class HotspotService
 
         return ['code'=>200, 'data'=>['rank_list'=>$rank_list]];
     }
-
-
 
 }

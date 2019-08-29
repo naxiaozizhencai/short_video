@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Service\AdsService;
 use App\Service\OrderService;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Auth;
 
 class AdsController extends Controller
 {

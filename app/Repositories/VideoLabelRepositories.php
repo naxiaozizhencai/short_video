@@ -17,7 +17,11 @@ class VideoLabelRepositories
         return DB::table($this->table_name)->insertGetId($data);
     }
 
-
+    /**
+     * 获取带标签的数据
+     * @param $search_arr
+     * @return mixed
+     */
     public function GetVideoLabelData($search_arr)
     {
         $query = DB::table($this->table_name);
