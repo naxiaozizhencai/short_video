@@ -36,10 +36,11 @@ class OrderService
         $data =  ['code'=>-1, 'errMsg'=>'订单创建失败'];
         $order_type = 1;//vip充值
         $product_id = $request['product_id'];
+        $return_url = $request['return_url'];
         $product = $this->GetProduct($request['product_id']);
         $order_price = $product->product_price;
         $pay_type = $request->input('pay_type');
-        $result = $this->orderRepositories->InsertUserOrder($user_id,$order_type,$product_id,$order_price,$pay_type);
+        $result = $this->orderRepositories->InsertUserOrder($user_id,$order_type,$product_id,$order_price,$pay_type,$return_url);
 
         if(!empty($result)){
             $url = 'http://'.$_SERVER['HTTP_HOST'].$result;
