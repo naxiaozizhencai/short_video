@@ -118,21 +118,26 @@ class VideoService
         $play_video_times = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
         $total_video_times = $this->tempDataRepositories->GetValueByKey(TempDataRepositories::TOTAL_VIEWED_TIMES);
         $total_times = empty($total_video_times) ? TempDataRepositories::TOTAL_VIDEO_TIMES  : $total_video_times->temp_value;
-
-        if($user_data->vip_expired_time > time() || $play_video_times < $total_times){
-
-            $update_temp_data['temp_value'] = (empty($play_video_times)) ? 1 : $play_video_times->temp_value + 1;
-            $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES, $update_temp_data);
-            $this->videoRepositories->IncrVideoNum($video_id, 'play_num', 1);
+        if($user_data->vip_expired_time < time() && $play_video_times->temp_value < $total_times){
 
             if(!$result = $this->playVideoHistoryRepositories->ExistHistory($user_id, $video_id)){
                 $history_data['user_id'] = $user_id;
                 $history_data['video_id'] = $video_id;
                 $history_data['add_time'] = date("Y-m-d H:i:s");
                 $this->playVideoHistoryRepositories->InsertPlayVideoHistory($history_data);
+
+                if($user_id !=  $data['data']['video_data']['video_user_id']) {
+                    $update_temp_data['temp_value'] = (empty($play_video_times)) ? 1 : $play_video_times->temp_value + 1;
+                    $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES, $update_temp_data);
+                }
+
             }
 
+            $this->videoRepositories->IncrVideoNum($video_id, 'play_num', 1);
         }
+
+
+
 
         return $data;
     }

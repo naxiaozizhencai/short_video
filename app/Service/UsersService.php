@@ -643,7 +643,7 @@ class UsersService
 
         $play_video_times_data = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
         $user_info['viewed_times'] = empty($play_video_times_data) ? 0 : $play_video_times_data->temp_value;
-        $total_viewed_times_data = $this->tempDataRepositories->GetValue($user_data->id, TempDataRepositories::TOTAL_VIEWED_TIMES);
+        $total_viewed_times_data = $this->tempDataRepositories->GetValueByKey(TempDataRepositories::TOTAL_VIEWED_TIMES);
         $user_info['total_viewed_times'] = empty($total_viewed_times_data) ? 10 :$total_viewed_times_data->temp_value;
 
         $data = [];
