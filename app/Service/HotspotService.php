@@ -1,5 +1,6 @@
 <?php
 namespace App\Service;
+use App\Repositories\LabelConfigRepositories;
 use App\Repositories\UsersRepositories;
 use App\Repositories\VideoRankRepositories;
 use App\Repositories\VideoRepositories;
@@ -10,13 +11,33 @@ class HotspotService
     protected $usersRepositories;
     protected $videoRepositories;
     protected $videoRankRepositories;
-   public function __construct(UsersRepositories $usersRepositories, VideoRepositories $videoRepositories, VideoRankRepositories $videoRankRepositories)
+    protected $labelConfigRepositories;
+   public function __construct(UsersRepositories $usersRepositories, VideoRepositories $videoRepositories,
+                               VideoRankRepositories $videoRankRepositories, LabelConfigRepositories $labelConfigRepositories)
    {
        $this->usersRepositories = $usersRepositories;
        $this->videoRepositories = $videoRepositories;
        $this->videoRankRepositories = $videoRankRepositories;
+       $this->labelConfigRepositories = $labelConfigRepositories;
    }
 
+   public function HotIndex($request)
+   {
+       $label_config = $this->labelConfigRepositories->GetAllLabelConfig();
+       $label_hots = [['name'=>'原创','image'=>'', 'favorite_num'=>100]];
+       $rank_hots = [['name'=>'官方推荐','image'=>'', ]];
+       $popular_hots = [['name'=>'邀请大神', 'image'=>'','user_info'=>['user_name'=>'111', 'avatar'=>'']]];
+       $today_hots = [['name'=>'top1', 'image'=>'']];
+       $data = [
+           'code'=>200,
+           'data'=>[
+               'today_hot'=>$today_hots,
+               'popular_hot'=>$popular_hots,
+               'rank_hot'=>$rank_hots,
+               'label_hot'=>$label_hots,
+           ],
+       ];
+   }
     /**
      * 今日热点
      * @param $request
