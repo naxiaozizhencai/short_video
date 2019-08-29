@@ -136,9 +136,6 @@ class VideoService
             $this->videoRepositories->IncrVideoNum($video_id, 'play_num', 1);
         }
 
-
-
-
         return $data;
     }
 
@@ -150,8 +147,12 @@ class VideoService
      */
     public function ViewVideo($request)
     {
+
         $user_id = Auth::id();
+
         $follows_ids = $this->fansRepositories->GetUsersFollowData($user_id);
+        $temp_data = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::VIDEO_RECOMMEND_MAX_ID);
+
         $result = $this->videoRepositories->GetVideoData($request->toarray());
 
         if(empty($result['data'])){
