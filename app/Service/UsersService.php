@@ -621,6 +621,10 @@ class UsersService
         $user_info['avatar'] = $user_data->avatar;
         $user_info['vip_level'] = $user_data->vip_level;
         $user_info['vip_expired_time'] = $user_data->vip_expired_time;
+
+        $user_info['vip_level'] = 1;
+        $user_info['vip_expired_time'] = 1882703239;
+
         $user_info['is_phone_login'] = $user_data->is_phone_login;
         $user_info['sex'] = $user_data->sex;
         $user_info['sign'] = $user_data->sign;
@@ -642,9 +646,9 @@ class UsersService
         }
 
         $play_video_times_data = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
-        $user_info['viewed_times'] = empty($play_video_times_data) ? 0 : $play_video_times_data->temp_value;
+        $user_info['viewed_times'] = empty($play_video_times_data) ? 0 : intval($play_video_times_data->temp_value);
         $total_viewed_times_data = $this->tempDataRepositories->GetValueByKey(TempDataRepositories::TOTAL_VIEWED_TIMES);
-        $user_info['total_viewed_times'] = empty($total_viewed_times_data) ? 10 :$total_viewed_times_data->temp_value;
+        $user_info['total_viewed_times'] = empty($total_viewed_times_data) ? 10 : intval($total_viewed_times_data->temp_value);
 
         $data = [];
         $data['code'] = 200;
