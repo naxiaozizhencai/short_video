@@ -123,9 +123,8 @@ $(document).ready(function(){
         console.log(data);
 				var str='<img src="images/ok.png" width="200" height="200"/>';
 				$(".qr").html(str);
-        alert("支付成功,请点击下方按钮");
+        alert("支付成功,请返回进入个人中心页面查看是否成功");
 
-                window.close();
 <?php
 if (!empty($back_url)) {
     echo <<<EF
