@@ -40,6 +40,7 @@ class OrderService
         $product = $this->GetProduct($request['product_id']);
         $order_price = $product->product_price;
         $pay_type = $request->input('pay_type');
+        var_dump($return_url);exit;
         $result = $this->orderRepositories->InsertUserOrder($user_id,$order_type,$product_id,$order_price,$pay_type,$return_url);
 
         if(!empty($result)){
