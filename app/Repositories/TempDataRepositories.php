@@ -9,12 +9,17 @@ class TempDataRepositories
     const TOTAL_VIEWED_TIMES = 'total_viewed_times';
     const VIDEO_RECOMMEND_MAX_ID = 'view_recommend_max_id';
     const PLAY_VIDEO_SECOND = 'play_video_second';
-
+    const TOTAL_VIDEO_TIMES = 10;
     protected $table_name = 'temp_data';
 
     public function GetValue($user_id, $key)
     {
         return DB::selectOne("select * from temp_data where user_id = ? AND temp_key = ?", [$user_id, $key]);
+    }
+
+    public function GetValueByKey($key)
+    {
+        return DB::selectOne("select * from temp_data where  temp_key = ?", [$key]);
     }
 
     public function ClearValue($user_id, $key)

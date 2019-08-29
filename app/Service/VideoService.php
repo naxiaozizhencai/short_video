@@ -72,6 +72,7 @@ class VideoService
     {
         $video_id = $request->input('video_id');
         $user_id = Auth::id();
+
         if(empty($video_id)) {
             return ['code'=>-1, 'msg'=>'参数不能为空！'];
         }
@@ -81,6 +82,12 @@ class VideoService
 
         if(empty($video_detail_data['data'])) {
             return ['code'=>-1, 'msg'=>'视频数据为空！'];
+        }
+
+        $user_data = $this->usersRepositories->getUserInfoById($user_id);
+
+        if(empty($user_data)) {
+            return ['code'=>-1, 'msg'=>'用户数据不存在！'];
         }
 
         $follows_ids = $this->fansRepositories->GetUsersFollowData($user_id);
@@ -107,19 +114,25 @@ class VideoService
             $data['data']['video_data'] = $video_data;
         }
 
-        if(!$result = $this->playVideoHistoryRepositories->ExistHistory($user_id, $video_id)){
+        //更新播放次数
+        $play_video_times = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
+        $total_video_times = $this->tempDataRepositories->GetValueByKey(TempDataRepositories::TOTAL_VIEWED_TIMES);
+        $total_times = empty($total_video_times) ? TempDataRepositories::TOTAL_VIDEO_TIMES  : $total_video_times->temp_value;
 
-            $play_video_times = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
+        if($user_data->vip_expired_time > time() || $play_video_times < $total_times){
+
             $update_temp_data['temp_value'] = (empty($play_video_times)) ? 1 : $play_video_times->temp_value + 1;
             $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES, $update_temp_data);
+            $this->videoRepositories->IncrVideoNum($video_id, 'play_num', 1);
 
-            $history_data['user_id'] = $user_id;
-            $history_data['video_id'] = $video_id;
-            $history_data['add_time'] = date("Y-m-d H:i:s");
-            $this->playVideoHistoryRepositories->InsertPlayVideoHistory($history_data);
+            if(!$result = $this->playVideoHistoryRepositories->ExistHistory($user_id, $video_id)){
+                $history_data['user_id'] = $user_id;
+                $history_data['video_id'] = $video_id;
+                $history_data['add_time'] = date("Y-m-d H:i:s");
+                $this->playVideoHistoryRepositories->InsertPlayVideoHistory($history_data);
+            }
+
         }
-
-        $this->videoRepositories->IncrVideoNum($video_id, 'play_num', 1);
 
         return $data;
     }
@@ -173,7 +186,6 @@ class VideoService
     public function PlayVideo($request)
     {
         $video_id = $request->input('video_id');
-        $user_id = Auth::id();
         $video_data = $this->videoRepositories->getVideoById($video_id);
 
         if(empty($video_data)){
@@ -684,6 +696,7 @@ class VideoService
         $video_data['video_label'] = $video_label;
         $video_data['add_time'] = date('Y-m-d H:i:s');
         $video_id = $this->videoRepositories->InsertVideo($video_data);
+
         if(!empty($label_arr)) {
             foreach($label_arr as $key=>$value){
 
