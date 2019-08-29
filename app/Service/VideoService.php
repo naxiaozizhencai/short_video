@@ -777,7 +777,10 @@ class VideoService
         $data = [];
         $data['code'] = 200;
         foreach($config_data as $key=>$value){
-            $data['data']['labels'][] = $value->label_name;
+            $label['label_id'] = $value->id;
+            $label['label_name'] = $value->label_name;
+            $label['sort'] = $value->sort;
+            $data['data']['labels'][] = $label;
         }
 
         return $data;
