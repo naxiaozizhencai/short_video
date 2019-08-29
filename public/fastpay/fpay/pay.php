@@ -71,7 +71,7 @@ body{background-color: #F5F5F5;font-size: 16px;font-family: "微软雅黑";}
 <div class="warp">
 <h3>请付款<span class="total_fee"></span>元</h3>
 <h5>重要:不能多也不能少,否则将收不到通知(如果不到账请联系客服)！</h5>
-<h5>重要:如果长按不能识别，请截图保存二维码到微信去支付！</h5>
+<h3 style="color: red">重要:请截图保存二维码到微信去支付！支付后即可自动开通会员</h3>
 <h4><?php echo $pay_title?></h4>
 <h4>支付成功后请耐心等待3-6秒,自动跳转</h4>
 <div class="qr"></div>
