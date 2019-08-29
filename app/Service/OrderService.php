@@ -44,7 +44,8 @@ class OrderService
 
         if(!empty($result)){
             $url = 'http://'.$_SERVER['HTTP_HOST'].$result;
-            return $data =['code'=>200, 'msg'=>$return_url,'url'=>$url];
+            $urls = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+            return $data =['code'=>200, 'msg'=>$urls,'url'=>$url];
         }
         return $data;
     }
