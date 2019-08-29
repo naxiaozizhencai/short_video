@@ -28,5 +28,10 @@ class LabelConfigRepositories
 
 
 
+    public function GetLabelConfigByType($type)
+    {
+        return DB::table($this->table_name)->where('type', '=', $type)->orderBy('sort', 'desc')->get();
+    }
+
 
 }

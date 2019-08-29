@@ -762,4 +762,25 @@ class VideoService
         return $data;
     }
 
+    /**
+     *
+     * @return array
+     */
+    public function LabelList()
+    {
+        $config_data = $this->labelConfigRepositories->GetLabelConfigByType(4);
+
+        if(empty($config_data)) {
+            return ['code'=>200, 'data'=>[]];
+        }
+
+        $data = [];
+        $data['code'] = 200;
+        foreach($config_data as $key=>$value){
+            $data['data']['labels'][] = $value->label_name;
+        }
+
+        return $data;
+    }
+
 }

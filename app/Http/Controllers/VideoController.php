@@ -166,4 +166,10 @@ class VideoController extends Controller
 
     }
 
+    public function LabelList()
+    {
+        $data = $this->videoService->LabelList();
+        return response()->json($data);
+    }
+
 }
