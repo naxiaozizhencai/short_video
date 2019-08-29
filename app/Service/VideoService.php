@@ -112,6 +112,7 @@ class VideoService
             $play_video_times = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
             $update_temp_data['temp_value'] = (empty($play_video_times)) ? 1 : $play_video_times->temp_value + 1;
             $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES, $update_temp_data);
+
             $history_data['user_id'] = $user_id;
             $history_data['video_id'] = $video_id;
             $history_data['add_time'] = date("Y-m-d H:i:s");
@@ -180,18 +181,6 @@ class VideoService
         }
 
 
-        if(!$result = $this->playVideoHistoryRepositories->ExistHistory($user_id, $video_id)){
-
-            $play_video_times = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
-            $update_temp_data['temp_value'] = (empty($play_video_times)) ? 1 : $play_video_times->temp_value + 1;
-            $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES, $update_temp_data);
-            $history_data['user_id'] = $user_id;
-            $history_data['video_id'] = $video_id;
-            $history_data['add_time'] = date("Y-m-d H:i:s");
-            $this->playVideoHistoryRepositories->InsertPlayVideoHistory($history_data);
-        }
-
-        $this->videoRepositories->IncrVideoNum($video_id, 'play_num', 1);
         return $this->usersService->UserInfo($request);
     }
 
