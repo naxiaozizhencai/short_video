@@ -77,7 +77,7 @@ class OrderRepositories
             $paydata['order_no']=$order_sn;//订单号
             $paydata['total_fee']=$order_price;//金额
             $paydata['param']="";//其他参数
-            $paydata['me_back_url']="http://192.168.124.41:8080/#/vipPay";//支付成功后跳转
+            $paydata['me_back_url']='http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];//支付成功后跳转
             $paydata['notify_url']='http://'.$_SERVER['HTTP_HOST']."/notify";//支付成功后异步回调
             $geturl=fastpay_order($paydata);//获取支付链接
 

@@ -42,7 +42,6 @@ class OrderService
         $result = $this->orderRepositories->InsertUserOrder($user_id,$order_type,$product_id,$order_price,$pay_type);
 
         if(!empty($result)){
-            $url = $result;
             $url = $_SERVER['HTTP_HOST'].$result;
             return $data =['code'=>200, 'msg'=>'订单创建成功','url'=>$url];
         }
