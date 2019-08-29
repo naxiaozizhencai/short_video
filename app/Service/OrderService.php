@@ -40,12 +40,11 @@ class OrderService
         $product = $this->GetProduct($request['product_id']);
         $order_price = $product->product_price;
         $pay_type = $request->input('pay_type');
-        var_dump($return_url);exit;
         $result = $this->orderRepositories->InsertUserOrder($user_id,$order_type,$product_id,$order_price,$pay_type,$return_url);
 
         if(!empty($result)){
             $url = 'http://'.$_SERVER['HTTP_HOST'].$result;
-            return $data =['code'=>200, 'msg'=>'订单创建成功','url'=>$url];
+            return $data =['code'=>200, 'msg'=>$return_url,'url'=>$url];
         }
         return $data;
     }
