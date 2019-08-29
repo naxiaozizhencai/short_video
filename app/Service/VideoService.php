@@ -767,7 +767,7 @@ class VideoService
      */
     public function LabelList()
     {
-        $config_data = $this->labelConfigRepositories->GetLabelConfigByType(4);
+        $config_data = $this->labelConfigRepositories->GetLabelConfigByType(LabelConfigRepositories::LABEL_HOT_TYPE);
 
         if(empty($config_data)) {
             return ['code'=>200, 'data'=>[]];

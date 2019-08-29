@@ -5,10 +5,11 @@ use Illuminate\Support\Facades\DB;
 
 class LabelConfigRepositories
 {
-    const TODAY_HOT_TYPE = 4;
-    const POPULAR_HOT_TYPE = 3;
-    const RANK_HOT_TYPE = 2;
-    const LABEL_HOT_TYPE = 1;
+    const TODAY_HOT_TYPE = 1;
+    const POPULAR_HOT_TYPE = 2;
+    const RANK_HOT_TYPE = 3;
+    const LABEL_HOT_TYPE = 4;
+    public static $label_type = [1=>'today_hot', 2=>'popular_hot', 3=>'rank_hot', 4=>'label_hot',];
     protected $table_name = 'label_config';
 
     /**

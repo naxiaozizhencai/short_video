@@ -24,19 +24,32 @@ class HotspotService
    public function HotIndex($request)
    {
        $label_config = $this->labelConfigRepositories->GetAllLabelConfig();
-       $label_hots = [['name'=>'原创','image'=>'', 'favorite_num'=>100]];
-       $rank_hots = [['name'=>'官方推荐','image'=>'', ]];
-       $popular_hots = [['name'=>'邀请大神', 'image'=>'','user_info'=>['user_name'=>'111', 'avatar'=>'']]];
-       $today_hots = [['name'=>'top1', 'image'=>'']];
-       $data = [
-           'code'=>200,
-           'data'=>[
-               'today_hot'=>$today_hots,
-               'popular_hot'=>$popular_hots,
-               'rank_hot'=>$rank_hots,
-               'label_hot'=>$label_hots,
-           ],
-       ];
+
+       if(empty($label_config)) {
+            return ['code'=>200, 'data'=>[]];
+       }
+
+        $data = ['code'=>200];
+        $label_data = [];
+
+       foreach($label_config as $key=>$value){
+
+           if(!isset(LabelConfigRepositories::$label_type[$key])) {
+                continue;
+            }
+            foreach($value as $_k=>$_v){
+                $label_data['name'] = $_v->label_name;
+                $label_data['image'] = $_v->label_image;
+                $label_data['url'] = $_v->label_url;
+                $label_data['type'] = $_v->type;
+                $data['data']['label_data'][LabelConfigRepositories::$label_type[$key]][] = $label_data;
+
+            }
+
+       }
+
+       return $data;
+
    }
     /**
      * 今日热点
