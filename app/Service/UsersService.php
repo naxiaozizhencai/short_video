@@ -37,6 +37,8 @@ class UsersService
         $this->messageService = $messageService;
     }
 
+
+
     /**
      * 刷新token
      * @return array
@@ -148,28 +150,6 @@ class UsersService
         return $resultData;
     }
 
-    /**
-     * 告诉前端登录还是注册
-     * @param $request
-     * @return array
-     */
-      public function PhoneLoginOrRegister($request)
-    {
-        $phone = $request->input('phone');
-        $user_id = Auth::id();
-        if(empty($phone)){
-            return ['code'=>-1, 'msg'=>'请输入手机号'];
-        }
-
-        $user_data = $this->UsersRepositories->GetUserInfoByPhone($phone);
-        if(empty($user_data)){
-            $data = ['code'=>200, 'data'=>['action'=>'register']];
-        }else{
-            $data =  ['code'=>200, 'data'=>['action'=>'login']];
-        }
-
-        return $data;
-    }
 
     /**
      * 手机注册
@@ -663,7 +643,7 @@ class UsersService
 
         $play_video_times_data = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
         $user_info['viewed_times'] = empty($play_video_times_data) ? 0 : $play_video_times_data->temp_value;
-        $total_viewed_times_data = $this->tempDataRepositories->GetValue($user_data->id, TempDataRepositories::TOTAL_VIEWED_TIMES);
+        $total_viewed_times_data = $this->tempDataRepositories->GetValueByKey(TempDataRepositories::TOTAL_VIEWED_TIMES);
         $user_info['total_viewed_times'] = empty($total_viewed_times_data) ? 10 :$total_viewed_times_data->temp_value;
 
         $data = [];
@@ -700,7 +680,7 @@ class UsersService
             $video_data['video_image'] = $value->video_image;
             $video_data['video_url'] = $value->video_url;
             $video_data['video_label'] = $value->video_label;
-            $video_data['favorite_number'] = $value->favorite_num;
+            $video_data['favorite_number'] = $value->video_favorite_num;
             $video_data['reply_number'] = $value->reply_num;
 
             if($my_user_id == $user_id){

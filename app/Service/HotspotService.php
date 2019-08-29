@@ -144,6 +144,4 @@ class HotspotService
         return ['code'=>200, 'data'=>['rank_list'=>$rank_list]];
     }
 
-
-
 }

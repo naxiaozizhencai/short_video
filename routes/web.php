@@ -43,6 +43,7 @@ $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], functio
     $router->post('reportdiscuss', 'VideoController@ReportDiscuss');//举报这条评论
     $router->post('uploadvideo', 'VideoController@UploadVideo');//上传视频
     $router->post('upload', 'VideoController@Upload');//上传视频
+    $router->get('labellist', 'VideoController@LabelList');//标签列表
 
     $router->post('addpopularnum', 'UserController@AddPopularizeNum');//填写推广码
     $router->post('dofollow', 'UserController@DoFollow');//关注用户
