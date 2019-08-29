@@ -763,7 +763,6 @@ class VideoService
     }
 
     /**
-     *
      * @return array
      */
     public function LabelList()
