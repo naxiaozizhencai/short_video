@@ -339,8 +339,8 @@ class UsersService
         }
 
         $user_id = Auth::id();
-        $temp_data = [];
         $code = rand(1000, 9999);
+        $temp_data = [];
         $temp_data['user_id'] = $user_id;
         $temp_data['temp_key'] = $phone;
         $find_data = $temp_data;
@@ -381,7 +381,7 @@ class UsersService
         $phone = $request->input('phone');
         $code = $request->input('code');
         $new_password = $request->input('new_password');
-
+        $user_id = Auth::id();
         if(empty($phone) || empty($code) || empty($new_password)){
             return ['code'=>-1, 'msg'=>'参数错误'];
         }
@@ -392,7 +392,7 @@ class UsersService
             return ['code'=>-1, 'msg'=>'手机号还未注册'];
         }
 
-        $temp_data = $this->tempDataRepositories->GetValue($phone_user_data->user_id, $phone);
+        $temp_data = $this->tempDataRepositories->GetValue($user_id, $phone);
 
         if(empty($temp_data)){
             return ['code'=>-1, 'msg'=>'验证码还未发送'];
