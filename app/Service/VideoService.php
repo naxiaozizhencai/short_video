@@ -738,7 +738,7 @@ class VideoService
         $label_data = $this->videoLabelRepositories->GetVideoLabelData($search_arr);
 
         if(empty($label_data['data'])) {
-            return ['code'=>-1, 'data'=>[]];
+            return ['code'=>200, 'data'=>[]];
         }
         $data = ['code'=>200];
         foreach($label_data['data'] as $key=>$value){

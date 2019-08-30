@@ -593,6 +593,7 @@ class UsersService
             $temp_data['vip_level'] = $value->vip_level;
             $temp_data['username'] = $value->username;
             $temp_data['avatar'] = $value->avatar;
+            $temp_data['is_follow'] = 0;
             $data['data']['fans_data'][] = $temp_data;
         }
 
