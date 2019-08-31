@@ -118,7 +118,7 @@ class VideoService
         $play_video_times = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::PLAY_VIDEO_TIMES);
         $total_video_times = $this->tempDataRepositories->GetValueByKey(TempDataRepositories::TOTAL_VIEWED_TIMES);
         $total_times = empty($total_video_times) ? TempDataRepositories::TOTAL_VIDEO_TIMES  : $total_video_times->temp_value;
-        $play_video_time = empty($play_video_times) ? 0  : $total_video_times->temp_value;
+        $play_video_time = empty($play_video_times) ? 0  : $play_video_times->temp_value;
 
         if($user_data->vip_expired_time < time() && $play_video_time < $total_times){
 
