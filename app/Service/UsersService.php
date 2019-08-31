@@ -728,6 +728,8 @@ class UsersService
             $video_data['video_label'] = $value->video_label;
             $video_data['favorite_number'] = $value->favorite_num;
             $video_data['reply_number'] = $value->reply_num;
+            $video_data['is_follow'] =  1;
+
             $data['data']['video_data'][] = $video_data;
         }
 
