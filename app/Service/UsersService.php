@@ -609,10 +609,16 @@ class UsersService
     public function UserInfo($request)
     {
         $my_user_id = Auth::id();
+        $my_user_data = $this->UsersRepositories->getUserInfoById($my_user_id);
+
         $user_id = $request->input('user_id', $my_user_id);
         $user_data = $this->UsersRepositories->getUserInfoById($user_id);
 
         if(empty($user_data)){
+            return ['code'=>-1, 'msg'=>'用户数据不存在'];
+        }
+        
+        if(empty($my_user_data)){
             return ['code'=>-1, 'msg'=>'用户数据不存在'];
         }
 
@@ -638,7 +644,6 @@ class UsersService
         if($user_id != $my_user_id){
             $follows_ids = $this->fansRepositories->GetUsersFollowData($my_user_id);
             $user_info['is_follow'] = isset($follows_ids[$user_id]) ? 1 : 0;
-            $my_user_data = $this->UsersRepositories->getUserInfoById($user_id);
             $user_info['room_id'] = $this->messageService->MakeRoomId($user_data, $my_user_data);
         }
 
