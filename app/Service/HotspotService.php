@@ -61,7 +61,7 @@ class HotspotService
         $condtion['rank_type'] = VideoRankRepositories::DAY_RANK_TYPE;
         $condtion['rank_group'] = date('Ymd');
         $rank_data = $this->videoRankRepositories->GetVideoRankList($condtion);
-
+        $page = $request->input('page', 1);
         if(empty($rank_data['data'])){
             return ['code'=>200, 'data'=>[]];
         }
@@ -70,6 +70,7 @@ class HotspotService
 
         foreach($rank_data['data'] as $key=>$value){
 
+            $video_data['rank_id'] = ($page - 1) * 6 + 1;
             $video_data['video_id'] = $value->video_id;
             $video_data['video_user_avatar'] = $value->avatar;
             $video_data['video_user_id'] = $value->user_id;
