@@ -42,7 +42,7 @@ class VideoRankRepositories
             ->leftJoin('users', 'users.id', '=', 'video_list.user_id')
             ->leftJoin('users_detail', 'users_detail.user_id', '=', 'users.id')
             ->where($data)->where('video_list.is_check', '=', 1)->orderby('video_rank.rank_num', 'desc')
-            ->paginate(6, ['video_list.id as video_id', 'video_list.*', 'users.*', 'users_detail.*'])->toarray();
+            ->paginate(3, ['video_list.id as video_id', 'video_list.*', 'users.*', 'users_detail.*'])->toarray();
     }
 
 
