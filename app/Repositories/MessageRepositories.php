@@ -87,4 +87,9 @@ class MessageRepositories
         where('message_type', '=', self::MESSAGE_TYPE_CHAT, 'and')->where([['send_id', '=', $user_id, 'or'], ['receive_id', '=', $user_id, 'or']])
             ->groupBy('room_id')->orderby('message_id', 'desc')->paginate(15, ['room_id', 'message_type', 'message', 'send_id', 'receive_id', 'send_time'])->toarray();
     }
+
+    public function GetMaxIdMessage($room_id)
+    {
+        return DB::table($this->table_name)->where([['message_type', '=', self::MESSAGE_TYPE_CHAT, 'and'], ['room_id', '=', $room_id, 'and']])->orderby('message_id', 'desc')->first();
+    }
 }

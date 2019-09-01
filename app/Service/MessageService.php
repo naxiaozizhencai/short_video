@@ -315,7 +315,9 @@ class MessageService
             $user_info['vip_level'] = $user_data->vip_level;
             $user_info['vip_expired_time'] = $user_data->vip_expired_time;
             $chat_info['room_id'] = $value->room_id;
-            $chat_info['message'] = $value->message;
+            $message_info = $this->messageRepositories->GetMaxIdMessage($value->room_id);
+
+            $chat_info['message'] = empty($message_info) ? '':$message_info->message;
             $chat_info['send_time'] = $value->send_time;
             $data['data']['chat_list'][$key]['user_info'] = $user_info;
             $data['data']['chat_list'][$key]['chat_info'] = $chat_info;
