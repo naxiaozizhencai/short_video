@@ -808,8 +808,8 @@ class VideoService
         $share_info['title'] = '熬过了年少轻狂';
         $share_info['video_image'] = $video_data->video_image;
         $share_info['qrcode'] = env('QRCODE_URL') . $user_data->popular_num . '.png';
-        $share_info['download_url'] = env('UPLOAD_APP_URL') . '/' . $user_data->popular_num;
-        $share_info['share_url'] =  env('UPLOAD_APP_URL') . '/' . $user_data->popular_num;
+        $share_info['download_url'] = env('UPLOAD_APP_URL')  . $user_data->popular_num;
+        $share_info['share_url'] =  env('UPLOAD_APP_URL') . $user_data->popular_num;
 
         $data['data']['share_info'] = $share_info;
         return $data;
