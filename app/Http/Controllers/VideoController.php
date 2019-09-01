@@ -161,9 +161,11 @@ class VideoController extends Controller
     /**
      * 分享这条视频
      */
-    public function ShareVideo()
+    public function ShareVideo(Request $request)
     {
 
+        $data = $this->videoService->ShareVideo($request);
+        return response()->json($data);
     }
 
     public function LabelList()

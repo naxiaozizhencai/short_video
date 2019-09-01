@@ -85,6 +85,6 @@ class MessageRepositories
 
         return DB::table($this->table_name)->
         where('message_type', '=', self::MESSAGE_TYPE_CHAT, 'and')->where([['send_id', '=', $user_id, 'or'], ['receive_id', '=', $user_id, 'or']])
-            ->groupBy('room_id')->orderby('id', 'desc')->paginate(15, ['room_id', 'message_type', 'message', 'send_id', 'receive_id', 'send_time'])->toarray();
+            ->groupBy('room_id')->orderby('message_id', 'desc')->paginate(15, ['room_id', 'message_type', 'message', 'send_id', 'receive_id', 'send_time'])->toarray();
     }
 }

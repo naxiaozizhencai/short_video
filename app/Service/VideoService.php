@@ -787,4 +787,11 @@ class VideoService
         return $data;
     }
 
+
+    public function ShareVideo($request)
+    {
+        $video_id = $request->input('video_id');
+
+    }
+
 }
