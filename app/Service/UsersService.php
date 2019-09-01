@@ -617,7 +617,7 @@ class UsersService
         if(empty($user_data)){
             return ['code'=>-1, 'msg'=>'用户数据不存在'];
         }
-        
+
         if(empty($my_user_data)){
             return ['code'=>-1, 'msg'=>'用户数据不存在'];
         }
