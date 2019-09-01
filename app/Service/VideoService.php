@@ -792,6 +792,28 @@ class VideoService
     {
         $video_id = $request->input('video_id');
 
+        $user_id = Auth::id();
+        $user_data = $this->usersRepositories->getUserInfoById($user_id);
+        if(empty($user_data)){
+            return ['code'=>-1, 'msg'=>'参数错误'];
+        }
+
+        $video_data = $this->videoRepositories->getVideoById($video_id);
+        if(empty($video_data)){
+            return ['code'=>-1, 'msg'=>'视频不存在'];
+        }
+
+        $data = ['code'=>200, 'data'=>[]];
+
+        $share_info['title'] = '熬过了年少轻狂';
+        $share_info['video_image'] = $video_data->video_image;
+        $share_info['qrcode'] = env('QRCODE_URL') . $user_data->popular_num . '.png';
+        $share_info['download_url'] = env('UPLOAD_APP_URL') . '/' . $user_data->popular_num;
+        $share_info['share_url'] =  env('UPLOAD_APP_URL') . '/' . $user_data->popular_num;
+
+        $data['data']['share_info'] = $share_info;
+        return $data;
+
     }
 
 }
