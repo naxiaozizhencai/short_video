@@ -130,7 +130,7 @@ class UsersService
         $data['is_phone_login'] = $userData->is_phone_login;
         $data['vip_expired_time'] = $userData->vip_expired_time;
         $play_video_times_data = $this->tempDataRepositories->GetValue($userData->id, 'play_video_times');
-        $data['viewed_times'] = empty($play_video_times_data) ? 0 : $play_video_times_data->temp_value;
+        $data['viewed_times'] = empty($play_video_times_data) ? 0 : intval($play_video_times_data->temp_value);
         $total_viewed_times_data = $this->tempDataRepositories->GetValue($userData->id, 'total_viewed_times');
         $data['total_viewed_times'] = empty($total_viewed_times_data) ? 10 :$total_viewed_times_data->temp_value;
         $user_info = $this->UsersRepositories->GetAuthUserData($uuid);
@@ -798,7 +798,7 @@ class UsersService
 
         $share_data['popular_num'] = $user_data->popular_num;
         $share_data['share_url'] = ' https://aff.91porn005.me/aff/' . $user_data->popular_num;
-        $share_data['qrcode'] = $request->getHttpHost(). ':8090/qrcode/' . $user_data->popular_num . '.png';
+        $share_data['qrcode'] = env('QRCODE_URL') . $user_data->popular_num . '.png';
         $data['data']['share_data'] = $share_data;
         return $data;
 
