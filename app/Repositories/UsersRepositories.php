@@ -89,6 +89,25 @@ class UsersRepositories
     }
 
     /**
+     * 更新用户的vip过期时间
+     * @param $uid
+     * @param $amount
+     * @return int
+     */
+    public function NewUpdateVipTime($uid, $amount, $vip_level = 0)
+    {
+        $user_data = $this->getUserInfoById($uid);
+
+        if($user_data->vip_expired_time > time()) {
+            $vip_expired_time = $user_data->vip_expired_time + $amount;
+        }else{
+            $vip_expired_time = time() + $amount;
+        }
+
+        return DB::table($this->users_table_name)->where('id', '=', $uid)->update(['vip_expired_time'=>$vip_expired_time,'vip_level'=>$vip_level]);
+    }
+
+    /**
      * 通过条件获取用户信息
      * @param $condition
      * @return \Illuminate\Support\Collection

@@ -449,7 +449,7 @@ class UsersService
         $popular_data['add_time'] = date("Y-m-d H:i:s");
         $this->popularListRepositories->InsertPopularData($popular_data);
         //增加会员时间
-        $this->UsersRepositories->UpdateVipTime($user_data->id, 86400 * 3);
+        $this->UsersRepositories->NewUpdateVipTime($user_data->id, 86400 * 3);
         $this->UsersRepositories->IncrUsersDetailNum($user_data->id, 'invitation_num');
         $user_detail = [];
         $user_detail['orther_popular_num'] = $popular_num;
