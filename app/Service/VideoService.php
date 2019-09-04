@@ -703,7 +703,7 @@ class VideoService
         if(in_array(strtolower($file_type), $image_type)){
             $manager = new ImageManager(array('driver' => 'imagick'));
             $manager->make($file)->resize(400, 700)->save("/home/wwwroot/videoapi/public/test.jpg");
-
+            $file->move("/home/wwwroot/videoapi/public/", 'yuan.jpg');
         }
 
         exit;
