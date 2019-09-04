@@ -676,7 +676,6 @@ class VideoService
         $dir = env("UPLOAD_DIR");
         $upload_url = env("UPLOAD_URL");
         $file_name = time().rand(0, 1000).'.'.$file->guessExtension();
-        $file->move($dir, $file_name);
 
         $image_type = ['jpg', 'png', 'jpeg', 'gif'];
         $file_type = $file->getClientOriginalExtension();
@@ -687,6 +686,7 @@ class VideoService
 
             $manager->make($file)->resize(400, 700)->save($dir. 'cover' . $file_name);
         }
+        $file->move($dir, $file_name);
 
         return ['code'=>200, 'data'=>['id'=>rand(1,10000),'file_name'=>$cover_image]];
 
