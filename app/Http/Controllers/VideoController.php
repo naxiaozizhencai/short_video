@@ -174,4 +174,14 @@ class VideoController extends Controller
         return response()->json($data);
     }
 
+    /**
+     * 上传文件
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function TestUpload()
+    {
+        $data = $this->videoService->TestUpload();
+        return response()->json($data);
+    }
+
 }
