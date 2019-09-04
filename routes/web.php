@@ -16,7 +16,7 @@ $router->get('/', function () use ($router) {
 });
 
 $router->post('login', 'LoginController@Login');
-$router->post('testupload', 'LoginController@TestUpload');
+$router->post('testupload', 'VideoController@TestUpload');
 $router->post('notify', 'NotifyController@Notify');//商品列表
 $router->post('user/postLogin', 'AuthController@postLogin');
 
