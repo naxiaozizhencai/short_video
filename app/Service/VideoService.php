@@ -16,6 +16,7 @@ use App\Repositories\VideoRankRepositories;
 use App\Repositories\VideoRepositories;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Image;
+use Intervention\Image\ImageManager;
 
 class VideoService
 {
@@ -700,7 +701,8 @@ class VideoService
         $file_type = $file->getClientOriginalExtension();
         //如果是图片生成缩略图
         if(in_array(strtolower($file_type), $image_type)){
-            Image::make($file)->resize(400, 700)->save("/home/wwwroot/videoapi/public/test.jpg");
+            $manager = new ImageManager(array('driver' => 'imagick'));
+            $manager->make($file)->resize(400, 700)->save("/home/wwwroot/videoapi/public/test.jpg");
 
         }
 
