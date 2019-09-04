@@ -30,6 +30,7 @@ $app->withFacades(true, [
         'Tymon\JWTAuth\Facades\JWTAuth' => 'JWTAuth',
         'SimpleSoftwareIO\QrCode\Facades\QrCode::class' => 'QrCode',
         'Tymon\JWTAuth\Facades\JWTFactory' => 'JWTFactory',
+        'Intervention\Image\Facades\Image::class'=>'Image'
     ]
 );
 /*
