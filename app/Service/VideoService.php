@@ -680,15 +680,19 @@ class VideoService
         $image_type = ['jpg', 'png', 'jpeg', 'gif'];
         $file_type = $file->getClientOriginalExtension();
         //如果是图片生成缩略图
-        $cover_image = $upload_url . 'cover' . $file_name;
+        $return_file_name = $upload_url . $file_name;
+
         if(in_array(strtolower($file_type), $image_type)){
             $manager = new ImageManager(array('driver' => 'imagick'));
+            $return_file_name = $upload_url . 'cover' . $file_name;
 
             $manager->make($file)->resize(400, 700)->save($dir. 'cover' . $file_name);
         }
+
+
         $file->move($dir, $file_name);
 
-        return ['code'=>200, 'data'=>['id'=>rand(1,10000),'file_name'=>$cover_image]];
+        return ['code'=>200, 'data'=>['id'=>rand(1,10000),'file_name'=>$return_file_name]];
 
     }
 
