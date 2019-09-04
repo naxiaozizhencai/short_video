@@ -90,6 +90,7 @@ $app->singleton(
  $app->register(\Tymon\JWTAuth\Providers\LumenServiceProvider::class);
  $app->register(Wn\Generators\CommandsServiceProvider::class);
  $app->register(SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class);
+ $app->register(Intervention\Image\ImageServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

@@ -694,7 +694,13 @@ class VideoService
             return ['code'=>-1, 'msg'=>'文件上传失败'];
         }
 
-        echo $file->getClientOriginalExtension();
+        $image_type = ['jpg', 'png', 'jpeg', 'gif'];
+
+        $file_type = $file->getClientOriginalExtension();
+        //如果是图片生成缩略图
+        if(in_array(strtolower($file_type), $image_type)){
+
+        }
         exit;
 
 
