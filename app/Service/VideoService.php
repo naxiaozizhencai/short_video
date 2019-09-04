@@ -684,7 +684,8 @@ class VideoService
         $cover_image = $upload_url . 'cover' . $file_name;
         if(in_array(strtolower($file_type), $image_type)){
             $manager = new ImageManager(array('driver' => 'imagick'));
-
+            echo dir. 'cover' . $file_name;
+            exit;
             $manager->make($file)->resize(400, 700)->save($dir. 'cover' . $file_name);
         }
 
