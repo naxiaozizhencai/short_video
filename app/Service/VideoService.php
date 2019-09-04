@@ -694,6 +694,8 @@ class VideoService
             return ['code'=>-1, 'msg'=>'文件上传失败'];
         }
 
+        print_r( $file);
+        exit;
         echo $file->getClientOriginalExtension();
         exit;
 
