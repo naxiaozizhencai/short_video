@@ -672,12 +672,23 @@ class VideoService
         }
 
 
+
         $dir = env("UPLOAD_DIR");
         $upload_url = env("UPLOAD_URL");
-        $file__name = time().rand(0, 1000).'.'.$file->guessExtension();
-        $file->move($dir, $file__name);
-        $file_url = $upload_url.$file__name;
-        return ['code'=>200, 'data'=>['id'=>rand(1,10000),'file_name'=>$file_url]];
+        $file_name = time().rand(0, 1000).'.'.$file->guessExtension();
+        $file->move($dir, $file_name);
+
+        $image_type = ['jpg', 'png', 'jpeg', 'gif'];
+        $file_type = $file->getClientOriginalExtension();
+        //如果是图片生成缩略图
+        $cover_image = $upload_url . 'cover' . $file_name;
+        if(in_array(strtolower($file_type), $image_type)){
+            $manager = new ImageManager(array('driver' => 'imagick'));
+
+            $manager->make($file)->resize(400, 700)->save($cover_image);
+        }
+
+        return ['code'=>200, 'data'=>['id'=>rand(1,10000),'file_name'=>$cover_image]];
 
     }
 
@@ -696,15 +707,6 @@ class VideoService
             return ['code'=>-1, 'msg'=>'文件上传失败'];
         }
 
-        $image_type = ['jpg', 'png', 'jpeg', 'gif'];
-
-        $file_type = $file->getClientOriginalExtension();
-        //如果是图片生成缩略图
-        if(in_array(strtolower($file_type), $image_type)){
-            $manager = new ImageManager(array('driver' => 'imagick'));
-            $manager->make($file)->resize(400, 700)->save("/home/wwwroot/videoapi/public/test.jpg");
-            $file->move("/home/wwwroot/videoapi/public/", 'yuan.jpg');
-        }
 
         exit;
 
