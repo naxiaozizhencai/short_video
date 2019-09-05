@@ -697,33 +697,6 @@ class VideoService
     }
 
     /**
-     *上传文件
-     * @return array
-     */
-    public function TestUpload()
-    {
-        $file = app('request')->file('file');
-        if(empty($file)){
-            return ['code'=>-1, 'msg'=>'参数错误'];
-        }
-
-        if (!$file->isValid()) {
-            return ['code'=>-1, 'msg'=>'文件上传失败'];
-        }
-
-
-        exit;
-
-
-        $dir = env("UPLOAD_DIR");
-        $upload_url = env("UPLOAD_URL");
-        $file__name = time().rand(0, 1000).'.'.$file->guessExtension();
-        $file->move($dir, $file__name);
-        $file_url = $upload_url.$file__name;
-        return ['code'=>200, 'data'=>['id'=>rand(1,10000),'file_name'=>$file_url]];
-
-    }
-    /**
      * 上传视频
      * @return array
      */
