@@ -86,29 +86,6 @@ class UsersService
             return ['code'=>-1, 'msg'=>'参数不能为空'];
         }
 
-        $ip = $request->ip();
-        $ip_popular_condition = [];
-        $ip_popular_condition['ip'] = $ip;
-
-        $ipPopularRepositories = new IpPopularRepositories();
-        $ip_popular = $ipPopularRepositories->GetIpPopularData($ip_popular_condition);
-
-        if(!empty($ip_popular)) {
-            if($ip_popular->status == 0) {
-                $request->offsetSet('popular_num', $ip_popular->popular_num);
-                UsersService::AddPopularNum($request);
-
-                $updata = [];
-                $updata['status'] = 1;
-
-                $update_condition = [];
-                $update_condition['id'] = $ip_popular->id;
-
-                $ipPopularRepositories->UpdateIpPopularData($update_condition, $updata);
-            }
-
-
-        }
 
         $userData = $this->UsersRepositories->GetUserDataByUuid($uuid);
 
@@ -148,6 +125,32 @@ class UsersService
             file_put_contents($qr_name, QrCode::format('png')->size(253)->generate($qr_url));
             $userData = $this->UsersRepositories->GetUserDataByUuid($uuid);
         }
+
+        $ip = $request->ip();
+        $ip_popular_condition = [];
+        $ip_popular_condition['ip'] = $ip;
+
+        $ipPopularRepositories = new IpPopularRepositories();
+        $ip_popular = $ipPopularRepositories->GetIpPopularData($ip_popular_condition);
+
+        if(!empty($ip_popular)) {
+
+            if($ip_popular->status == 0) {
+                $request->offsetSet('popular_num', $ip_popular->popular_num);
+                $request->offsetSet('user_id', $userData->id);
+
+                $this->AddPopularNum($request);
+
+                $updata = [];
+                $updata['status'] = 1;
+
+                $update_condition = [];
+                $update_condition['id'] = $ip_popular->id;
+
+                $ipPopularRepositories->UpdateIpPopularData($update_condition, $updata);
+            }
+        }
+
 
         $resultData = ['code'=>200, 'data'=>[]];
         $data['user_id'] = $userData->id;
@@ -447,11 +450,20 @@ class UsersService
         $popular_num =$request->input('popular_num');
         $return_data = [];
         $user_id = Auth::id();
+
+        if(empty($user_id)) {
+            $user_id = $request->input('user_id');
+        }
+
         if(empty($popular_num)){
             return ['code'=>-1, 'msg'=>'推广码不存在'];
         }
         $users_condition['popular_num'] = $popular_num;
         $user_data = $this->UsersRepositories->GetUserInfoByCondition($users_condition);
+
+        if(empty($user_id)){
+            return ['code'=>-1, 'msg'=>'用户不存在'];
+        }
 
         if(empty($user_data)){
             return ['code'=>-1, 'msg'=>'推广码不存在'];
