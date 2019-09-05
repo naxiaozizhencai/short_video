@@ -30,6 +30,7 @@ class AdsService
         }
 
         $data = ['code'=>200];
+
         foreach($ads_data as $key=>$value){
 
             $temp_data['id']  = $value->id;
@@ -37,7 +38,7 @@ class AdsService
             $temp_data['link_url']  = $value->link_url;
             $temp_data['images']  = $value->images;
 //            $temp_data['images']  ='http://39.100.242.186/1.png';
-            $temp_data['ads_play_second']  = $value->timeout;
+            $temp_data['ads_play_second']  = $value->time_out;
             $data['ads_data'][] = $temp_data;
         }
 
