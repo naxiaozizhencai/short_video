@@ -36,8 +36,8 @@ class AdsService
             $temp_data['title']  = $value->title;
             $temp_data['link_url']  = $value->link_url;
             $temp_data['images']  = $value->images;
-            $temp_data['images']  ='http://39.100.242.186/1.png';
-            $temp_data['ads_play_second']  = 10;
+//            $temp_data['images']  ='http://39.100.242.186/1.png';
+            $temp_data['ads_play_second']  = $value->timeout;
             $data['ads_data'][] = $temp_data;
         }
 
