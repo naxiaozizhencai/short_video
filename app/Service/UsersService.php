@@ -121,7 +121,7 @@ class UsersService
             $insert_temp_data['add_time'] = date('Y-m-d H:i:s');
             $this->tempDataRepositories->UpateOrInsertTempData($temp_data, $insert_temp_data);
             $qr_name =  env("QRCODE_DIR") . $popular_num . '.png';
-            $qr_url = env("UPLOAD_APP_URL") . '/' . $popular_num;
+            $qr_url = env("UPLOAD_APP_URL") . $popular_num;
             file_put_contents($qr_name, QrCode::format('png')->size(253)->generate($qr_url));
             $userData = $this->UsersRepositories->GetUserDataByUuid($uuid);
         }
