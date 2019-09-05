@@ -1,5 +1,6 @@
 <?php
 namespace App\Service;
+use App\Repositories\IpPopularRepositories;
 use App\Repositories\MessageRepositories;
 use App\Repositories\PopularListRepositories;
 use App\Repositories\TempDataRepositories;
@@ -83,6 +84,30 @@ class UsersService
 
         if(empty($uuid)){
             return ['code'=>-1, 'msg'=>'参数不能为空'];
+        }
+
+        $ip = $request->ip();
+        $ip_popular_condition = [];
+        $ip_popular_condition['ip'] = $ip;
+
+        $ipPopularRepositories = new IpPopularRepositories();
+        $ip_popular = $ipPopularRepositories->GetIpPopularData($ip_popular_condition);
+
+        if(!empty($ip_popular)) {
+            if($ip_popular->status == 0) {
+                $request->offsetSet('popular_num', $ip_popular->popular_num);
+                UsersService::AddPopularNum($request);
+
+                $updata = [];
+                $updata['status'] = 1;
+
+                $update_condition = [];
+                $update_condition['id'] = $ip_popular->id;
+
+                $ipPopularRepositories->UpdateIpPopularData($update_condition, $updata);
+            }
+
+
         }
 
         $userData = $this->UsersRepositories->GetUserDataByUuid($uuid);

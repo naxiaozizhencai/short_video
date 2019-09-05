@@ -11,7 +11,18 @@ class IpPopularRepositories
 
     public function GetIpPopularData($data)
     {
-        return DB::table($this->table_name)->where($data)->get();
+        return DB::table($this->table_name)->where($data)->first();
+    }
+
+    /**
+     * 更新信息
+     * @param $uid
+     * @param $data
+     * @return mixed
+     */
+    public function UpdateIpPopularData($condition, $data)
+    {
+        return DB::table($this->table_name)->where($condition)->update($data);
     }
 
 
