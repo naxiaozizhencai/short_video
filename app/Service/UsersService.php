@@ -77,8 +77,10 @@ class UsersService
      * @param $uuid
      * @return array
      */
-    public function Login($uuid)
+    public function Login($request)
     {
+        $uuid = $request->input("uuid");
+
         if(empty($uuid)){
             return ['code'=>-1, 'msg'=>'参数不能为空'];
         }

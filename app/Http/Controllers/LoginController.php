@@ -29,8 +29,7 @@ class LoginController extends BaseController
      */
     public function Login(Request $request)
     {
-        $uuid = $request->input("uuid");
-        $data = $this->UsersService->Login($uuid);
+        $data = $this->UsersService->Login($request);
         return response()->json($data);
 
     }
