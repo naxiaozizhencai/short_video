@@ -73,6 +73,8 @@ class VideoService
     public function ViewVideoDetail($request)
     {
         $video_id = $request->input('video_id');
+        $type = $request->input('type');
+
         $user_id = Auth::id();
 
         if(empty($video_id)) {
@@ -91,6 +93,7 @@ class VideoService
         if(empty($user_data)) {
             return ['code'=>-1, 'msg'=>'用户数据不存在！'];
         }
+
 
         $follows_ids = $this->fansRepositories->GetUsersFollowData($user_id);
         $data = ['code'=>200];
@@ -114,6 +117,11 @@ class VideoService
             $video_data['is_favorite'] = empty($favorite_data) ? 0 : 1;
 
             $data['data']['video_data'] = $video_data;
+        }
+
+        //更新播放到哪里了
+        if($type == 1){
+            $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::VIDEO_RECOMMEND_MAX_ID, ['temp_value'=>$video_data['video_id']]);
         }
 
         //更新播放次数
@@ -155,7 +163,16 @@ class VideoService
         $user_id = Auth::id();
 
         $follows_ids = $this->fansRepositories->GetUsersFollowData($user_id);
-        $temp_data = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::VIDEO_RECOMMEND_MAX_ID);
+
+
+        $page = $request->input('page');
+        $type = $request->input('type');
+        if($page == 1 && $type == 1){
+            $temp_data = $this->tempDataRepositories->GetValue($user_id, TempDataRepositories::VIDEO_RECOMMEND_MAX_ID);
+            $min_video_id = empty($temp_data) ? 0 : $temp_data->temp_value;
+            $request->offsetSet('min_video_id', $min_video_id);
+        }
+
 
         $result = $this->videoRepositories->GetVideoData($request->toarray());
 
