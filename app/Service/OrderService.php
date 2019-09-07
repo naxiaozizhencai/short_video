@@ -43,7 +43,7 @@ class OrderService
         $result = $this->orderRepositories->InsertUserOrder($user_id,$order_type,$product_id,$order_price,$pay_type,$return_url);
 
         if(!empty($result)){
-            $url = 'http://154.83.17.150:8080'.$result;
+            $url = 'http://'.$_SERVER['HTTP_HOST'].$result;
             return $data =['code'=>200, 'msg'=>'订单创建成功','url'=>$url];
         }
         return $data;
@@ -86,7 +86,7 @@ class OrderService
         $status = $this->orderRepositories->updateOrderBySn($order_no);
         //更新用户vip过期时间
         $amount = $order->free_day * 86400;
-        $user = $this->usersRepositories->NewUpdateVipTime($uid,$amount,$order->product_id);
+        $user = $this->usersRepositories->UpdateVipTime($uid,$amount,,$order->product_id);
         
         return $data = ['code'=>200, 'data'=>$user];
     }
