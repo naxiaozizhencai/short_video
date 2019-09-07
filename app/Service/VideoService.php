@@ -123,7 +123,7 @@ class VideoService
         if($type == 1){
             $max_video_id = $this->videoRepositories->GetMaxVideoId();
             if($max_video_id == $video_data['video_id']){
-                $rand_num = rand(1,10);
+                $rand_num = rand(2,10);
                 $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::VIDEO_RECOMMEND_MAX_ID, ['temp_value'=>intval($max_video_id / $rand_num)]);
 
             }else{
