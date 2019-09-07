@@ -123,7 +123,7 @@ $(document).ready(function(){
         console.log(data);
 				var str='<img src="images/ok.png" width="200" height="200"/>';
 				$(".qr").html(str);
-        alert("支付成功,请返回个人信息页面查看充值状态，如有疑问请联系客服");
+        alert("支付成功,请点击左上角返回按钮返回到app内查看状态，如有疑问请联系客服");
 
 <?php
 if (!empty($back_url)) {
