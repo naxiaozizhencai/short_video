@@ -87,34 +87,6 @@ body{background-color: #F5F5F5;font-size: 16px;font-family: "微软雅黑";}
 
 
 <script>
-    /**
-     * 解决hbuilder打包app之后点击手机返回键直接退出app的
-     */
-    document.addEventListener('plusready', function() {
-        plus.navigator.setStatusBarStyle('light');
-        var webview = plus.webview.currentWebview();
-        plus.key.addEventListener('backbutton', function() {
-            webview.canBack(function(e) {
-                if(e.canBack) {
-                    webview.back();
-                } else {
-                    var first = null;
-                    plus.key.addEventListener('backbutton', function() {
-                        if (!first) {
-                            first = new Date().getTime();
-                            setTimeout(function() {
-                                first = null;
-                            }, 1000);
-                        } else {
-                            if (new Date().getTime() - first < 1000) {
-                                plus.runtime.quit();
-                            }
-                        }
-                    }, false);
-                }
-            })
-        });
-    });
 $(document).ready(function(){
   			fast_pay.shows_qr({
   			appkey: "<?php echo $appkey?>",//填写网站生成的appkey
