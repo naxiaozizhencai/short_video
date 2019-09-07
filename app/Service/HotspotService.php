@@ -41,20 +41,20 @@ class HotspotService
                 $label_data = [];
                 $label_data['image'] = $_v->label_image;
 
-                switch ($value->type){
+                switch ($_v->type){
                     case LabelConfigRepositories::TODAY_HOT_TYPE:
                         break;
 
                     case LabelConfigRepositories::RANK_HOT_TYPE:
-                        if($value->id == 22){
+                        if($_v->id == 22){
                             $searchArr['is_recommend'] = 1;
-                        }elseif($value->id == 23){
+                        }elseif($_v->id == 23){
                             //$searchArr['is_recommend'] = 1;
-                        }elseif($value->id == 24){
+                        }elseif($_v->id == 24){
                             $searchArr['play_num'] = 'desc';
-                        }elseif($value->id == 25){
+                        }elseif($_v->id == 25){
                             $searchArr['reply_num'] = 'desc';
-                        }elseif($value->id == 26){
+                        }elseif($_v->id == 26){
                             $searchArr['favorite_num'] = 'desc';
                         }
                         $video_data = $this->videoRepositories->GetVideoDataByCondition($searchArr);
