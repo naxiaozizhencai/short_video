@@ -74,7 +74,7 @@ class HotspotService
                         $search_arr['label_name'] = $_v->label_name;
                         $label_data = $this->videoLabelRepositories->GetVideoLabelData($search_arr);
                         if(!empty($label_data)){
-                            $label_data['image'] = $video_data['data'][0]->video_image;
+                            $label_data['image'] = $label_data['data'][0]->video_image;
                         }
 
                         break;
