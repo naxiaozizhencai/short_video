@@ -86,7 +86,7 @@ class OrderService
         $status = $this->orderRepositories->updateOrderBySn($order_no);
         //更新用户vip过期时间
         $amount = $order->free_day * 86400;
-        $user = $this->usersRepositories->UpdateVipTime($uid,$amount);
+        $user = $this->usersRepositories->NewUpdateVipTime($uid,$amount,$order->product_id);
         
         return $data = ['code'=>200, 'data'=>$user];
     }
