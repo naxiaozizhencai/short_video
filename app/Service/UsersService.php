@@ -696,7 +696,8 @@ class UsersService
         $user_info['is_self'] = ($user_id == $my_user_id) ? 1 : 0;
 
 //        $user_info['background_image'] = 'http://154.83.17.150/background/'. rand(1,3) .'.png';
-        $user_info['background_image'] = 'http://154.83.17.150/background/2.png';
+//        $user_info['background_image'] = 'http://154.83.17.150/background/2.png';
+        $user_info['background_image'] = 'http://154.83.17.150/avatar/2.png';
         if($user_id != $my_user_id){
             $follows_ids = $this->fansRepositories->GetUsersFollowData($my_user_id);
             $user_info['is_follow'] = isset($follows_ids[$user_id]) ? 1 : 0;
