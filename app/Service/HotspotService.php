@@ -59,9 +59,7 @@ class HotspotService
                         }
                         $video_data = $this->videoRepositories->GetVideoDataByCondition($searchArr);
                         if(!empty($video_data)){
-                            print_r($video_data);
-                            exit;
-                            $label_data['image'] = $video_data[0]['video_image'];
+                            $label_data['image'] = $video_data['data'][0]['video_image'];
                         }
                         break;
 
