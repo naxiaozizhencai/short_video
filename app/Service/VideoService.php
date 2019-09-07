@@ -121,7 +121,15 @@ class VideoService
 
         //更新播放到哪里了
         if($type == 1){
-            $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::VIDEO_RECOMMEND_MAX_ID, ['temp_value'=>$video_data['video_id']]);
+            $max_video_id = $this->videoRepositories->GetMaxVideoId();
+            if($max_video_id == $video_data['video_id']){
+                $rand_num = rand(1,10);
+                $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::VIDEO_RECOMMEND_MAX_ID, ['temp_value'=>intval($max_video_id / $rand_num)]);
+
+            }else{
+                $this->tempDataRepositories->UpdateTempValue($user_id, TempDataRepositories::VIDEO_RECOMMEND_MAX_ID, ['temp_value'=>$video_data['video_id']]);
+
+            }
         }
 
         //更新播放次数
