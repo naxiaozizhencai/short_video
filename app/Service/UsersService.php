@@ -132,8 +132,8 @@ class UsersService
 
             $qr_name =  env("QRCODE_DIR") . $popular_num . '.png';
             $qr_url = env("UPLOAD_APP_URL") . $popular_num;
-            file_put_contents($qr_name, QrCode::format('png')->size(253)->margin(100)->generate($qr_url));
-            
+            file_put_contents($qr_name, QrCode::format('png')->size(253)->margin(0)->generate($qr_url));
+
             $userData = $this->UsersRepositories->GetUserDataByUuid($uuid);
         }
 
