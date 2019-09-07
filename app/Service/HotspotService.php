@@ -2,6 +2,7 @@
 namespace App\Service;
 use App\Repositories\LabelConfigRepositories;
 use App\Repositories\UsersRepositories;
+use App\Repositories\VideoLabelRepositories;
 use App\Repositories\VideoRankRepositories;
 use App\Repositories\VideoRepositories;
 
@@ -12,8 +13,12 @@ class HotspotService
     protected $videoRepositories;
     protected $videoRankRepositories;
     protected $labelConfigRepositories;
+    protected $videoLabelRepositories;
    public function __construct(UsersRepositories $usersRepositories, VideoRepositories $videoRepositories,
-                               VideoRankRepositories $videoRankRepositories, LabelConfigRepositories $labelConfigRepositories)
+                               VideoRankRepositories $videoRankRepositories,
+                               LabelConfigRepositories $labelConfigRepositories,
+                               VideoLabelRepositories  $videoLabelRepositories
+)
    {
        $this->usersRepositories = $usersRepositories;
        $this->videoRepositories = $videoRepositories;
@@ -64,6 +69,12 @@ class HotspotService
                         break;
 
                     case LabelConfigRepositories::LABEL_HOT_TYPE:
+                        $search_arr['label_name'] = $_v->label_name;
+                        $label_data = $this->videoLabelRepositories->GetVideoLabelData($search_arr);
+                        if(!empty($video_data)){
+                            $label_data['image'] = $video_data['data'][0]->video_image;
+                        }
+
                         break;
 
                 }
