@@ -43,6 +43,7 @@ class LabelConfigRepositories
         }
         $result = [];
         foreach($data as $key=>$value){
+
             $result[$value->type][] = $value;
         }
 

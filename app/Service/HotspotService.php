@@ -30,16 +30,45 @@ class HotspotService
        }
 
         $data = ['code'=>200];
-        $label_data = [];
 
        foreach($label_config as $key=>$value){
 
            if(!isset(LabelConfigRepositories::$label_type[$key])) {
                 continue;
             }
+
             foreach($value as $_k=>$_v){
-                $label_data['name'] = $_v->label_name;
+                $label_data = [];
                 $label_data['image'] = $_v->label_image;
+
+                switch ($value->type){
+                    case LabelConfigRepositories::TODAY_HOT_TYPE:
+                        break;
+
+                    case LabelConfigRepositories::RANK_HOT_TYPE:
+                        if($value->id == 22){
+                            $searchArr['is_recommend'] = 1;
+                        }elseif($value->id == 23){
+                            //$searchArr['is_recommend'] = 1;
+                        }elseif($value->id == 24){
+                            $searchArr['play_num'] = 'desc';
+                        }elseif($value->id == 25){
+                            $searchArr['reply_num'] = 'desc';
+                        }elseif($value->id == 26){
+                            $searchArr['favorite_num'] = 'desc';
+                        }
+                        $video_data = $this->videoRepositories->GetVideoDataByCondition($searchArr);
+                        if(!empty($video_data)){
+                            $label_data['image'] = $video_data[0]->video_image;
+                        }
+                        break;
+
+                    case LabelConfigRepositories::LABEL_HOT_TYPE:
+                        break;
+
+                }
+
+                $label_data['name'] = $_v->label_name;
                 $label_data['url'] = $_v->label_url;
                 $label_data['type'] = $_v->type;
                 $data['data']['label_data'][LabelConfigRepositories::$label_type[$key]][] = $label_data;

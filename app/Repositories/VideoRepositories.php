@@ -30,7 +30,7 @@ class VideoRepositories
      * @param $search_arr
      * @return mixed
      */
-    public function GetRecommendVideoData($search_arr)
+    public function GetVideoDataByCondition($search_arr, $perPage = 1)
     {
         $query = DB::table('video_list');
         $query->where(function ($query) use ($search_arr){
@@ -54,16 +54,33 @@ class VideoRepositories
                         break;
                 }
             }
-        })->where('is_check', '=', 1);
+        })->where('video_list.is_check', '=', 1);
 
-        if(!empty($search_arr['is_back'])){
-            $query->orderby('video_list.id', 'desc');
+
+        if(!empty($search_arr['favorite_num'])){
+            $query->orderby('video_list.favorite_num', $search_arr['favorite_num']);
         }
+
+        if(!empty($search_arr['favorite_num'])){
+            $query->orderby('video_list.favorite_num', $search_arr['favorite_num']);
+        }
+
+        if(!empty($search_arr['reply_num'])){
+            $query->orderby('video_list.reply_num', $search_arr['reply_num']);
+        }
+
+        if(!empty($search_arr['play_num'])){
+            $query->orderby('video_list.play_num', $search_arr['play_num']);
+        }
+
+        $query->orderby('video_list.add_time', 'desc');
 
         $query->leftjoin('users', 'video_list.user_id', '=', 'users.id')->leftjoin('users_detail', 'users.id', '=', 'users_detail.user_id');
 
-        return $query->paginate(6, ['video_list.id as video_id', 'video_list.*', 'users.*', 'users_detail.*'])->toarray();
+        return $query->paginate($perPage, ['video_list.id as video_id', 'video_list.*', 'users.*', 'users_detail.*'])->toarray();
     }
+
+
     /**
      * 获取视频数据
      * @param $search_arr
