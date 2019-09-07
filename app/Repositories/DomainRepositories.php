@@ -18,5 +18,5 @@ class DomainRepositories
         return DB::table($this->table_name)->where($data)->orderBy('id', 'desc')->get();
     }
 
-    
+
 }

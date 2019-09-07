@@ -162,8 +162,6 @@ class VideoService
 
         $user_id = Auth::id();
 
-        $follows_ids = $this->fansRepositories->GetUsersFollowData($user_id);
-
 
         $page = $request->input('page');
         $type = $request->input('type');
