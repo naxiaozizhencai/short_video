@@ -133,7 +133,7 @@ class UsersService
             $qr_name =  env("QRCODE_DIR") . $popular_num . '.png';
             $qr_url = env("UPLOAD_APP_URL") . $popular_num;
             file_put_contents($qr_name, QrCode::format('png')->size(253)->margin(0)->generate($qr_url));
-            
+
             $userData = $this->UsersRepositories->GetUserDataByUuid($uuid);
         }
         $usersData = $this->UsersRepositories->getUserInfoById($userData->id);
@@ -695,7 +695,7 @@ class UsersService
         $user_info['orther_popular_num'] = $user_data->orther_popular_num;
         $user_info['is_self'] = ($user_id == $my_user_id) ? 1 : 0;
 
-
+        $user_info['background_image'] = 'http://154.83.17.150/background/' . rand(1,3) . 'png';
         if($user_id != $my_user_id){
             $follows_ids = $this->fansRepositories->GetUsersFollowData($my_user_id);
             $user_info['is_follow'] = isset($follows_ids[$user_id]) ? 1 : 0;
