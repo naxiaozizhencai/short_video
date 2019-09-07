@@ -45,6 +45,7 @@ class OrderRepositories
 
     public function InsertUserOrder($user_id,$order_type,$product_id,$order_price,$pay_type,$return_url)
     {
+        date_default_timezone_set("Asia/Shanghai");
         if(empty($user_id)){
             return [];
         }
@@ -78,7 +79,7 @@ class OrderRepositories
             $paydata['total_fee']=$order_price;//金额
             $paydata['param']="";//其他参数
             $paydata['me_back_url']='';//支付成功后跳转
-            $paydata['notify_url']='http://'.$_SERVER['HTTP_HOST']."/notify";//支付成功后异步回调
+            $paydata['notify_url']='http://154.83.17.150:8080'."/notify";//支付成功后异步回调
             $geturl=fastpay_order($paydata);//获取支付链接
 
             return $geturl;
