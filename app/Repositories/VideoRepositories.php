@@ -80,7 +80,7 @@ class VideoRepositories
 
         $query->leftjoin('users', 'video_list.user_id', '=', 'users.id')->leftjoin('users_detail', 'users.id', '=', 'users_detail.user_id');
 
-        return $query->paginate($perPage, ['video_list.id as video_id', 'video_list.*', 'users.*', 'users_detail.*'])->toarray();
+        return $query->paginate($perPage, ['video_list.id as video_id','video_list.favorite_num as video_favorite_num', 'video_list.*', 'users.*', 'users_detail.*'])->toarray();
     }
 
 
