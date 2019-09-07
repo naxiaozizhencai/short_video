@@ -24,6 +24,7 @@ class HotspotService
        $this->videoRepositories = $videoRepositories;
        $this->videoRankRepositories = $videoRankRepositories;
        $this->labelConfigRepositories = $labelConfigRepositories;
+       $this->videoLabelRepositories = $videoLabelRepositories;
    }
 
    public function HotIndex($request)
@@ -45,8 +46,9 @@ class HotspotService
             foreach($value as $_k=>$_v){
                 $label_data = [];
                 $label_data['image'] = $_v->label_image;
-
+                $searchArr = [];
                 switch ($_v->type){
+
                     case LabelConfigRepositories::TODAY_HOT_TYPE:
                         break;
 
