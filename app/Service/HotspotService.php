@@ -131,7 +131,7 @@ class HotspotService
             $video_data['video_image'] = $value->video_image;
             $video_data['video_url'] = $value->video_url;
             $video_data['video_label'] = $value->video_label;
-            $video_data['favorite_number'] = $value->favorite_num;
+            $video_data['favorite_number'] = $value->video_favorite_number;
             $video_data['reply_number'] = $value->reply_num;
             $data['data']['video_data'][] = $video_data;
 
