@@ -77,7 +77,7 @@ body{background-color: #F5F5F5;font-size: 16px;font-family: "微软雅黑";}
 <div class="qr"></div>
 <h6>订单倒计时,过期后请勿支付:<span class="exprie_time" id="time"></span></h6>
 <img src="images/pay2.jpg?a=1" />
-<a href="<?php echo $back_url?>" class="payok">支付完成点击这里</a>
+<!--<a href="--><?php //echo $back_url?><!--" class="payok">支付完成点击这里</a>-->
 <h6>订单号:<span class="order_no"></span></h6>
 </div>
 
