@@ -191,6 +191,11 @@ class VideoRepositories
         where('video_favorite_list.user_id', '=', $user_id)->orderby('video_favorite_list.add_time', 'desc')->paginate($page_size)->toarray();
     }
 
+    public function GetMaxVideoId($data = [])
+    {
+        return DB::table($this->table_name)->where($data)->max('id');
+    }
+
 
 
 }
