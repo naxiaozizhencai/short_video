@@ -49,7 +49,7 @@ class HotspotService
                         if($_v->id == 22){
                             $searchArr['is_recommend'] = 1;
                         }elseif($_v->id == 23){
-                            //$searchArr['is_recommend'] = 1;
+                            $searchArr['add_time'] = 'desc';
                         }elseif($_v->id == 24){
                             $searchArr['play_num'] = 'desc';
                         }elseif($_v->id == 25){

@@ -73,7 +73,10 @@ class VideoRepositories
             $query->orderby('video_list.play_num', $search_arr['play_num']);
         }
 
-        $query->orderby('video_list.add_time', 'desc');
+        if(!empty($search_arr['add_time'])){
+            $query->orderby('video_list.add_time', $search_arr['add_time']);
+        }
+        
 
         $query->leftjoin('users', 'video_list.user_id', '=', 'users.id')->leftjoin('users_detail', 'users.id', '=', 'users_detail.user_id');
 
