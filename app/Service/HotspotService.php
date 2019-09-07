@@ -50,6 +50,15 @@ class HotspotService
                 switch ($_v->type){
 
                     case LabelConfigRepositories::TODAY_HOT_TYPE:
+
+                        $condtion['rank_type'] = VideoRankRepositories::DAY_RANK_TYPE;
+                        $condtion['rank_group'] = date('Ymd');
+
+                        $rank_data = $this->videoRankRepositories->GetVideoRankList($condtion);
+                        if(!empty($rank_data['data'])){
+                            $label_data['image'] = $rank_data['data'][0]->video_image;
+                        }
+                        break;
                         break;
 
                     case LabelConfigRepositories::RANK_HOT_TYPE:
