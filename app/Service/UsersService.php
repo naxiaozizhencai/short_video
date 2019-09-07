@@ -854,7 +854,7 @@ class UsersService
         }
 
         $share_data['popular_num'] = $user_data->popular_num;
-        $share_data['share_url'] =  env('UPLOAD_APP_URL') . $user_data->popular_num;
+        $share_data['share_url'] =  '网红不雅被流出？精品资源无处寻？一切尽在宅男短视频(十万资源在线看)，请复制链接在浏览器中打开! ' . env('UPLOAD_APP_URL') . $user_data->popular_num;
         $share_data['qrcode'] = env('QRCODE_URL') . $user_data->popular_num . '.png';
         $data['data']['share_data'] = $share_data;
         return $data;

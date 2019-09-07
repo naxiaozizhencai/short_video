@@ -850,7 +850,7 @@ class VideoService
         $share_info['video_image'] = $video_data->video_image;
         $share_info['qrcode'] = env('QRCODE_URL') . $user_data->popular_num . '.png';
         $share_info['download_url'] = env('UPLOAD_APP_URL')  . $user_data->popular_num;
-        $share_info['share_url'] =  env('UPLOAD_APP_URL') . $user_data->popular_num;
+        $share_info['share_url'] =  '网红不雅被流出？精品资源无处寻？一切尽在宅男短视频(十万资源在线看)，请复制链接在浏览器中打开! ' . env('UPLOAD_APP_URL') . $user_data->popular_num;
 
         $data['data']['share_info'] = $share_info;
         return $data;
