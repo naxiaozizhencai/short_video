@@ -45,6 +45,7 @@ class OrderRepositories
 
     public function InsertUserOrder($user_id,$order_type,$product_id,$order_price,$pay_type,$return_url)
     {
+        date_default_timezone_set("Asia/Shanghai");
         if(empty($user_id)){
             return [];
         }
