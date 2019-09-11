@@ -713,6 +713,8 @@ class VideoService
             $manager->make($file)->resize(400, 700)->save($dir. 'cover' . $file_name);
         }
 
+        $file->move($dir, $file_name);
+        
         //获取视频时长
         $time = 0;
         if(!in_array(strtolower($file_type), $image_type)){
@@ -720,11 +722,7 @@ class VideoService
             $command = "ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 -i {$path}";
             $time = exec($command);
         }
-
-
-        $file->move($dir, $file_name);
-
-        return ['code'=>200, 'data'=>['id'=>rand(1,10000),'file_name'=>$return_file_name,'is_fifteen'=>$path]];
+        return ['code'=>200, 'data'=>['id'=>rand(1,10000),'file_name'=>$return_file_name,'is_fifteen'=>$time]];
 
     }
 
