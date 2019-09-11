@@ -714,15 +714,18 @@ class VideoService
         }
 
         $file->move($dir, $file_name);
-        
+
         //获取视频时长
-        $time = 0;
+        $is_fifteen = 0;
         if(!in_array(strtolower($file_type), $image_type)){
             $path = $dir.$file_name;
             $command = "ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 -i {$path}";
             $time = exec($command);
+            if($time > 15){
+                $is_fifteen = 1;
+            }
         }
-        return ['code'=>200, 'data'=>['id'=>rand(1,10000),'file_name'=>$return_file_name,'is_fifteen'=>$time]];
+        return ['code'=>200, 'data'=>['id'=>rand(1,10000),'file_name'=>$return_file_name,'is_fifteen'=>$is_fifteen]];
 
     }
 
