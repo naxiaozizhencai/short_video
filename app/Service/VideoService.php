@@ -724,7 +724,7 @@ class VideoService
 
         $file->move($dir, $file_name);
 
-        return ['code'=>200, 'data'=>['id'=>rand(1,10000),'file_name'=>$return_file_name,'is_fifteen'=>$time]];
+        return ['code'=>200, 'data'=>['id'=>rand(1,10000),'file_name'=>$return_file_name,'is_fifteen'=>$path]];
 
     }
 
