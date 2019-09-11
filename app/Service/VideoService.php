@@ -713,10 +713,18 @@ class VideoService
             $manager->make($file)->resize(400, 700)->save($dir. 'cover' . $file_name);
         }
 
+        //获取视频时长
+        $time = 0;
+        if(!in_array(strtolower($file_type), $image_type)){
+            $path = $dir.$file_name;
+            $command = "ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 -i {$path}";
+            $time = exec($command);
+        }
+
 
         $file->move($dir, $file_name);
 
-        return ['code'=>200, 'data'=>['id'=>rand(1,10000),'file_name'=>$return_file_name]];
+        return ['code'=>200, 'data'=>['id'=>rand(1,10000),'file_name'=>$return_file_name,'is_fifteen'=>$time]];
 
     }
 
@@ -730,6 +738,7 @@ class VideoService
         $title = app('request')->input('title');
         $video_image = app('request')->input('video_image');
         $video = app('request')->input('video');
+        $is_fifteen = app('request')->input('is_fifteen');
         $video_label = app('request')->input('video_label');
         $label_arr = explode('#', $video_label);
 
@@ -743,6 +752,7 @@ class VideoService
         $video_data['video_title'] = $title;
         $video_data['video_image'] = $video_image;
         $video_data['video_url'] = $video;
+        $video_data['is_fifteen'] = $is_fifteen;
         $video_data['video_label'] = $video_label;
         $video_data['add_time'] = date('Y-m-d H:i:s');
         $video_id = $this->videoRepositories->InsertVideo($video_data);
