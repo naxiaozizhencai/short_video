@@ -134,6 +134,9 @@ class UsersService
             $qr_url = env("UPLOAD_APP_URL") . $popular_num;
             file_put_contents($qr_name, QrCode::format('png')->size(253)->margin(0)->generate($qr_url));
 
+
+
+
             $userData = $this->UsersRepositories->GetUserDataByUuid($uuid);
         }
         $usersData = $this->UsersRepositories->getUserInfoById($userData->id);
@@ -207,6 +210,8 @@ class UsersService
         $phone = $request->input('phone');
         $code = $request->input('code');
         $password = $request->input('password');
+
+        
         $user_id = Auth::id();
         if(empty($phone) || empty($code) || empty($password)){
             return ['code'=>-1, 'msg'=>'参数错误'];
@@ -401,7 +406,8 @@ class UsersService
 
         $appkey = env('MESSAGE_APPKEY');//你的appkey
         $mobile = $phone;//手机号 超过1024请用POST
-        $content = '你的注册码是'.$code.'【鲨鹰供应】';//utf8
+//        $content = '你的注册码是''【鲨鹰供应】';//utf8
+        $content = '你的验证码是'.$code.'【宅男视频】';
         $url = "https://api.jisuapi.com/sms/send?appkey=$appkey&mobile=$mobile&content=$content";
 
         $result = curlOpen($url, ['ssl'=>true]);
