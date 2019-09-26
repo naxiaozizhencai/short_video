@@ -86,7 +86,7 @@ $router->group(['prefix'=>'api', 'middleware'=>['settoken','jwt.auth']], functio
 
 
     $router->get('adslist', 'AdsController@AdsList');//广告列表
-    $router->get('checkversion', 'OrderController@checkversion');//广告列表
+    $router->get('checkversion', 'OrderController@checkVersion');//广告列表
 
 
     
