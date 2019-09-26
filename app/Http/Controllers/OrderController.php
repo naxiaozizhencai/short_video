@@ -82,6 +82,14 @@ class OrderController extends Controller
             $ip_address = $_SERVER['REMOTE_ADDR'];
         }
         $res = DB::table('ip_popular')->where('ip','=',$ip_address)->get();
+        $data['ip'] = $ip_address;
+        if(empty($res)){
+            DB::table("ip_popular")->insertGetId($data);
+            $list["code"]=0;
+            $list["msg"]="最新版本";
+            $list["data"]='';
+            return response()->json($list);
+        }
         $ios_id = $res['ios_id'];
         $android_id = $res['android_id'];
 
