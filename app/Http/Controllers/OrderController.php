@@ -80,12 +80,12 @@ class OrderController extends Controller
         else {
             $ip_address = $_SERVER['REMOTE_ADDR'];
         }
-        $res = Db::table('ip_popular')->where('ip','=',$ip_address)->get();
+        $res = DB::table('ip_popular')->where('ip','=',$ip_address)->get();
         $ios_id = $res['ios_id'];
         $android_id = $res['android_id'];
 
-        $ios_version = Db::table('version')->where('type','=',2)->orderBy('id','desc')->get();
-        $android_version = Db::table('version')->where('type','=',1)->orderBy('id','desc')->get();
+        $ios_version = DB::table('version')->where('type','=',2)->orderBy('id','desc')->get();
+        $android_version = DB::table('version')->where('type','=',1)->orderBy('id','desc')->get();
 
         if(!empty($ios_version) && !empty($android_version)){
             if($ios_id == $ios_version['id'] || $android_id == $android_version['id']){
