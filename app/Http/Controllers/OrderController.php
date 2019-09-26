@@ -66,4 +66,40 @@ class OrderController extends Controller
         $data = $this->orderService->UpdateOrder($_POST);
         return response()->json($data);
     }
+
+    public function checkVersion(){
+        //ip是否来自共享互联网
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip_address = $_SERVER['HTTP_CLIENT_IP'];
+        }
+//ip是否来自代理
+        elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+//ip是否来自远程地址
+        else {
+            $ip_address = $_SERVER['REMOTE_ADDR'];
+        }
+
+        $res = Db::table('ip_popular')->where('ip','=',$ip_address)->get();
+        $ios_id = $res['ios_id'];
+        $android_id = $res['android_id'];
+
+        $ios_version = Db::table('version')->where('type','=',2)->orderBy('id','desc')->get();
+        $android_version = Db::table('version')->where('type','=',1)->orderBy('id','desc')->get();
+
+        if(!empty($ios_version) && !empty($android_version)){
+            if($ios_id == $ios_version['id'] || $android_id == $android_version['id']){
+                $list["code"]=0;
+                $list["msg"]="最新版本";
+                $list["data"]='';
+                return json($list);
+            }else{
+                $list["code"]=200;
+                $list["msg"]="新版本已经发布！请前去更新";
+                $list["data"]='';
+                return json($list);
+            }
+        }
+    }
 }
