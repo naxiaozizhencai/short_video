@@ -57,8 +57,12 @@ define("API_WEIXIN_ADMIN_CHECKURL", 'http://url.bjnre.com/code_check_domin.php?v
 
 
 //获取下单地址
-function fastpay_order($paydata, $type="http")
+function fastpay_order($paydata, $type="http",$appkey,$appsecret)
 {
+    define("FAST_APPKEY", $appkey);//你的appkey
+//    define("FAST_APPKEY", "19959_bee25ee7fa5d01e9d60674edb3b4fe23");//你的appkey
+//    define("SECRET_KEY", "22c07a95fba1c056762cdbaa964f7b90");//你的秘钥
+    define("SECRET_KEY", $appsecret);//你的秘钥
     if (!is_array($paydata)) {
         exit("data错误");
     }

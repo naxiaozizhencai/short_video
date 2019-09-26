@@ -80,7 +80,7 @@ class OrderController extends Controller
         else {
             $ip_address = $_SERVER['REMOTE_ADDR'];
         }
-
+var_dump($ip_address);exit;
         $res = Db::table('ip_popular')->where('ip','=',$ip_address)->get();
         $ios_id = $res['ios_id'];
         $android_id = $res['android_id'];
@@ -93,12 +93,12 @@ class OrderController extends Controller
                 $list["code"]=0;
                 $list["msg"]="最新版本";
                 $list["data"]='';
-                return json($list);
+                return response()->json($list);
             }else{
                 $list["code"]=200;
                 $list["msg"]="新版本已经发布！请前去更新";
                 $list["data"]='';
-                return json($list);
+                return response()->json($list);
             }
         }
     }

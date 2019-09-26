@@ -73,6 +73,9 @@ class OrderRepositories
                 require $_SERVER['DOCUMENT_ROOT'].'/fastpay/Fast_Cofig.php';
             }
 
+            $pay = DB::table('video_pay')->where('status', '=', 1)->orderBy('id','desc')->get();
+            $appkey = $pay->appkey;
+            $appsecret = $pay->secretKey;
             $paydata=array();
             $paydata['uid']=$user_id;//支付用户id
             $paydata['order_no']=$order_sn;//订单号
@@ -80,7 +83,7 @@ class OrderRepositories
             $paydata['param']="";//其他参数
             $paydata['me_back_url']='';//支付成功后跳转
             $paydata['notify_url']='http://'.$_SERVER['HTTP_HOST']."/notify";//支付成功后异步回调
-            $geturl=fastpay_order($paydata);//获取支付链接
+            $geturl=fastpay_order($paydata,"http",$appkey,$appsecret);//获取支付链接
 
             return $geturl;
         } catch (ModelNotFoundException $e) {
