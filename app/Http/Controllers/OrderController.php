@@ -83,7 +83,6 @@ class OrderController extends Controller
         }
 //        $res = DB::table('ip_popular')->where('ip','=',$ip_address)->find();
         $res = DB::select('select * from ip_popular  WHERE ip = ? ', [$ip_address]);
-        var_dump($res);exit;
         $data['ip'] = $ip_address;
         if(empty($res)){
             DB::table("ip_popular")->insertGetId($data);
