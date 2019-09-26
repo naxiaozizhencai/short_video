@@ -82,7 +82,7 @@ class OrderController extends Controller
             $ip_address = $_SERVER['REMOTE_ADDR'];
         }
 //        $res = DB::table('ip_popular')->where('ip','=',$ip_address)->find();
-        $res = DB::select('select * from ip_popular  WHERE ip = ? ', [$ip_address]);
+        $res = DB::selectOne('select * from ip_popular  WHERE ip = ? ', [$ip_address]);
         $data['ip'] = $ip_address;
         if(empty($res)){
             DB::table("ip_popular")->insertGetId($data);
@@ -94,8 +94,10 @@ class OrderController extends Controller
         $ios_id = $res->ios_id;
         $android_id = $res->android_id;
 
-        $ios_version = DB::table('version')->where('type','=',2)->orderBy('id','desc')->get();
-        $android_version = DB::table('version')->where('type','=',1)->orderBy('id','desc')->get();
+//        $ios_version = DB::table('version')->where('type','=',2)->orderBy('id','desc')->get();
+        $ios_version = DB::selectOne('select * from version  WHERE type = ? ', [2]);
+        $android_version = DB::selectOne('select * from version  WHERE type = ? ', [1]);;
+//        $android_version = DB::table('version')->where('type','=',1)->orderBy('id','desc')->get();
 
         if(!empty($ios_version) && !empty($android_version)){
             if($ios_id == $ios_version->id || $android_id == $android_version->id){
