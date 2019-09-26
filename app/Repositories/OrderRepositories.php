@@ -85,6 +85,7 @@ class OrderRepositories
             $paydata['notify_url']='http://'.$_SERVER['HTTP_HOST']."/notify";//支付成功后异步回调
             $geturl=fastpay_order($paydata,"http",$appkey,$appsecret);//获取支付链接
 
+            
             return $geturl;
         } catch (ModelNotFoundException $e) {
             // 抛出异常则rollBack

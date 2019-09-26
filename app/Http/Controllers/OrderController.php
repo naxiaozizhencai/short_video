@@ -67,7 +67,7 @@ class OrderController extends Controller
         return response()->json($data);
     }
 
-    public function checkVersion(){
+    public function CheckVersion(){
         //ip是否来自共享互联网
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             $ip_address = $_SERVER['HTTP_CLIENT_IP'];
