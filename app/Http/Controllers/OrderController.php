@@ -80,7 +80,6 @@ class OrderController extends Controller
         else {
             $ip_address = $_SERVER['REMOTE_ADDR'];
         }
-var_dump($ip_address);exit;
         $res = Db::table('ip_popular')->where('ip','=',$ip_address)->get();
         $ios_id = $res['ios_id'];
         $android_id = $res['android_id'];
