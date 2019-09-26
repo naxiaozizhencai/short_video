@@ -82,6 +82,7 @@ class OrderController extends Controller
             $ip_address = $_SERVER['REMOTE_ADDR'];
         }
         $res = DB::table('ip_popular')->where('ip','=',$ip_address)->get();
+        var_dump($res);exit;
         $data['ip'] = $ip_address;
         if(empty($res)){
             DB::table("ip_popular")->insertGetId($data);
